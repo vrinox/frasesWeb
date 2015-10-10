@@ -1,0 +1,360 @@
+/*-----------------------------------------------FUENTES-----------------------------------------------------*/
+@font-face {
+   font-family: "AGT";
+   font-style: normal;
+   font-weight: normal;
+   src: url("../imagenes/fuentes/AGT.ttf");
+}
+@font-face {
+   font-family: "MWH";
+   font-style: normal;
+   font-weight: normal;
+   src: url('../imagenes/fuentes/MWH.ttf') format("truetype");
+}
+/*-----------------------------------------------Acceso-----------------------------------------------------*/
+div[contenedor-acc]{
+	float: left;
+	margin: 15% 30%;
+	border:1px solid silver;
+	border-radius: 3px;
+	width: 40%;
+	background: white;
+}
+div[contenedor-acc] i.icono-usuario,div[contenedor-acc] i.icono-llave{
+	background: #354b60;
+	float: left;
+}
+div[contenedor-acc] i.icono-usuario{width: 40px;
+	height: 40px;
+	background-image: url("../imagenes/iconos/blancos/cool.png");
+	margin-top: 30px !important;
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+	margin-left: 10px;
+}
+div[contenedor-acc] i.icono-llave{
+
+	width: 40px;
+	height: 40px;
+	background-image: url("../imagenes/iconos/blancos/key.png");
+	margin-top: 10px !important;
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+	margin-left: 10px;
+
+}
+div[titulo-acc]{
+	background: #354b60;
+	color: white;
+	font-size: 30px;
+	padding: 5px 25px 5px;
+}
+div[contenedor-acc] input[type="text"],div[contenedor-acc] input[type="password"]{
+	width: 70%;
+	padding: 9px;
+	font-size: 17px;
+	float: left;
+	margin-left: -4px;
+	border: 1px solid rgb(53, 75, 96);
+	border-radius: 0px;
+}
+div[contenedor-acc] input[type="text"]{
+	margin-top: 30px;
+	margin-bottom: 10px;
+}
+div[contenedor-acc] input[type="password"]{
+	margin-bottom: 30px;
+	margin-top: 10px;
+}
+div[contenedor-acc] button{    
+	background: #354b60 none repeat scroll 0% 0%;
+    color: #FFF;
+    width: 30%;
+    border: medium none;
+    padding: 10px;
+    margin: 10px 10px 20px 40px;
+    box-shadow: 0px 0px 1px white;
+}
+div[contenedor-acc] label{
+	color: white;
+	text-align: center;
+	font-style: italic;
+	float: right;
+	margin:20px;
+}
+div[botonera-acc]{
+	background: #354b60;
+	border-top: 1px solid silver;
+	margin-top: 10px;
+}
+div#contenedor{
+	width: 100%;
+	height: 100%;
+}
+div[salto]{
+	clear: both;
+}
+/*--------------------------------------INICIO----------------------------------------------*/
+div[cabecera-ini]{
+	position: fixed;
+	width: 100%;
+	height: 32px;
+	background:#354b60;
+	z-index: 10;
+	margin-left:-8px;
+
+}
+span[icono-app]{
+	color:white;
+	font-size: 25px; 
+}
+i[menu]{
+	float: right;
+	border-left: 1px solid white
+}
+i#menuPer{
+	width: 34px;
+	height: 32px;
+	background-image: url("../imagenes/iconos/blancos/cool.png");
+	background-repeat: no-repeat;
+	background-position: 3px 0px;
+}
+i#menuNew{
+	width: 34px;
+	height: 32px;
+	background-image: url("../imagenes/iconos/blancos/pen2.png");
+	background-repeat: no-repeat;
+	background-position: 3px 0px;
+}
+quotes{
+	color:#354b60;
+	font-family: "MWH";
+}
+/*-----------------------------------------CAPAS----------------------------------------------*/
+div#exterior{
+	width: 100%;
+	height: 100%;
+	position:fixed;
+	background: black;
+	opacity: 0;
+	z-index: 3;
+	margin-left: -8px;
+	transition:all 0.5s;
+}
+div#capaContenido{
+	background: white;
+	width:50%;
+	height: auto;
+	position: absolute;
+	top: 10%;
+	left: 25%;
+	margin-bottom: 100px;
+	z-index: 10;
+	box-shadow: 1px 1px 1px black;
+	overflow: hidden;
+}
+/*---------------------------------DATOS PERSONALES-------------------------------------------*/
+div#dP{
+	width: 200px;
+	height: 143px;
+	background: white;
+	margin-top:-150px;
+	margin-left: 81%; 
+	transition:all 0.5s;
+	position:fixed;
+	z-index: 8;
+	border-radius: 0px 0px 10px 10px;
+}
+div[tituloPer]{
+	text-align: center;
+	font-size: 15px;
+}
+i.icon{
+	margin-top: 2px !important;
+}
+span[per]{
+	color:silver;
+}
+div[contentNombre],div[cs],div[tituloPer]{
+	border-bottom: 1px solid silver;
+	margin-top: 12px;
+}
+
+/*---------------------------------Nueva Frase-------------------------------------------*/
+div#nF{
+	width: 60%;
+	height: 132px;
+	background: white;
+	margin:-150px 25% ;
+	transition:all 0.5s;
+	position:absolute;
+	z-index: 10;
+}
+div[botoneraNF]{
+	width: 100%;
+	height: 33px;
+	border-top: 1px solid silver;
+	background: #354b60;
+}
+textarea#nfPanel{
+	outline: medium none;
+	border: medium none;
+	resize: none;
+	width: 96%;
+	height: 100px;
+	font-size: 20px;
+	padding-top: 15px;
+	font-family: "AGT";
+}
+l[nfEnviar]{
+	width: auto;
+	color:white;
+	border-right: 1px solid white;
+	font-size: 25px;
+}
+div[usarSeudonimo]{
+	display: inline-block;
+	color: silver;
+	float: right;
+	padding: 5px;
+}
+/*---------------------------Frases-----------------------------------------*/
+div[fondo]{
+	width: 100%;
+	position:fixed;
+	height: 100%;
+	background: url("../imagenes/fondo.jpg");
+	background-size: cover;
+	z-index:-1;
+	margin:0px -8px;
+}
+div#contenedorFrases{
+	width: 70%;
+	height: auto;
+	margin:0px auto;
+}
+div[primero]{
+	height: 32px;
+	width: 100%;
+	margin-bottom: 50px;
+	margin-top: -8px;
+	margin-left: -10px;
+	background: white;
+}
+div[frase]{
+	width: 60%;
+	height: 162px;
+	background: #FFF none repeat scroll 0% 0%;
+	margin: 25px 25%;
+	z-index: 1;
+	border: 1px solid #354b60;
+}
+div[frase] div[contenido]{
+	font-style: italic;
+	font-size: 25px;
+	padding: 20px;
+	border-bottom: 1px solid silver;
+	height: 90px;
+	font-family: "AGT";
+}
+span[autor]{
+	color:	silver;
+	float: right;
+	margin-right: 10px;
+	text-transform: capitalize;
+	font-weight: bold;
+}
+au{
+	cursor: pointer;
+}
+/*-----------------------------------------------identModule---------------------------*/
+div[ident]{
+	width: 20%;
+	height:80px;
+	background: #354b60;
+	position: fixed;
+	margin-left: -10%;
+}
+div[idNombre]{
+	width: auto;
+	height: 25%;
+	color: #FBFCFC;
+	font-size: 100%;
+	float: left;
+	margin-top: 3%;
+}
+div[idImg]{
+	border-radius: 1000px;
+	height: 80px;
+	width: 80px;
+	background-color: silver;
+	float: left;
+}
+/*-----------------------------------Opciones-----------------------------------*/
+div[titulo-opciones]{
+	width: 100%;
+	background: #354b60;
+	padding: 10px;
+	color: #FBFCFC;
+	font-size: 25px;
+}
+div[titulo-opciones] i{
+	float:right;
+	margin-right: 20px;
+}
+div[subtitulo-opciones]{
+	color: #354b60;
+	margin-left: 20px;
+	padding: 10px;
+	font-size: 20px;
+}
+div[form-opciones]{
+	margin-left: 40px;
+	border-bottom: 1px solid #354b60;
+	padding-right:20px; 
+	margin-bottom: 5px;
+}
+div[form-opciones] input[type='text'],div[form-opciones] input[type='password']{
+	padding: 10px;
+	margin: 5px;
+}
+div[form-opciones] button,div[salir] button{    
+	background: #354b60 none repeat scroll 0% 0%;
+    color: #FFF;
+    width: 30%;
+    border: medium none;
+    padding: 10px;
+    margin: 10px 64px 20px ;
+    box-shadow: 0px 0px 1px white;
+    float: right;
+}
+div[ordenar]{
+	clear: both;
+}
+div[salir] {
+	padding: 20px;
+}
+/*--------------------------------Cargando------------------------------------*/
+div[cargando] {
+    position: absolute;
+    width: 500px;
+    z-index: 20;
+    height: 60px;
+    background: white ;
+    top:40%;
+    left:30%;
+    box-shadow: 0 0 1px black;
+}
+div[cargando] div[gif]{
+	float: left;
+	background: transparent url("../imagenes/29.gif") no-repeat scroll 0% 0%;
+	width: 50px;
+	height: 50px;
+	margin: 5px 25px;
+}
+div[cargando] div[texto]{
+	float: left;
+	padding-top: 20px;
+	font-style: italic;
+	padding-right: 20px;
+}
