@@ -135,6 +135,12 @@ var Constructor = function(){
 			this.cambiarEstruc("inicio");
 			inicio = new Inicio();
 			inicio.darVida();
+			if(jarvis.buscarLib('Chat').cargada){
+				jarvis.buscarLib("Chat").op.construirDashBoard();
+				jarvis.buscarLib("Chat").op.darVida();
+			}else{
+				jarvis.usarLib("Chat");	
+			}	
 		}
 	}
 
@@ -148,13 +154,24 @@ var Constructor = function(){
 	}
 	
 	this.construirIdentUsuario = function(data){
+		console.log(data);
 		var boton="";
 		var username = "";
+		newData = {
+			nombreUsu : ' ',
+			nombre : ' ',
+			apellido : ' ',
+			boton : 'disabled',
+			texto : ' '
+		}
 		switch(data.tipo){
 			case "perfil":
 			if(data.nombreUsu!=jarvis.session.nombreUsu){
 				var texto = (data.estado==1)?"dejar de seguir":"seguir";
 				boton="<input type='button' onclick='inicio.seguir(this)' user='"+data.nombreUsu+"' value='"+texto+"' id='btnSeguir'>";
+				newData.nombreUsu = data.nombreUsu;
+				newData.texto = texto;
+				newData.boton = 'enable';
 			}
 			break;
 			case "busqueda":
@@ -164,12 +181,17 @@ var Constructor = function(){
 				data.nombreUsu = jarvis.session.nombreUsu;
 			break;
 		}
-		var html ="<div ident>\
-						<div idImg></div>\
-						<div idNombre>"+data.nombreUsu+"</div>\
-						"+boton+"\
-					</div>";
-		return html;
+		var iniciales = newData.nombre.substr(0,1).toUpperCase()+newData.apellido.substr(0,1).toUpperCase();
+		var seccionDerecha = "<div cardButton><input type='button' value='seguir'></div>";
+		var html = "<div chatCab><div cardLogo><div iniciales>"+iniciales+"</div></div><div cardTitle >"+newData.nombre+" "+newData.apellido+"</div>";
+		html += seccionDerecha+"</div>";
+		var html2 = '<div cardId>\
+								<div cardFlipCont id="cardIdCont" onclick="flip(this)">\
+									<figure class="front">'+html+'</figure>\
+									<figure class="back"><h3>Informacion de Contacto</h3></figure>\
+								</div>\
+							</div>'; 
+		return html2;
 	};
 	//metodos ejecutados en la instanciacion del objeto
 }
@@ -267,13 +289,15 @@ var Inicio = function(){
 						data = {
 							tipo : "perfil",
 							nombreUsu : control.getElementsByTagName('parametro')[0].textContent,
-							estado : control.getElementsByTagName('estado')[0].textContent
+							estado : control.getElementsByTagName('estado')[0].textContent,
+							nombre : control.getElementsByTagName('nombre')[0].textContent,
+							apellido : control.getElementsByTagName('apellido')[0].textContent,
 						}
 					break;
 					case "busqueda":
 						data = {
 							tipo : "busqueda",
-							parametro : control.getElementsByTagName('parametro')[0].textContent
+							parametro : control.getElementsByTagName('parametro')[0].textContent,
 						}
 					break;
 					case "inicio":
@@ -282,6 +306,7 @@ var Inicio = function(){
 						}
 					break;
 				}
+
 				var identModule=jarvis.construc.construirIdentUsuario(data);
 				document.getElementById('contenedorFrases').innerHTML="<div primero></div>"+identModule;
 				for(var x=0;x<frases.length;x++){
@@ -468,6 +493,12 @@ function modificarDatos(){
 		jarvis.buscarLib("Opciones").op.darVida();
 	}else{
 		jarvis.usarLib("Opciones");	
+	}		
+}
+function flip(obj){
+	if(obj.style.transform!='rotateX(180deg)'){
+		obj.style.transform='rotateX(180deg)';
+	}else{
+		obj.style.transform='rotateX(0)';
 	}
-		
 }

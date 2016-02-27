@@ -102,6 +102,8 @@ router.post("/", function(req,res)
 						xmlResponse+="<control>";
 							xmlResponse+="<tipo>perfil</tipo>";
 							xmlResponse+="<parametro>"+reqData.perfil+"</parametro>";
+							xmlResponse+="<nombre>"+frasesModel.innerData.nombre+"</nombre>";
+							xmlResponse+="<apellido>"+frasesModel.innerData.apellido+"</apellido>";
 							xmlResponse+="<estado>"+frasesModel.innerData.estado+"</estado>";
 						xmlResponse+="</control>";
 						xmlResponse+="<mensaje>registro realizado con exito</mensaje>";

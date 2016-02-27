@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var routes = require('./Servidor/routes/index');
 var acceso = require('./Servidor/routes/corAcceso');
 var frase = require('./Servidor/routes/corFrase');
+var chat = require('./Servidor/routes/corChat');
 //aplicacion
 var app = express();
 
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'Client')));
 app.use('/', routes);
 app.use('/corAcceso', acceso);
 app.use('/corfrase', frase);
+app.use('/corChat', chat);
 
 
 // catch 404 and forward to error handler
@@ -62,7 +64,7 @@ app.use(function(err, req, res, next) {
 
 //-----------------------------------------------funcionamiento http ----------------------------------------//
 var http = require('http');
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '4000');
 app.set('port', port);
 
 /**
@@ -143,7 +145,9 @@ function onError(error) {
 
 //-------------------------------------------Funcionamiento de Socket.io-------------------------------------//
 var rack = require('./Servidor/racks');
+var dateParser = require('./Servidor/dateParser')
 var io = require('socket.io').listen(server);
+var plugAssembler = require('./Servidor/plug');
 
 
 io.sockets.on('connection',function(socket){
@@ -159,12 +163,11 @@ io.sockets.on('connection',function(socket){
       rack.buscarPlug(atributos.nombreUsu).socket.emit('session',{text:"dobleSession"});
       console.log('doble session');
     }else{
-      var plug = require('./Servidor/plug');
-
-      plug.configure(atributos,socket);
+      var plug = plugAssembler.configure(atributos,socket);
       rack.addPlug(plug);
       //identificacion en servidor
       console.log('\nconexion establecida con: '+plug.nombreUsu+"\nde direccion: "+plug.ip+"\n"); 
+      rack.mostrarListaPlugs();
     }
   });
   //-----------inicio SESSION--- ------------------------
@@ -199,6 +202,39 @@ io.sockets.on('connection',function(socket){
         });
       }
     }
+  });
+  //---------------------------Control de Chat--------------------------------------------------------
+  socket.on('chatMsg',function(data){
+    if(data.tipo=='envio')
+    {
+      console.log(data);
+      rack.mostrarListaPlugs();
+      var receptor = rack.buscarPlug(data.receptor);
+      if(receptor){
+        data.fecha = dateParser.getParseDate();
+        console.log('disparando mensaje a receptor');
+        receptor.socket.emit('chatMsg',data);
+        var newData = {
+          id : data.id,
+          estado : 'recibidoServidor',
+          fecha : data.fecha
+        }
+        console.log('disparando cambio de estado a emisor\n');
+        console.log(newData);
+        socket.emit('chatMsg',newData); 
+      }
+    }
+    else if(data.tipo=='cambioEstado')
+    {
+      if(data.estado=='recibidoPorReceptor'){
+        var emisor = rack.buscarPlug(data.receptor);
+        console.log(emisor);
+        emisor.socket.emit('chatMsg',data);
+      }
+    }
+  });
+  socket.on('connect_failed', function(){
+    console.log('Connection Failed');
   });
   socket.on('disconnect',function(){
     plug=rack.buscarPlugPorSocket(socket);

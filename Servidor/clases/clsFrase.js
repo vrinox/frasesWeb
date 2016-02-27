@@ -81,12 +81,14 @@ var frasesModel = {}
 
 	frasesModel.verificarSeguidor = function(){
 		var data = this.getData();
-		var sql = "SELECT * FROM sigue WHERE seguidor="+connection.escape(data.nombreUsu)+ 
-		 			" AND seguido="+connection.escape(data.perfil);
+		var sql = "SELECT u.nombreUsu,u.nombre,u.apellido FROM sigue AS s INNER JOIN usuario AS u ON(u.nombreUsu=s.seguidor)"+
+					"  WHERE seguidor = "+connection.escape(data.nombreUsu)+" and seguido = "+connection.escape(data.perfil);
 		connection.query(sql,function(error,row){
 			if(error){
 				throw error;
 			}else{
+				frasesModel.innerData.nombre = row[0].nombre;
+				frasesModel.innerData.apellido = row[0].apellido;
 				if (typeof row !== 'undefined' && row.length > 0){
 					frasesModel.innerData.estado=0;
 				}else{

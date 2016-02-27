@@ -136,6 +136,8 @@ router.post("/", function(req,res)
 				nombreUsu : req.body.NombreUsu,
 				parametro : req.body.Parametro
 			}
+
+			console.log(reqData);
 			accessModel.setData(reqData);
 			accessModel.seguir(function(error, data){
 				

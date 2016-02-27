@@ -21,6 +21,11 @@
 			<nombre>Socket.io</nombre>
 			<ruta>socket.io/socket.io.js</ruta>
 			<tipo>javascript</tipo>
+		</libreria>
+		<libreria>
+			<nombre>Chat</nombre>
+			<ruta>vistas/chat.js</ruta>
+			<tipo>javascript</tipo>
 		</libreria>	
 		<libreria>
 			<nombre>Opciones</nombre>

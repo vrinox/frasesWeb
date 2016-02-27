@@ -68,6 +68,9 @@ function activarRegistro(){
  }
 //-----------------------------Acceso------------------------------------------------------------
 function ingresar(){
+
+ 	var btEnviar = document.getElementById("BtAcc");
+ 	btEnviar.textContent='Accesando...';
 	var campNom = document.getElementById("AccNom");
 	var campPass = document.getElementById("AccPass");
 	if((campNom.value!="")&&(campPass.value!="")){
@@ -82,10 +85,12 @@ function ingresar(){
 		alert("por favor llene los campos para poder ingresar");
 		activarAcceso();
 	}
-
 }
 function procesarAcc(){
 	if(conexionAcc.readyState == 4){
+
+	 	var btEnviar = document.getElementById("BtAcc");
+	 	btEnviar.value='Ingresar';
 		//recivo el xml con los usuarios
 		var xml=conexionAcc.responseXML;
 		console.log("respuesta aceptada");
@@ -94,8 +99,10 @@ function procesarAcc(){
 		if(xml.getElementsByTagName('success')[0].textContent==0){
 			//extraigo el mensaje
 			var mensaje=xml.getElementsByTagName('mensaje')[0].textContent;
+			var btEnviar = document.getElementById("BtAcc");
+ 			btEnviar.textContent='Ingresar';
 			alert(mensaje);
-			jarvis.buscarLib("Acceso").op.darVida();;
+			jarvis.buscarLib("Acceso").op.darVida();
 		}else{
 			//extarigo los elementos
 			var NombreUsu=xml.getElementsByTagName('NombreUsu')[0].textContent;

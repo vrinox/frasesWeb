@@ -43,10 +43,9 @@ var Session = function(){
 		this.sesIntId = setInterval(function(){
 			if(jarvis.session.nombreUsu!=""){
 				console.log("temporalmente sin conexion");
-				alert("conexion perdida");
+				//alert("conexion perdida");
 			}
 		},30000);
-		console.log("intervalo "+this.sesIntId+" iniciado");
 	};
 
 	this.identificacion = function(){
@@ -64,8 +63,11 @@ var Session = function(){
 			},50000)
 	};
 
-	this.inicializarConeccion = function(){
-		this.socket=io.connect('http://192.168.1.108:3000');
+	this.inicializarConexion = function(){
+		this.socket=io.connect('http://192.168.0.103:4000');
+		var obj = this.socket;
+		alert('hola');
+		Window.onbeforeunload=function(e){alert('hola');}
 		this.socket.on('identificacion',function(data){
 			if(data.text=="falsa"){
 				jarvis.session.nombreUsu="";
@@ -81,7 +83,6 @@ var Session = function(){
 				jarvis.session.nombreUsu=data.nombreUsu;
 				jarvis.session.horaDeConexion=data.horaCon;
 				jarvis.session.estado="abierta";
-				console.log("intervalo "+jarvis.session.sesIntId+" cerrado");
 				clearInterval(jarvis.session.sesIntId);
 				jarvis.session.sesIntId=null;
 				if(jarvis.construc.mostrarEstEnUso()=="basica"){
@@ -121,12 +122,33 @@ var Session = function(){
 			}
 
 		});
+		this.socket.on('chatMsg',function(data){
+			if(data.tipo=='envio'){
+				console.log('mensaje llego a receptor');
+				jarvis.buscarLib('Chat').op.listarChats();
+				if(jarvis.buscarLib('Chat').op.buscarChatUnit(data.emisor).estado=='activo'){
+					console.log(data.emisor);
+					jarvis.buscarLib('Chat').op.agregarMsg(data);
+					var newData = {
+						id : data.id,
+						estado : 'recibidoPorReceptor',
+						emisor : data.emisor
+					}
+					console.log('envio cambio de estado');
+					jarvis.session.socket.emit('chatMsg',newData);
+				}else{
+					//cuando el chat esta inactivo aumento el numero de mensajes pendientes y los aumentos
+				}
+			}else if(data.tipo=='cambioEstado'){
+				console.log('cambio de estado\n'+data)
+			}
+		});
 		this.recuperarSession();
 		
 	}
 
 	//metodos ejecutados en la instanciacion del objeto
-	this.inicializarConeccion();
+	this.inicializarConexion();
 }
 //----------------------------------------------OBJETO LIBRERIA--------------------------------------//
 var Libreria = function(nombre,ruta,tipo){
