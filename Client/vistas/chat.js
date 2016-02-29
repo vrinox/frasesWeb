@@ -105,7 +105,9 @@ var ChatManager = function(){
 				console.log("peticion de chat enviada\n"+envio);
 				conexionChat.send(envio);
 
-				this.onclick=function(){};
+				this.onclick=function(){
+					console.log('me presiono');
+				};
 			}
 		}	
 	}
@@ -212,7 +214,7 @@ function cargarChat(){
 				//estructura de la etiqueta msg
 				mensaje = {
 					id : messages[m].getElementsByTagName('id')[0].textContent,
-					receptor : messages[m].getElementsByTagName('emisor')[0].textContent,
+					emisor : messages[m].getElementsByTagName('emisor')[0].textContent,
 					fecha : messages[m].getElementsByTagName('fecha')[0].textContent,
 					contenido : messages[m].getElementsByTagName('cont')[0].textContent,
 					estado : messages[m].getElementsByTagName('estado')[0].textContent
@@ -248,7 +250,7 @@ function createCard(data,tipo,forma){
 
 			card.id = 'cardChatOf'+data.nombreUsu;
 			card.setAttribute('cardChat',data.nombreUsu);
-			seccionDerecha = "<div opciones onmouseout='regresarNot(this)'><div contenido>2</div></div><div notificaciones onmouseover='moverNot(this)'><div contenido>1</div></div>";
+			seccionDerecha = "<div opciones onmouseout='regresarNot(this)'><div contenido >2</div></div><div notificaciones onmouseover='moverNot(this)'><div contenido>1</div></div>";
 
 		}
 		var html = "";

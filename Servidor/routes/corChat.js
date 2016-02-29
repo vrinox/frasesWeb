@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 
-//modelo o clase necesario para su conexion
+//modelo o clase necesario para el manejo de los chat
 var chatModel = require("../clases/clsChat");
 
 router.post('/',function(req, res, next)
@@ -82,7 +82,6 @@ router.post('/',function(req, res, next)
 				</messges>
 			</cuerpo>
 			*/
-				console.log(data);
 				if(data.length>0){
 					var xmlResponse='<?xml version="1.0" encoding="UTF-8"?>';
 					xmlResponse+="<cuerpo>";
@@ -107,13 +106,11 @@ router.post('/',function(req, res, next)
 					xmlResponse+="<msg>chat vacio</msg>";
 					xmlResponse+="<user>"+reqData.user+"</user>";
 					xmlResponse+="</cuerpo>";
-				}
-				console.log(xmlResponse);
+				}  
 				res.header('Content-Type','text/xml');
 				res.send(xmlResponse);
 			});
 		}
 	}
-
 });
 module.exports = router;

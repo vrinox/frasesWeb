@@ -204,10 +204,23 @@ io.sockets.on('connection',function(socket){
     }
   });
   //---------------------------Control de Chat--------------------------------------------------------
+  //modelo o clase necesario para su conexion
+  var chatModel = require("./Servidor/clases/clsChat");
   socket.on('chatMsg',function(data){
     if(data.tipo=='envio')
     {
-      console.log(data);
+
+      //----------prueba chatModel en app-------------------
+      chatModel.setData(data);
+      chatModel.guardarMensaje(function(error,data){
+          if(data && data.affectedRows){
+            console.log('Mensaje Guardado satisfactoriamente por el sevidor');
+          }else{
+            console.log(error);
+          }
+      });
+      //----------fin prueba chatModel en app---------------
+
       rack.mostrarListaPlugs();
       var receptor = rack.buscarPlug(data.receptor);
       if(receptor){

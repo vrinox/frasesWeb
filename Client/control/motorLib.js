@@ -64,10 +64,12 @@ var Session = function(){
 	};
 
 	this.inicializarConexion = function(){
-		this.socket=io.connect('http://192.168.0.103:4000');
+		this.socket=io.connect('http://192.168.0.100:4000');
+		console.log('conectado1',this.socket.connected);
+		this.socket.on('connect',function(){
+			console.log('conectado2',jarvis.session.socket.connected);
+		});
 		var obj = this.socket;
-		alert('hola');
-		Window.onbeforeunload=function(e){alert('hola');}
 		this.socket.on('identificacion',function(data){
 			if(data.text=="falsa"){
 				jarvis.session.nombreUsu="";
@@ -120,7 +122,6 @@ var Session = function(){
 			{
 				console.log('no hay sesion abierta');
 			}
-
 		});
 		this.socket.on('chatMsg',function(data){
 			if(data.tipo=='envio'){
@@ -317,6 +318,7 @@ var Asistente = function(){
 	}; 
 
 	this.arranque = function(){
+		window.onbeforeunload=function(){jarvis.session.socket.close();};
 		var lista=this.contendor.childNodes;
 		//agrego a mis librerias los scritps(js) y link(css) que se encuentran en el cuerpo del index
 		for(var x=0;x<lista.length;x++){
