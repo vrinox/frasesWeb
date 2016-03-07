@@ -209,7 +209,7 @@ io.sockets.on('connection',function(socket){
   socket.on('chatMsg',function(data){
     if(data.tipo=='envio')
     {
-
+      console.log(data);
       //----------prueba chatModel en app-------------------
       chatModel.setData(data);
       chatModel.guardarMensaje(function(error,data){

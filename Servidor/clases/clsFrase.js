@@ -87,11 +87,12 @@ var frasesModel = {}
 			if(error){
 				throw error;
 			}else{
-				frasesModel.innerData.nombre = row[0].nombre;
-				frasesModel.innerData.apellido = row[0].apellido;
-				if (typeof row !== 'undefined' && row.length > 0){
+				console.log(row);
+				if (typeof row !== 'undefined' || row.length > 0){
 					frasesModel.innerData.estado=0;
 				}else{
+					frasesModel.innerData.nombre = row[0].nombre;
+					frasesModel.innerData.apellido = row[0].apellido;
 					frasesModel.innerData.estado=1;
 				}
 			}
