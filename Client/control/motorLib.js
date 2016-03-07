@@ -64,7 +64,7 @@ var Session = function(){
 	};
 
 	this.inicializarConexion = function(){
-		this.socket=io.connect('http://192.168.0.100:4000');
+		this.socket=io.connect('http://192.168.0.104:4000');
 		console.log('conectado1',this.socket.connected);
 		this.socket.on('connect',function(){
 			console.log('conectado2',jarvis.session.socket.connected);

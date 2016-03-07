@@ -499,6 +499,7 @@ div[iniciales]{
 }
 /*----------------------------------Chat Card-----------------------------------------------*/
 card[cardChat] {
+	transition:all 0.3s ease-in-out;
 	width: 98%;
     height: auto;
     background: white;
@@ -537,7 +538,7 @@ card[cardChat] div[chatCab] div[iniciales]{
     padding: 10px 0px 0px 0px;
 }
 card[cardChat] div[chatCab] div[notificaciones]{
-	transition:all 0.5s;
+	transition:all 0.5s ease-in-out;
 	border-radius: 100px;
     border: 1px solid #c0392b;
     color: white;
@@ -550,7 +551,7 @@ card[cardChat] div[chatCab] div[notificaciones]{
     font-size: 13px;
 }
 card[cardChat] div[chatCab] div[opciones]{
-	transition:all 0.5s;
+	transition:all 0.5s ease-in-out;
 	border:1px solid white;
 	border-radius: 100px;
     color: black;
@@ -614,7 +615,7 @@ card[cardChat] div[chatFoot] input[type='button']{
 card[cardChat] div[chatBody]{
 	overflow-x: hidden;
 	overflow-y: auto;
-	transition:all 0.5s ease-in 0.5s;
+	transition:all 0.3s ease-in-out;
 	height: 0px;
 	background-color:#BCAAA4; 
 }
