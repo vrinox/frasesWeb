@@ -5,7 +5,7 @@ connection = mysql.createConnection(
 	{ 
 		host: 'localhost', 
 		user: 'root',  
-		password: 'testing', 
+		password: 'iutep', 
 		database: 'frasesWeb'
 	}
 );
