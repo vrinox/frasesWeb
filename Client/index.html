@@ -2,24 +2,26 @@
 <html>
 <head>
 	<title>FrasesWEB</title>
+<!-- Estilos externos //google -->
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css' nombre = "fuente" type="text/css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" nombre = "gooIconos" type="text/css">
 <!-- Librerias Basicas -->
 	<meta charset="UTF-8">
 	<script type="text/javascript" nombre='motorLib' src='control/motorLib.js'>	</script>
-	<script type="text/javascript" nombre='cuerpo' src='vistas/cuerpo.js'></script>	
 	<script type="text/javascript" nombre='Acceso' src='vistas/acceso.js'></script>	
 	<script type="text/javascript" nombre='Socket.io' src='/socket.io/socket.io.js'></script>	
 	<link rel="stylesheet" type="text/css" href="vistas/css/icons.css" nombre="Iconos">
 	<link rel="stylesheet" type="text/css" href="vistas/css/cuerpo.css" nombre="estilos cuerpo">
+	<link rel="stylesheet" type="text/css" href="lib/Rhino/css/Rhino.css" nombre="estilos rhino">
 </head>
 
 <body>
-
+	<div contenedor></div>
 </body>
 <script type="text/javascript">
 	var jarvis = new Asistente();
-	jarvis.buscarLib("Acceso").op = new Acceso;	
-	jarvis.construc= new Constructor;
-	jarvis.construc.arranque();
+	jarvis.buscarLib("Acceso").op = new Acceso;
+	jarvis.usarLib('Rhino');
 		
 </script>
 </html>

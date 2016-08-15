@@ -94,7 +94,6 @@ function procesarAcc(){
 		//recivo el xml con los usuarios
 		var xml=conexionAcc.responseXML;
 		console.log("respuesta aceptada");
-		console.log(xml);
 		//cadenaHtml donde se guardan todas las partes a agregar
 		if(xml.getElementsByTagName('success')[0].textContent==0){
 			//extraigo el mensaje

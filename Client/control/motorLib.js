@@ -155,12 +155,12 @@ var Session = function(){
 var Libreria = function(nombre,ruta,tipo){
 
 	this.nombre = nombre;
-
 	this.ruta = ruta;
-
 	this.tipo = tipo.toLowerCase();
-
 	this.cargada = false;
+	this.dependencias = [];
+	//usado en la espera de la ejecucion del script de la libreria
+	this.intervaloID = null;
 
 	//aqui se guarda el obj que se encuentra dentro de la libreria para poder acceder a sus metodos
 	this.op = null;
@@ -195,12 +195,11 @@ var Asistente = function(){
 
 	//---------------------------------------ATRIBUTOS PRIMARIOS--------------------------------------//
 	this.librerias = [ ];
-
 	this.contendor = document.getElementsByTagName("head")[0];
-
 	this.construc = null;
-
 	this.session = new Session();
+	this.estado = "sinArrancar";
+	this.intervaloID = null;
 
 	//--------------------------------------ATRIBUTOS SECUNDARIOS-------------------------------------//
 	this.intervaloID="";
@@ -208,30 +207,28 @@ var Asistente = function(){
 	//-------------------------------------------METODOS---------------------------------------------//
 	//---------------------------Metodos de utilizacion de indice------------------------------------//
 	this.buscarIndice = function(){
-		var ruta = "control/indice.xml";
+		this.estado = "cargandoIndice";	
+		var ruta = "control/indice.json";
 		conexionIndice=crearXMLHttpRequest();
 		conexionIndice.onreadystatechange = procesarIndice;
 		conexionIndice.open('GET',ruta, true);
-		conexionIndice.send();	
+		conexionIndice.send();
 	}
 
-	this.cargarIndice = function(xml){
-		var Librerias = xml.getElementsByTagName("Librerias")[0].childNodes;
-		var nombre;
-		var ruta;
-		var tipo;
+	this.cargarIndice = function(json){
+		var Librerias = json.librerias;
+		this.estado = 'cargandoLibrerias';
 
-		for(var x = 0; x < Librerias.length; x++){
-			//verifico que el nodo a cargar sea del tipo "libreria"
-			if(Librerias[x].nodeName.toLowerCase() == "libreria"){
+		//cargo el javascript
+		Librerias.javascript.forEach(function(libreria){
+			jarvis.addLib(libreria,"javascript");
+		});
+		//y luego el css
+		Librerias.css.forEach(function(libreria){
+			jarvis.addLib(libreria,"css");
+		});
 
-				nombre = Librerias[x].getElementsByTagName('nombre')[0].textContent;
-				ruta = Librerias[x].getElementsByTagName('ruta')[0].childNodes[0].nodeValue;
-				tipo = Librerias[x].getElementsByTagName('tipo')[0].textContent;
-				
-				this.addLib(nombre,ruta,tipo);
-			}
-		}	
+		this.estado = "enLinea";
 	};
 	//---------------------------Metodos para la utilizacion de librerias---------------------------//
 	this.verificarLibreria = function(lib){
@@ -256,27 +253,55 @@ var Asistente = function(){
 		return lib;
 	};
 
-	this.addLib=function(nombre,ruta,tipo){
+	this.addLib=function(libreria,tipo){
 		//instancio una nueva libreria
-		var lib = new Libreria(nombre,ruta,tipo);
+		var lib = new Libreria(libreria.nombre,libreria.ruta,tipo);
+		if(libreria.dependencias){
+			for(var i = 0; i < libreria.dependencias.length; i++){
+				var newLib = this.addLib(libreria.dependencias[i],"javascript");
+				lib.dependencias.push(newLib);
+			}
+		}
 		//verifico si la libreria añadida ya se encuentra agregada
 		if(!this.verificarLibreria(lib)){
 			//si no esta agregada con anterioridad la agrego al arreglo			
 			this.librerias[this.librerias.length]=lib;
 			//dejo la traza de que fue agregada
-			console.log("libreria "+nombre+" fue agregada al indice con exito");
-		}else{
-			//en caso de que ya se encuentre agregada 
-			//console.log("libreria "+nombre+" ya se encuentra agregada al indice");
+			console.log(libreria.nombre+" fue agregada al indice");
 		}
+		return lib;
 	};
 	
 	this.usarLib = function(nombreLib){
-		var lib = this.buscarLib(nombreLib);
+		//TODO: carga de librerias css asincronas
+		if(jarvis.estado !== 'enLinea'){
+			var intervaloID = setInterval(function(){
+				var lib = jarvis.buscarLib(nombreLib);
+				lib.intervaloID = intervaloID;
+				if(jarvis.estado === 'enLinea'){
+					jarvis.montarLib(nombreLib);
+					clearInterval(lib.intervaloID);
+				}
+			},30);
+		}else{
+			this.montarLib(nombreLib);
+		}
+	}
+	this.montarLib = function(nombreLib){
+		var lib = jarvis.buscarLib(nombreLib);
+		if(lib.dependencias){
+			lib.dependencias.forEach(function(dep){
+				jarvis.usarLib(dep.nombre);
+			});
+		}
 		//luego la agrego al documento en forma de script
 		this.contendor.appendChild(lib.tag);
 		//ejecutamos un intervalo de carga
-		this.iniciarEsperaCarga(lib.nombre);
+		if(lib.tipo === 'javascript'){
+			if(lib.noUsaCarga){
+				this.iniciarEsperaCarga(lib.nombre);
+			}
+		}	
 	}
 	//------------------------------Metodos de carga de scripts--------------------------------//
 
@@ -284,7 +309,7 @@ var Asistente = function(){
 		var libreria = this.buscarLib(nombre);
 		if(libreria!=-1){
 			libreria.cargada = true;
-			console.log("libreria "+nombre+" cargada con exito");
+			console.log(nombre+" cargada");
 		}else{
 			console.log("libreria "+nombre+" no se encuentra en el indice");
 		}
@@ -319,6 +344,7 @@ var Asistente = function(){
 
 	this.arranque = function(){
 		window.onbeforeunload=function(){jarvis.session.socket.close();};
+		this.estado = "arrancando"
 		var lista=this.contendor.childNodes;
 		//agrego a mis librerias los scritps(js) y link(css) que se encuentran en el cuerpo del index
 		for(var x=0;x<lista.length;x++){
@@ -349,10 +375,9 @@ var Asistente = function(){
 //--------------------------RESPUESTAS ---------------------------------------------------
 procesarIndice = function(){
 	if(conexionIndice.readyState == 4){
-		//recivo el xml con los datos
-		var xml=conexionIndice.responseXML;
-		//cargo el indice
-		jarvis.cargarIndice(xml);
+		var json=JSON.parse(conexionIndice.responseText);
+		jarvis.estado = 'procesandoIndice';
+		jarvis.cargarIndice(json);
 	}
 }
 //--------------------------MOTOR AJAX---------------------------------------------------
