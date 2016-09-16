@@ -32,6 +32,10 @@ var CampoDeTexto = function(info){
 			this.nodo.onmouseout=UI.elementos.maestro.cerrartooltipInput;
 		}
 		this.estado='enUso';
+		if(this.data.valor){
+			this.asignarValor(this.data.valor);
+			this.data.valor = null;
+		}
 	};
 	this.captarValor = function(){
 		var tipo = this.captarTipo();

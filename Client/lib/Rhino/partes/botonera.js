@@ -29,8 +29,11 @@ var Botonera = function(atributos){
 				case 'detalle':
 					nodo.setAttribute('btnDetalle','');
 				break;
-				case 'redactar':
-					nodo.setAttribute('btnRedactar','');
+				case 'asignar-rol':
+					nodo.setAttribute('btnAsignarRol','');
+				break;
+				case 'seguridad':
+					nodo.setAttribute('btnSeguridad','');
 				break;
 				case 'cancelar':
 					nodo.setAttribute('btnCancelar','');

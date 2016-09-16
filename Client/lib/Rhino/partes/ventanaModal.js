@@ -7,12 +7,17 @@ var modalWindow = function(){
 
 			this.estado = 'sinConstruir';
 			this.nodo = null;
+			this.clases = [];
 
 			this.construirNodo = function(){
 				var nodo=document.createElement('section');
 				nodo.setAttribute('cabecera','');
 				this.nodo = nodo;
 				this.manejoDeContenido(contenido);
+				if(contenido.clases){
+					this.clases = contenido.clases;
+					UI.manejoDeClases(this);
+				}
 			};
 			this.manejoDeContenido = function(contenido){
 				var porConstruir;
@@ -26,6 +31,7 @@ var modalWindow = function(){
 				}
 			};
 			this.agregarTipo = function(tipo){
+				this.revisarTipos();
 				this.nodo.classList.add(tipo);
 				var icono;
 				switch(tipo){
@@ -33,7 +39,7 @@ var modalWindow = function(){
 						icono = UI.crearIcono({
 							nombre:'error',
 							tamano: 48,
-							color: 'white',
+							color: 'red500',
 							inactivo: false
 						});
 						this.nodo.appendChild(icono);
@@ -43,7 +49,7 @@ var modalWindow = function(){
 						icono = UI.crearIcono({
 							nombre:'warning',
 							tamano: 48,
-							color: 'white',
+							color: 'amber500',
 							inactivo: false
 						});
 						this.nodo.appendChild(icono);
@@ -53,7 +59,7 @@ var modalWindow = function(){
 						icono = UI.crearIcono({
 							nombre:'info_outline',
 							tamano: 48,
-							color: 'white',
+							color: 'indigo500',
 							inactivo: false
 						});
 						this.nodo.appendChild(icono);
@@ -62,6 +68,19 @@ var modalWindow = function(){
 					default:
 						console.log('no existe icono para'+tipo);
 						break;
+				}
+			};
+			this.revisarTipos = function(){
+				var tipos = ['informacion','error','advertencia'];
+				var nodo = this.nodo;
+				tipos.forEach(function(tipo){
+					if(nodo.classList.contains(tipo)){
+						nodo.classList.remove(tipo);
+					}
+				});
+				var icono = nodo.querySelector('i');
+				if(icono){
+					icono.parentNode.removeChild(icono);
 				}
 			};
 			this.construirNodo();
@@ -126,6 +145,7 @@ var modalWindow = function(){
 		var Pie = function(contenido){
 			this.estado = 'sinConstruir';
 			this.nodo = null;
+			this.clases = [];
 			//funcion para agregar funcionamiento a los elementos hijos
 			this.funcionamiento = null;
 			this.construirNodo = function(){
@@ -133,6 +153,10 @@ var modalWindow = function(){
 				nodo.setAttribute('pie','');
 				this.nodo=nodo;
 				this.manejoDeContenido(contenido);
+				if(contenido.clases){
+					this.clases = contenido.clases;
+					UI.manejoDeClases(this);
+				}
 			};
 			this.manejoDeContenido = function(contenido){
 				var porConstruir;
@@ -268,11 +292,12 @@ var modalWindow = function(){
 					this.agregarParte('cabecera','titulo');
 				}
 				this.partes.cabecera.nodo.class = '';
+				this.partes.cabecera.nodo.textContent = mensaje.titulo;
 				this.partes.cabecera.agregarTipo(mensaje.nombre_tipo.toLowerCase());
 			}
 
 			//cambio el cuerpo
-			this.partes.cuerpo.nodo.innerHTML=mensaje.cuerpo;
+			this.partes.cuerpo.nodo.innerHTML='<div textomodal>'+mensaje.cuerpo+'</div>';
 			this.partes.cuerpo.nodo.style.height = '50px';
 
 			//cambio pie
@@ -337,7 +362,7 @@ var modalWindow = function(){
 				capaNueva.nodo.style.zIndex=parseInt(zIndex)+1;
 			}
 		}else if(tipo=='opciones'){
-
+			//TODO: capa opciones
 		}
 		return capaNueva;
 	};
@@ -364,6 +389,7 @@ var modalWindow = function(){
 					UI.elementos.modalWindow.capas.splice(indice,1);
 
 					obtenerContenedor().style.position='inherit';
+					document.body.scrollTop = UI.elementos.modalWindow.scrollTop + 40;
 				},810);
 			}else{
 				capaContenido= UI.elementos.modalWindow.buscarCapa(capaExterior.nodo.nextSibling);
@@ -399,12 +425,16 @@ var modalWindow = function(){
 		return capa;
 	};
 	this.buscarUltimaCapaContenido = function(){
-		var capa=this.obtenerUltimaCapa();
-		var cont=0;
-		while((capa.tipo!='contenido')||(cont==6)){
-			capa=capa.previousSibling;
+		if(this.capas.length){
+			var capa=this.obtenerUltimaCapa();
+			var cont=0;
+			while((capa.tipo!='contenido')||(cont==6)){
+				capa=capa.previousSibling;
+			}
+			return capa;
+		}else{
+			return false;
 		}
-		return capa;
 	};
 	this.existeExterior = function(){
 		var capas=this.capas;
@@ -422,6 +452,7 @@ var modalWindow = function(){
 		return ultimaCapa;
 	};
 	this.manejoDeCapas = function(){
+		this.scrollTop = document.body.scrollTop;
 		var contenedor=obtenerContenedor();
 		if(this.existeExterior()){
 			contenedor.style.position='fixed';

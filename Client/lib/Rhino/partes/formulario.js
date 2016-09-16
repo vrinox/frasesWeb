@@ -67,7 +67,7 @@ var Formulario = function(atributos){
 	this.buscarCampo = function(nombre){
 		var campos = this.campos;
 		for (var i = 0; i < campos.length; i++) {
-			if(campos[i].captarNombre() === nombre.toLowerCase()){
+			if(campos[i].captarNombre().toLowerCase() === nombre.toLowerCase()){
 				return campos[i];
 			}
 		}

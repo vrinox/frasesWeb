@@ -10,6 +10,9 @@ var Radio = function(info){
 		nodo.setAttribute('formElements','');
 		this.nodo = nodo;
 		this.agregarOpciones();
+		if(this.data.valor){
+			this.asignarValor(this.data.valor);
+		}
 	};
 	this.agregarOpcion = function(opcion){
 		var nodoOpcion = document.createElement('label');
@@ -27,31 +30,50 @@ var Radio = function(info){
 	};
 
 	this.captarValor = function(){
-		var valor = (this.nodo.querySelector('radio').value==='')?null:this.nodo.querySelector('radio').value;
-		return valor;
+		var opciones = this.nodo.querySelectorAll('input[type="radio"]');
+		for (var i = 0; i < opciones.length; i++) {
+			if(opciones[i].checked){
+				return opciones[i].value;
+			}
+		}
+		return null;
 	};
 	this.captarNombre = function(){
-		return this.nodo.querySelector('radio').name;
+		return this.nodo.querySelector('input[type="radio"]').name;
 	};
 	this.captarRequerido = function(){
-		return this.atributos.requerido;
+		return this.data.requerido;
 	};
 	this.asignarValor = function(valor){
 		this.valor = valor;
-		this.nodo.querySelector('radio').value = valor;
+		var opciones = this.nodo.querySelectorAll('input[type="radio"]');
+		opciones.forEach(function(opc){
+			if(opc.value === valor){
+				opc.checked = true;
+			}else{
+				opc.checked = false;
+			}
+		});
 	};
 	this.deshabilitar = function(){
-		for (var i = 0; i < this.opciones.length; i++) {
-			this.opciones[i].disabled = true;
-		}
+		this.nodo.classList.add('desahbilitado');
+		var opciones = this.nodo.querySelectorAll('input[type="radio"]');
+		opciones.forEach(function(each){
+			each.disabled = true;
+		});
 	};
 	this.habilitar = function(){
-		for (var i = 0; i < this.opciones.length; i++) {
-			this.opciones[i].disabled = false;
-		}
+		this.nodo.classList.remove('desahbilitado');
+		var opciones = this.nodo.querySelectorAll('input[type="radio"]');
+		opciones.forEach(function(each){
+			each.disabled = false;
+		});
 	};
 	this.limpiar = function(){
-		this.nodo.querySelector('radio').value = '';
+		var opciones = this.nodo.querySelectorAll('input[type="radio"]');
+		opciones.forEach(function(each){
+			each.checked = false;
+		});
 	};
 	this.construirNodo();
 };

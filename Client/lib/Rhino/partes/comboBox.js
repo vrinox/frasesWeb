@@ -69,6 +69,10 @@ var ComboBox = function(info){
 		for(var x=0;x<opciones.length;x++){
 			this.agregarOpcion(opciones[x]);
 		}
+		if(this.data.valor){
+			this.asignarValor(this.data.valor);
+			this.data.valor = null;
+		}
 	};
 	this.agregarOpcion = function(opcion){
 		var select=this.nodo.getElementsByTagName('select')[0];
@@ -132,6 +136,8 @@ var ComboBox = function(info){
 	};
 	this.construir();
 };
+
+};/*----------------------------------Funciones del Objeto Select-------------------------------*/
 construirCapaSelect= function(capaSelect){
 	capaSelect.onclick=function(){};
 	var opciones =[];
@@ -206,3 +212,4 @@ destruirCapaSelect = function(capaSelect){
 		};
 	},300);
 };
+	/*------------------------------Fin Funciones del Objeto Select-------------------------------*/

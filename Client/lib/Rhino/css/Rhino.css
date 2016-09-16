@@ -326,7 +326,9 @@ input:focus~ .highlight, textarea:focus~ .highlight {
 }
 
 /*------------------------------Radio Box--------------------------------------*/
-
+div.desahbilitado label.radio span.outer{
+    border: 2px solid  #757575;
+}
 .radio {
     display: inline-block;
     font-size: 14px;
@@ -352,7 +354,7 @@ input:focus~ .highlight, textarea:focus~ .highlight {
     opacity: 1;
 }
 .radio input:checked+ .outer {
-    border: 2px solid #f08b3b;
+    border: 2px solid #4CAF50;
 }
 .radio input:focus+ .outer .inner {
     -webkit-transform: scale(1);
@@ -367,7 +369,7 @@ input:focus~ .highlight, textarea:focus~ .highlight {
     display: block;
     float: left;
     margin: 12px -4px 0px 0px;
-    border: 2px solid #0c70b4;
+    border: 2px solid #4CAF50;
     border-radius: 50%;
     background-color: #fff;
 }
@@ -608,7 +610,11 @@ div[mat-window].titulo {
     float: left;
     margin-bottom: 10px;
 }
-
+div[mat-window].ventana {
+    width: calc(90%);
+    float: left;
+    margin-bottom: 10px;
+}
 /*-----------------------------titulo---------------------------------------*/
 
 div[mat-window] section[titulo] {
@@ -653,7 +659,7 @@ div[mat-window] section[botonera]{
     height: calc(100%);
     min-height: calc(100%);
 }
-div[mat-window] section[botonera] button.icon{
+section[botonera] button.icon,section.botonera button.icon{
     transition: all 0.2s ease-in-out;
     border: none;
     width: 40px;
@@ -665,9 +671,9 @@ div[mat-window] section[botonera] button.icon{
     background-position: 8px;
     float: right;
     overflow: visible;
-    margin-top: 10px;
+    margin-top: 5px;
     background-color: white;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
 /*-----------------------------------Media Query-------------------------------*/
@@ -686,7 +692,6 @@ div[mat-window] section[botonera] button.icon{
     div[mat-window].formulario,div[mat-window].ventana {
         width: 85%;
         margin-bottom: 10px;
-        min-height: 50px;
         margin-left: 50px;
     }
 }
@@ -695,6 +700,21 @@ div[mat-window] section[botonera] button.icon{
     div[mat-window].formulario,div[mat-window].ventana{
         width: 100%;
         margin-left: 0px;
-        min-height: 50px;
+    }
+}
+/*-----------------------------------Media screen-------------------------------*/
+@media only screen and (max-device-width: 480px) {
+    div[mat-window].formulario,div[mat-window].ventana,div[mat-window].titulo{
+        width: 100%;
+        margin-left: 0px;
+    }
+    div[mat-window] section[formulario]{
+        height: auto !important;
+    }
+    .group {
+        width: calc(100% - 10px);
+    }
+    div[formElements] {
+        width: calc(100% - 10px);
     }
 }
