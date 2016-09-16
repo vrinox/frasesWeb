@@ -2,8 +2,10 @@ var socketio = require('socket.io');
 var rack = require('./racks');
 var dateParser = require('./dateParser');
 var plugAssembler = require('./plug');
+
 function init(server) {
-    var io = socketio(server);
+
+	var io = socketio(server);
 
 	io.sockets.on('connection',function(socket){
 	  //--------inicio identificacion ------------------------
@@ -115,7 +117,7 @@ function init(server) {
 	            if(plug.estado=='esperando'){
 	              rack.removePlug(plug.nombreUsu);
 	            }
-	      }})(plug), 120000); 
+	      }})(plug), 120000);
 	    }
 	  });
 	});
