@@ -22,7 +22,7 @@ var Motor = function(entidadActiva){
 		        callback(JSON.parse(conexionBuscar.responseText));
 		    }
 		};
-		conexionBuscar.open('POST','../Servidor/routes/corMotor.js', true);
+		conexionBuscar.open('POST','corMotor', true);
 		conexionBuscar.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="operacion="+encodeURIComponent("buscar")+'&entidad='+encodeURIComponent(entidad);
 		conexionBuscar.send(envio);
@@ -35,7 +35,7 @@ var Motor = function(entidadActiva){
 		            callback(JSON.parse(conexionBusqueda.responseText));
 		    }
 		};
-		conexionBusqueda.open('POST','../Servidor/routes/corMotor.js', true);
+		conexionBusqueda.open('POST','corMotor', true);
 		conexionBusqueda.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="operacion="+encodeURIComponent(info.operacion)+'&entidad='+encodeURIComponent(info.entidad);
 		envio+="&codigo="+encodeURIComponent(info.codigo);
@@ -70,7 +70,7 @@ var Motor = function(entidadActiva){
 				}
 		    }
 		};
-		conexionMotor.open('POST','../Servidor/routes/corMotor.js', true);
+		conexionMotor.open('POST','corMotor', true);
 		conexionMotor.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio='';
 		for(var llave in peticion){
@@ -103,7 +103,7 @@ var Motor = function(entidadActiva){
 				}
 		    }
 		};
-		conexionMotor.open('POST','../Servidor/routes/corMotor.js', true);
+		conexionMotor.open('POST','corMotor', true);
 		conexionMotor.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		var envio="operacion="+encodeURIComponent('guardar')+'&entidad='+encodeURIComponent(entidad)+'&';
 		for(var x=0;x<info.length;x++){

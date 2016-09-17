@@ -603,6 +603,12 @@ div[mat-window].formulario {
     width: calc(90%);
     float: left;
 }
+div[mat-window].centrado {
+    width: 400px;
+    float: left;
+    margin-top: calc(20%);
+    margin-left: calc(25%);
+}
 div[mat-window].titulo {
     width: calc(80% + 50px);
     float: left;
@@ -665,9 +671,9 @@ div[mat-window] section[botonera] button.icon{
     background-position: 8px;
     float: right;
     overflow: visible;
-    margin-top: 10px;
+    margin-top: 5px;
     background-color: white;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
 /*-----------------------------------Media Query-------------------------------*/

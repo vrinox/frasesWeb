@@ -25,3 +25,9 @@ var Toasts = function(atributos){
 	};
 	this.construirNodo();
 };
+/****************************************************************************************************************************************/
+arranque();
+function arranque(){
+	//aviso al motor que el script arranco
+	jarvis.libCargada("toast");
+}

@@ -206,3 +206,9 @@ destruirCapaSelect = function(capaSelect){
 		};
 	},300);
 };
+/****************************************************************************************************************************************/
+arranque();
+function arranque(){
+	//aviso al motor que el script arranco
+	jarvis.libCargada("ComboBox");
+}

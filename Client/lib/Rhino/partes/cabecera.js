@@ -24,3 +24,9 @@ var Cabecera = function(){
 	};
 	this.construir();
 };
+/****************************************************************************************************************************************/
+arranque();
+function arranque(){
+	//aviso al motor que el script arranco
+	jarvis.libCargada("cabecera");
+}

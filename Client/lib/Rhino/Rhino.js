@@ -324,7 +324,4 @@ arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("Rhino");
-	console.log('hola');
-	UI = new Arquitecto();
-	UI.configure();
 }
