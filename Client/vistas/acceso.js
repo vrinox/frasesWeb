@@ -1,71 +1,55 @@
 var conexionAcc;
 var Acceso = function(){
-
+	
 	this.crearFormulario = function(){
-		var html = "<div fondo><div>\
-					<div contenedor-acc >\
-						<div titulo-acc id='tituloAcc'>Acceso</div>\
-						<div contenido-acc>\
-							<form name='Acceso' method='Post' action='corAcceso'>\
-								<i class='icono-usuario'></i>\
-								<input type='text' name='AccNom' id='AccNom' placeholder='Nombre de Usuario'/><div salto></div>\
-								<i class='icono-llave'></i>\
-								<input type='password' name='AccPass' id='AccPass' placeholder='Clave'/><br>\
-								<div ordenar></div>\
-							</form>\
-						</div>\
-						<div botonera-acc><button type='button' id='BtAcc'>Ingresar</button><label id='registro'>Registrece</label></div>\
-					</div>\
-					<div ordenar></div>";
-		return html;
+		UI.agregarVentana({
+		  tipo: 'centrado',
+		  nombre: 'Ventana',
+		  titulo:{
+		    html: 'Acceso',
+		    tipo: 'inverso'
+		  },
+		  sectores:[
+			{
+				nombre: 'formulario', //puede ser lo que sea
+				formulario: {
+					campos : [
+						{
+							tipo: 'campoDeTexto',
+							parametros: {
+							  requerido: true,
+							  titulo:'Nombre de usuario',
+							  nombre:'usuario',
+							  tipo:'simple',
+							  eslabon:'area',
+							  max: 25,
+							  usaToolTip:true
+							}
+						},{
+							tipo: 'campoDeTexto',
+							parametros: {
+							  requerido: true,
+							  titulo:'Clave de acceso',
+							  nombre:'usuario',
+							  tipo:'password',
+							  eslabon:'area',
+							  max: 25,
+							  usaToolTip:true
+							}
+						}
+					]
+				},
+				tipo: 'nuevo'
+			},
+			{
+				nombre:'botonera',
+				html:'<section botonera><button type="button" class="icon material-icons md-24 white mat-blue500">send</button></section>'
+			}
+		  ]
+		},document.body.querySelector('div[contenedor]'));
 	}
-	 this.darVida = function(){
-	 	var btEnviar = document.getElementById("BtAcc");
-	 	var btRegistro = document.getElementById('registro');
-
-	 	btEnviar.onclick=function(){
-	 		ingresar();
-	 		btEnviar.onclick=function(){}
-	 	};
-
-	 	btRegistro.onclick = function(){
-	 		activarRegistro();
-	 	};
-	 };
+	 
 }
-function activarRegistro(){
- 	var titulo = document.getElementById('tituloAcc');
- 	var btEnviar = document.getElementById("BtAcc");
- 	var btRegistro = document.getElementById('registro');
- 	titulo.textContent='Registro';
- 	btEnviar.textContent="Enviar";
- 	btRegistro.textContent='¿Desea ingresar?';
-
- 	btRegistro.onclick = function(){
- 		activarAcceso();
- 	};
-
- 	btEnviar.onclick = function(){
- 		registro();
- 	};
-
- }
- function activarAcceso(){
- 	var titulo = document.getElementById('tituloAcc');
- 	var btEnviar = document.getElementById("BtAcc");
- 	var btRegistro = document.getElementById('registro');
- 	titulo.textContent='Acceso';
- 	btEnviar.textContent="Ingresar";
- 	btRegistro.textContent='Registrece';
- 	
- 	btRegistro.onclick = function(){
- 		activarRegistro();
- 	};
-
- 	btEnviar.onclick = function(){
- 		ingresar();
- 	}
- }
 //-----------------------------Acceso------------------------------------------------------------
 function ingresar(){
 

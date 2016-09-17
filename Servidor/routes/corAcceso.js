@@ -1,73 +1,60 @@
 var express = require('express');
-var router = express.Router();
 
 //modelo o clase necesario para su conexion
 var accessModel = require("../clases/clsAcceso")
 
-/* GET users listing. */
-router.post("/", function(req,res)
-{
-	//creamos un objeto con los datos a insertar del usuario
-	var Operacion = req.body.Operacion;
-	var TipoPet = req.body.TipoPet;
-	var formData = {
-		nombreUsu : req.body.Nombre,
-		clave_usu : req.body.Pass,
-	};
+var corAcceso = {}
+
+corAcceso.prototype.gestionar(pet){
+
 	//mando la informacion a la clase para su utilizacion
 	if((Operacion!="recuperarSession")&&(Operacion!="actualizarClave")){
-		accessModel.setData(formData);
+		accessModel.setData(pet);
 	}
-	if(TipoPet=="web"){
-		if(Operacion=='acceso')
-		{
+	switch(pet.Operacion){
+		case 'acceso':
 			//realizo la busqueda para el acceso
 			accessModel.acceder(function(error,data){
-				var xmlResponse='<?xml version="1.0" encoding="UTF-8"?>';
-				xmlResponse+="<cuerpo>";
+				var respuesta = {};
 				if(data.success==1)
 				{
-					xmlResponse+="<session><NombreUsu>"+accessModel.innerData.nombreUsu+"</NombreUsu><HoraCon>"+data.HoraCon+"</HoraCon></session>";
-					xmlResponse+="<success>1</success>";
+					respuesta.session = {
+						NombreUsu: accessModel.innerData.nombreUsu,
+						HoraCon: data.HoraCon
+					}
+					respuesta.success = 1;
 				}
 				else
 				{
-					xmlResponse+="<success>0</success>";
+					respuesta.success = 0;
 				}
-				xmlResponse+="<mensaje>"+data.msg+"</mensaje>";
-				xmlResponse+="</cuerpo>";
-				
-				res.header('Content-Type','text/xml');
-				res.send(xmlResponse);
+				respuesta.mensaje = data.msg;	
 			});
-		}
-		else if(Operacion=="registro")
-		{
+			//TODO: como retornar dentro del callback
+			break;
+
+		case 'registro':
 			accessModel.registrar(function(error,data){
 				if(data && data.affectedRows)
 				{
 					console.log("registro realizado con exito");
-					var xmlResponse='<?xml version="1.0" encoding="UTF-8"?>';
-					xmlResponse+="<cuerpo>";
-					xmlResponse+="<success>1</success>";
-					xmlResponse+="<mensaje>registro realizado con exito</mensaje>";
-					xmlResponse+="</cuerpo>";
+					var respuesta = {
+						success: 1,
+						mensaje: 'registro realizado con exito'
+					}
 				}
 				else
 				{
 					console.log("error en el registro");
-					var xmlResponse='<?xml version="1.0" encoding="UTF-8"?>';
-					xmlResponse+="<cuerpo>";
-					xmlResponse+="<success>0</success>";
-					xmlResponse+="<mensaje>Error interno del servidor</mensaje>";
-					xmlResponse+="</cuerpo>";
+					var respuesta = {
+						success: 0,
+						mensaje: 'Error interno del servidor'
+					}
 				}
-				res.header('Content-Type','text/xml');
-				res.send(xmlResponse);
 			});
-		}
-		else if(Operacion=="datosPer")
-		{	
+			break;
+
+		case 'datosPer':
 			accessModel.buscar(function(error,data){
 				var xmlResponse='<?xml version="1.0" encoding="UTF-8"?>';
 				xmlResponse+="<cuerpo>";
@@ -75,23 +62,28 @@ router.post("/", function(req,res)
 				if(data.success=='1')
 				{
 					var formData=accessModel.getData();
-					xmlResponse+="<usuario><Nombre>"+formData.nombre+"</Nombre><Apellido>"+formData.apellido+"</Apellido>";
-					xmlResponse+="<Email>"+formData.email+"</Email><Seudonimo>"+formData.seudonimo+"</Seudonimo></usuario>";
-					xmlResponse+="<success>1</success>";
+					var respuesta = {
+						usuario:{
+							Nombre: formData.nombre,
+							Apellido: formData.apellido,
+							Email: formData.email,
+							Seudonimo: formData.seudonimo
+						},
+						success: 1,
+						mensaje: data.msg
+					}
 				}
 				else
 				{
-					xmlResponse+="<success>0</success>";
+					var respuesta = {
+						success: 0,
+						mensaje: data.msg
+					}
 				}
-				xmlResponse+="<mensaje>"+data.msg+"</mensaje>";
-				xmlResponse+="</cuerpo>";
-				
-				res.header('Content-Type','text/xml');
-				res.send(xmlResponse);
 			});
-		}
-		else if(Operacion=="actualizarDatos")
-		{
+			break;
+
+		case "actualizarDatos":
 			console.log("peticion de actualizacion obtenida");
 			var reqData = {
 				nombreUsu : req.body.NombreUsu,
@@ -102,18 +94,14 @@ router.post("/", function(req,res)
 			}
 			accessModel.setData(reqData);
 			accessModel.actualizarDatos(function(error,data){
-
-				var xmlResponse='<?xml version="1.0" encoding="UTF-8"?>';
-				xmlResponse+="<cuerpo>";
-				xmlResponse+="<success>"+data.success+"</success>";
-				xmlResponse+="<mensaje>"+data.msg+"</mensaje>";
-				xmlResponse+="</cuerpo>";
-				res.header('Content-Type','text/xml');
-				res.send(xmlResponse);
+				var respuesta ={
+					success: data.success,
+					msg: data.msg
+				}
 			});
-		}
-		else if(Operacion=="actualizarClave")
-		{
+			break;
+
+		case "actualizarClave":
 			var reqData = {
 				nombreUsu : req.body.Nombre,
 				clave_usu : req.body.Pass,
@@ -121,17 +109,14 @@ router.post("/", function(req,res)
 			}
 			accessModel.setData(reqData);
 			accessModel.actualizarClave(function(error,data){
-				var xmlResponse='<?xml version="1.0" encoding="UTF-8"?>';
-				xmlResponse+="<cuerpo>";
-				xmlResponse+="<success>"+data.success+"</success>";
-				xmlResponse+="<mensaje>"+data.msg+"</mensaje>";
-				xmlResponse+="</cuerpo>";
-				res.header('Content-Type','text/xml');
-				res.send(xmlResponse);
+				var respuesta = {
+					success: data.success,
+					mensaje: data.msg
+				}
 			});
-		}
-		else if(Operacion=="seguir")
-		{
+			break;
+
+		case "seguir":
 			var reqData = {
 				nombreUsu : req.body.NombreUsu,
 				parametro : req.body.Parametro
@@ -143,22 +128,14 @@ router.post("/", function(req,res)
 				
 				var success=(data.affectedRows!="0")?1:0;
 				
-				var xmlResponse='<?xml version="1.0" encoding="UTF-8"?>';
-				xmlResponse+="<cuerpo>";
-				xmlResponse+="<success>"+success+"</success>";
-				xmlResponse+="<accion>"+data.accion+"</accion>";
-				xmlResponse+="</cuerpo>";
-				res.header('Content-Type','text/xml');
-				res.send(xmlResponse);
+				var respuesta = {
+					success: data.success,
+					action: data.action
+				}
 			});
-		}
+			break;
+	}	
+	return respuesta;
+}
 
-	}else if(TipoPet=="mobile"){
-
-	}
-});
-
-router.get('/',function(req,res,next){
-	res.end("Si es esta ruta");
-});
-module.exports = router;
+module.exports = corAcceso;

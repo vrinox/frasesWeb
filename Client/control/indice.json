@@ -19,7 +19,7 @@
 						"noUsaCarga":true
 					},{
 						"nombre":"campoTexto",
-						"ruta":"lib/Rhino/partes/.campoTextojs",
+						"ruta":"lib/Rhino/partes/campoTexto.js",
 						"noUsaCarga":true
 					},{
 						"nombre":"checkBox",
@@ -88,9 +88,6 @@
 		],
 		"css":[
 			{
-				"nombre":"Iconos",
-				"ruta":"vistas/css/iconos.css"
-			},{
 				"nombre":"estilos cuerpo",
 				"ruta":"vistas/css/cuerpo.css"
 			},{
