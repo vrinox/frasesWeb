@@ -336,6 +336,18 @@ var Asistente = function(){
 		}
 	};
 
+	this.verificarDependencias = function(nombreLib){
+		var lib = this.buscarLib(nombreLib);
+		if(lib.cargada){
+			lib.dependencias.forEach(function(each){
+				if(!each.cargada){
+					return false;
+				}
+			});
+			return true;
+		}
+	};
+
 	//--------------------------- Metodos Auxiliares ------------------------------------------//
 
 	this.mostrarlibrerias = function(){
