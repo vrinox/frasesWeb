@@ -67,7 +67,7 @@ var Formulario = function(atributos){
 	this.buscarCampo = function(nombre){
 		var campos = this.campos;
 		for (var i = 0; i < campos.length; i++) {
-			if(campos[i].captarNombre() === nombre.toLowerCase()){
+			if(campos[i].captarNombre().toLowerCase() === nombre.toLowerCase()){
 				return campos[i];
 			}
 		}
@@ -120,9 +120,12 @@ var Formulario = function(atributos){
 	};
   this.construirNodo();
 };
+<<<<<<< HEAD
 /****************************************************************************************************************************************/
 arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("formulario");
 }
+=======
+>>>>>>> refs/remotes/origin/Actualizacion-Rhino

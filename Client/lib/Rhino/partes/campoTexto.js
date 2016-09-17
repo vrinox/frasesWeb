@@ -32,6 +32,10 @@ var CampoDeTexto = function(info){
 			this.nodo.onmouseout=UI.elementos.maestro.cerrartooltipInput;
 		}
 		this.estado='enUso';
+		if(this.data.valor){
+			this.asignarValor(this.data.valor);
+			this.data.valor = null;
+		}
 	};
 	this.captarValor = function(){
 		var tipo = this.captarTipo();
@@ -80,9 +84,12 @@ var CampoDeTexto = function(info){
 	};
 	this.construir();
 };
+<<<<<<< HEAD
 /****************************************************************************************************************************************/
 arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("campoTexto");
 }
+=======
+>>>>>>> refs/remotes/origin/Actualizacion-Rhino

@@ -60,7 +60,7 @@ var CheckBox = function(info){
 
 		tipo = info.tipo || 'campo';
 		this.nodo.classList.add(tipo);
-		info.usaTitulo = info.usaTitulo || true;
+		info.sinTitulo = info.sinTitulo || false;
 		if(info.usaTitulo){
 			this.titulo = new Titulo(info.nombre);
 			this.nodo.appendChild(this.titulo.nodo);
@@ -68,7 +68,6 @@ var CheckBox = function(info){
 		if(info.eslabon === 'area'){
 			this.nodo.setAttribute('area','');
 		}
-
 		if(!info.habilitado){
 			this.deshabilitar();
 		}else {
@@ -104,6 +103,9 @@ var CheckBox = function(info){
 		var yo = this;
 		this.nodo.onclick = function(){
 			yo.cambiarEstado();
+			if(yo.onclick){
+				yo.onclick();
+			}
 		};
 		this.estado = 'habilitado';
 	};
@@ -123,11 +125,22 @@ var CheckBox = function(info){
 	this.limpiar = function(){
 		this.desmarcar();
 	};
+	this.asignarClick = function(clickFunction){
+		var yo = this;
+		this.onclick = clickFunction;
+		if(this.estado === "habilitado"){
+			this.deshabilitar();
+			this.habilitar();
+		}
+	};
 	this.construirNodo();
 };
+<<<<<<< HEAD
 /****************************************************************************************************************************************/
 arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("checkBox");
 }
+=======
+>>>>>>> refs/remotes/origin/Actualizacion-Rhino

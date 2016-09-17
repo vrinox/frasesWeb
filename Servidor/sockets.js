@@ -2,8 +2,10 @@ var socketio = require('socket.io');
 var rack = require('./racks');
 var dateParser = require('./dateParser');
 var plugAssembler = require('./plug');
+
 function init(server) {
-    var io = socketio(server);
+
+	var io = socketio(server);
 
 	io.sockets.on('connection',function(socket){
 	  //--------inicio identificacion ------------------------
@@ -12,7 +14,7 @@ function init(server) {
 	      nombreUsu:data.nombre,
 	      horaDeConeccion:data.HDC,
 	      ultimaConeccion:new Date(),
-	    }
+	    };
 	    if(rack.buscarPlug(atributos.nombreUsu)){
 	      socket.emit('identificacion',{text:"falsa"});
 	      rack.buscarPlug(atributos.nombreUsu).socket.emit('session',{text:"dobleSession"});
@@ -21,7 +23,7 @@ function init(server) {
 	      var plug = plugAssembler.configure(atributos,socket);
 	      rack.addPlug(plug);
 	      //identificacion en servidor
-	      console.log('\nconexion establecida con: '+plug.nombreUsu+"\nde direccion: "+plug.ip+"\n"); 
+	      console.log('\nconexion establecida con: '+plug.nombreUsu+"\nde direccion: "+plug.ip+"\n");
 	      rack.mostrarListaPlugs();
 	    }
 	  });
@@ -86,10 +88,10 @@ function init(server) {
 	          id : data.id,
 	          estado : 'recibidoServidor',
 	          fecha : data.fecha
-	        }
+	        };
 	        console.log('disparando cambio de estado a emisor\n');
 	        console.log(newData);
-	        socket.emit('chatMsg',newData); 
+	        socket.emit('chatMsg',newData);
 	      }
 	    }
 	    else if(data.tipo=='cambioEstado')
@@ -115,7 +117,7 @@ function init(server) {
 	            if(plug.estado=='esperando'){
 	              rack.removePlug(plug.nombreUsu);
 	            }
-	      }})(plug), 120000); 
+	      }})(plug), 120000);
 	    }
 	  });
 	});

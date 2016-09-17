@@ -4,24 +4,24 @@ var Settings = function(){
 
 	this.construirOpciones = function(){
 		var contenido = document.getElementById('capaContenido');
-		var htmlForm1 = "<div titulo-opciones>Opciones<i id='cerrarOp' class='icon32 icon-white icon-cross'></i></div>\
-						<div subtitulo-opciones>Actualizar Datos</div>\
-						<div form-opciones>\
-							<input type='text' name='nombre' id='nombre' placeholder='Nombres'>\
-							<input type='text' name='apellido' id='apellido' placeholder='Apellidos'><br>\
-							<input type='text' name='seudonimo' id='seudonimo' placeholder='Seudonimo'>\
-							<input type='text' name='email' id='email' placeholder='Email'><br>\
-							<button type='button' id='enviarDatosOp' disabled>Cargando</button>\
-							<div ordenar></div>\
-						</div>";
-		var htmlForm2 = "<div subtitulo-opciones>Cambiar Clave</div>\
-						<div form-opciones>\
-							<input type='password' name='claveAc' id='clave' placeholder='clave actual'>\
-							<input type='password' name='claveNew' id='newClave' placeholder='clave nueva'><br>\
-							<input type='password' name='claveNew2' id='newClave2' placeholder='reigrese clave' ><br>\
-							<button type='button' id='enviarClaveOp' >Enviar</button>\
-							<div ordenar></div>\
-						</div>";					
+		var htmlForm1 = "<div titulo-opciones>Opciones<i id='cerrarOp' class='icon32 icon-white icon-cross'></i></div>"+
+						"<div subtitulo-opciones>Actualizar Datos</div>"+
+						"<div form-opciones>"+
+							"<input type='text' name='nombre' id='nombre' placeholder='Nombres'>"+
+							"<input type='text' name='apellido' id='apellido' placeholder='Apellidos'><br>"+
+							"<input type='text' name='seudonimo' id='seudonimo' placeholder='Seudonimo'>"+
+							"<input type='text' name='email' id='email' placeholder='Email'><br>"+
+							"<button type='button' id='enviarDatosOp' disabled>Cargando</button>"+
+							"<div ordenar></div>"+
+						"</div>";
+		var htmlForm2 = "<div subtitulo-opciones>Cambiar Clave</div>"+
+						"<div form-opciones>"+
+							"<input type='password' name='claveAc' id='clave' placeholder='clave actual'>"+
+							"<input type='password' name='claveNew' id='newClave' placeholder='clave nueva'><br>"+
+							"<input type='password' name='claveNew2' id='newClave2' placeholder='reigrese clave' ><br>"+
+							"<button type='button' id='enviarClaveOp' >Enviar</button>"+
+							"<div ordenar></div>"+
+						"</div>";
 		contenido.innerHTML=htmlForm1+htmlForm2;
 		document.getElementById('exterior').style.height="100%";
 	};
@@ -32,7 +32,7 @@ var Settings = function(){
 		var	campReinClave =document.getElementById('newClave2');
 		var btSalir = document.getElementById('cerrarOp');
 		//les asigno sus metodos
-		campReinClave.onkeyup = function(){			
+		campReinClave.onkeyup = function(){
 			var newClave=document.getElementById('newClave');
 			var newClave2=document.getElementById('newClave2');
 			if(newClave.value==newClave2.value){
@@ -40,10 +40,10 @@ var Settings = function(){
 			}else{
 				newClave2.style.backgroundColor='#D24D57';
 			}
-		}
+		};
 		btSalir.onclick = function(){
 			document.getElementById('exterior').click();
-		}
+		};
 		btEnviarDatos.onclick = function(){
 			conexionOpc=crearXMLHttpRequest();
 			conexionOpc.onreadystatechange = procesarUpdate;
@@ -59,9 +59,9 @@ var Settings = function(){
 			envio+="&Nombre="+encodeURIComponent(nombre)+"&Apellido="+encodeURIComponent(apellido);
 			envio+="&Email="+encodeURIComponent(email)+"&Seudonimo="+encodeURIComponent(seudonimo);
 			envio+="&NombreUsu="+encodeURIComponent(jarvis.session.nombreUsu);
-			conexionOpc.send(envio)
-		}
-		btenviarClave.onclick = function(){			
+			conexionOpc.send(envio);
+		};
+		btenviarClave.onclick = function(){
 			var clave=document.getElementById('clave').value;
 			var newClave=document.getElementById('newClave').value;
 			var newClave2=document.getElementById('newClave2').value;
@@ -79,12 +79,12 @@ var Settings = function(){
 				var envio="TipoPet="+encodeURIComponent("web")+"&Operacion="+encodeURIComponent("actualizarClave");
 				envio+="&Pass="+encodeURIComponent(clave)+"&NewClave="+encodeURIComponent(newClave);
 				envio+="&Nombre="+encodeURIComponent(jarvis.session.nombreUsu);
-				conexionOpc.send(envio)
+				conexionOpc.send(envio);
 			}else{
 				alert("claves no coinciden");
 			}
-		}
-	}
+		};
+	};
 };
 //--------------------------------------FUNCIONAMIENTO DE CARGA DE SCRIPT-------------------//
 arranque();
@@ -112,7 +112,7 @@ function procesarDatos(){
 		var xml=conexionOpc.responseXML;
 		console.log("datos personales cargados");
 		//cadenaHtml donde se guardan todas las partes a agregar
-		if(xml.getElementsByTagName('success')[0].textContent==0){
+		if(xml.getElementsByTagName('success')[0].textContent===0){
 			//extraigo el mensaje
 			var mensaje=xml.getElementsByTagName('mensaje')[0].textContent;
 			alert(mensaje);
@@ -126,7 +126,7 @@ function procesarDatos(){
 			var boton=document.getElementById('enviarDatosOp');
 			boton.disabled=false;
 			boton.textContent="Enviar";
-					
+
 		}
 	}
 }
@@ -135,7 +135,7 @@ function procesarUpdate(){
 		//recivo el xml con los usuarios
 		var xml=conexionOpc.responseXML;
 		//cadenaHtml donde se guardan todas las partes a agregar
-		if(xml.getElementsByTagName('success')[0].textContent==0){
+		if(xml.getElementsByTagName('success')[0].textContent===0){
 			console.log("error");
 		}else{
 			console.log("sin error");

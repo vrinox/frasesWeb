@@ -12,5 +12,5 @@ Date.prototype.toMysqlFormat = function() {
 dateParser.getParseDate = function(){
 	var date = new Date().toMysqlFormat();
 	return date;
-}
+};
 module.exports=dateParser;

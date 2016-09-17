@@ -49,6 +49,44 @@ var Arquitecto = function(){
 	this.crearMensaje = function(mensaje){
 		var capa = this.crearVentanaModal({cuerpo: 'mesaje'});
 		capa.convertirEnMensaje(mensaje);
+		return capa;
+	};
+	this.crearVerificacion = function(mensaje,funcion){
+		mensaje.nombre_tipo = mensaje.nombre_tipo || 'advertencia';
+		var capa = this.crearMensaje(mensaje);
+		this.agregarBotoneraStandard(capa,funcion,mensaje.nombre_tipo);
+	};
+	this.crearVerificacionUsuario = function(mensaje,funcion){
+		mensaje.nombre_tipo = mensaje.nombre_tipo || 'informacion';
+		var capa = this.crearMensaje(mensaje);
+		var campoClave = new CampoDeTexto({
+			requerido:true,
+			titulo:'Clave Usuario Actual',
+			nombre:'clave',
+			tipo:'password',
+			eslabon:'area',
+			usaToolTip:true
+		});
+		capa.partes.cuerpo.nodo.innerHTML = '';
+		capa.partes.cuerpo.nodo.appendChild(campoClave.nodo);
+		var funcionAgregada = function(){
+			var clave =campoClave.captarValor();
+			funcion(clave);
+		};
+		this.agregarBotoneraStandard(capa,funcionAgregada,mensaje.nombre_tipo);
+	};
+	this.agregarBotoneraStandard= function(capa,funcion,nombre_tipo){
+		capa.agregarParte('pie',{
+			clases:[nombre_tipo,'botonera'],
+			html:'<button class="icon material-icons md-24 green500">check</button>'+
+						'<button class="icon material-icons md-24 red500">close</button>'
+		});
+		capa.partes.pie.nodo.querySelector('button.green500').onclick = function(){
+			funcion();
+		};
+		capa.partes.pie.nodo.querySelector('button.red500').onclick = function(){
+			UI.elementos.modalWindow.eliminarUltimaCapa();
+		};
 	};
 //------------------------- Manejo Cuadros de carga -------------------------------
 	this.agregarCuadroCarga = function(cuadroCarga){
@@ -103,7 +141,6 @@ var Arquitecto = function(){
 		}
 		var nuevaLista = new Lista(lista);
 		contenedor.appendChild(nuevaLista.nodo);
-		nuevaLista.atributos.nombre = nuevaLista.atributos.titulo;
 		this.elementos.ventanas.push(nuevaLista);
 		return nuevaLista;
 	};
@@ -283,6 +320,19 @@ var URL = function(){
     results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 	};
+	this.actual = function(){
+		var actual = this.obtenerArchivodeURl(location.href);
+		actual = this.limpiarURL(actual);
+		return actual;
+	};
+	this.obtenerArchivodeURl = function(ruta){
+		return ruta.split('/')[ruta.split('/').length-1];
+	};
+	this.limpiarURL = function(url){
+		var valorGET = (url.indexOf('?') === -1)?url.length:url.indexOf('?');
+		url = url.slice(0,valorGET);
+		return url;
+	};
 };
 /*---------------Utilidades---------------------------------------------*/
 function obtenerContenedor(){
@@ -324,4 +374,11 @@ arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("Rhino");
+<<<<<<< HEAD
 }
+=======
+	console.log('hola');
+	UI = new Arquitecto();
+	UI.configure();
+}
+>>>>>>> refs/remotes/origin/Actualizacion-Rhino

@@ -1,24 +1,24 @@
 var conexionChat;
 var ChatManager = function(){
 
-	this.chatSession = jarvis.session,
-	
-	this.chats = new Array(),
+	this.chatSession = jarvis.session;
+
+	this.chats = [];
 	//---------------------------------FUNCIONES DASHBOARD----------------------------//
 	this.construirDashBoard = function(){
 		var chatContenedor = document.createElement('div');
 		chatContenedor.id = "chatCon";
-		var html = "<div dashBoard id='dashBoard' >\
-						<div estado='oculto' id='dashCab' dashCab><i id='chatIcon' class='iconMjs'><div id='chatTitle' dashtitle>Mensajes</div></i></div>\
-						<div dashOpcs id='dashOpcs'>\
-							<div dashOpc>Cargando</div>\
-						</div>\
-					</div>";
+		var html = "<div dashBoard id='dashBoard' >"+
+						"<div estado='oculto' id='dashCab' dashCab><i id='chatIcon' class='iconMjs'><div id='chatTitle' dashtitle>Mensajes</div></i></div>"+
+						"<div dashOpcs id='dashOpcs'>"+
+							"<div dashOpc>Cargando</div>"+
+						"</div>"+
+					"</div>";
 		chatContenedor.innerHTML = html;
 		document.body.appendChild(chatContenedor);
 	};
 	this.mostarDash = function(){
-		var dash = document.getElementById('chatCon');		
+		var dash = document.getElementById('chatCon');
 		var cabecera = document.getElementById('dashCab');
 		var titulo = document.getElementById('chatTitle');
 		var icon = document.getElementById('chatIcon');
@@ -29,7 +29,7 @@ var ChatManager = function(){
 	};
 
 	this.ocultarDash = function(){
-		var dash = document.getElementById('chatCon');		
+		var dash = document.getElementById('chatCon');
 		var cabecera = document.getElementById('dashCab');
 		var titulo = document.getElementById('chatTitle');
 		var icon = document.getElementById('chatIcon');
@@ -48,7 +48,7 @@ var ChatManager = function(){
 				jarvis.buscarLib('Chat').op.ocultarDash();
 				this.setAttribute('estado','oculto');
 			}
-		}
+		};
 	};
 	//---------------------------------FUNCIONES DASHBOARD----------------------------//
 	this.pedirP2P = function(){
@@ -72,7 +72,7 @@ var ChatManager = function(){
 							nombreUsu : persona.getElementsByTagName('nombreUsu')[0].textContent,
 							nombre : persona.getElementsByTagName('nombre')[0].textContent,
 							apellido : persona.getElementsByTagName('apellido')[0].textContent,
-						}
+						};
 						//cargo la lista de chat en el arreglo
 						var newChat = jarvis.buscarLib('Chat').op.crearChatUnit(user);
 						//lo agrego al dashboard
@@ -91,7 +91,7 @@ var ChatManager = function(){
 		var envio="TipoPet="+encodeURIComponent("web")+"&Operacion="+encodeURIComponent("cargarp2p");
 		envio+="&Nombre="+encodeURIComponent(jarvis.session.nombreUsu);
 		conexionChat.send(envio);
-	}
+	};
 	this.agregarMsg = function(dataMsg){
 		console.log('mensaje Agregado por recepcion\n'+dataMsg);
 		var usuario = dataMsg.emisor;
@@ -101,13 +101,13 @@ var ChatManager = function(){
 		var chatBody = document.getElementById('chatBodyOf'+usuario);
 		chatBody.appendChild(msg);
 		chatBody.appendChild(clear);
-	}
+	};
 	//-----------------------------------GESTION DE CHATS--------------------------------------------
 	this.crearChatUnit = function(user){
 		var newChat=new ChatUnit(user);
 		this.chats.push(newChat);
 		return newChat;
-	}
+	};
 	this.buscarChatUnit = function(userName){
 		var chatArray = this.chats;
 		for(var x = 0;x < chatArray.length; x++){
@@ -116,7 +116,7 @@ var ChatManager = function(){
 			}
 		}
 		return -1;
-	}
+	};
 	this.controlChats = function(nombreUsu){
 		var chats = this.chats;
 		Chat=this.buscarChatUnit(nombreUsu);
@@ -131,29 +131,27 @@ var ChatManager = function(){
 				chats[x].desactivarChat();
 			}
 		}
-	}
+	};
 	this.listarChats = function(){
 		var chatArray = this.chats;
-		var lista = "lista de chats:\n"
+		var lista = "lista de chats:\n";
 		for(var x = 0;x < chatArray.length; x++){
 			lista += "\t Nombre:"+chatArray[x].user.nombreUsu+"\n\tEstado:"+chatArray[x].estado+"\n";
 		}
 		console.log(lista);
-	}
+	};
 	//------------------------------------ELEMENTO CHAT-------------------------------//
 
 	var ChatUnit = function(user){
-
+		//-------------------------- Partes ----------------------//
 		var Cabecera = function(nodo){
-			
 			this.estado = 'enUso';
-			this.nodo=nodo;		
+			this.nodo=nodo;
+		};
 
-		}
 		var Cuerpo = function(user){
-
 			this.estado = 'porConstruir';
-			this.nodo;
+			this.nodo = null;
 
 			this.construirNodo = function(){
 				var contenido = document.createElement("div");
@@ -166,13 +164,13 @@ var ChatManager = function(){
 				contenido.innerHTML = html;
 				this.nodo=contenido;
 				this.estado = 'enUso';
-			}
+			};
 			this.construirNodo();
-		}
-		var Pie =function(user){
+		};
 
+		var Pie =function(user){
 			this.estado = 'porConstruir';
-			this.nodo;
+			this.nodo = null;
 
 			this.construirNodo = function(){
 				var pie = document.createElement('div');
@@ -183,22 +181,21 @@ var ChatManager = function(){
 				pie.innerHTML = html;
 				this.nodo=pie;
 				this.estado = 'enUso';
-			}
+			};
 			this.construirNodo();
-		}
-
-		//-----------------------------------Chat Unit ------------------------------------//
-		this.id;
+		};
+		//--------------------------Fin Partes ----------------------//
+		this.id = null;
 		this.estado = 'inactivo';
 
-		//datos del usuario 
+		//datos del usuario
 		this.user = user;
 
 		//mensajes pendientes
 		this.msgPend = 0;
 
 		//nodo fisico del chat
-		this.userChatCard;
+		this.userChatCard = null;
 		this.partes = [];
 
 		this.construirNodo = function(){
@@ -208,7 +205,7 @@ var ChatManager = function(){
 			this.agregarParte('cabecera');
 			this.partes.cabecera.nodo.onclick=function(){
 				jarvis.buscarLib('Chat').op.controlChats(user.nombreUsu);
-			}
+			};
 		};
 
 		this.activarChat = function(){
@@ -217,9 +214,8 @@ var ChatManager = function(){
 				this.estado='activo';
 			}else{
 				var user = this.user.nombreUsu;
-
 				var chatUnit=this;
-				
+
 				//cambios en chat
 				this.userChatCard.style.height="90px";
 
@@ -243,7 +239,7 @@ var ChatManager = function(){
 						var mensaje;
 						chatBody.innerHTML="";
 						chatBody.style.height='200px';
-						chat.userChatCard.style.height='290px';						
+						chat.userChatCard.style.height='290px';
 						if(success==1){
 							var messages = xml.getElementsByTagName('messages')[0].childNodes;
 							var msg;
@@ -256,28 +252,28 @@ var ChatManager = function(){
 									fecha : messages[m].getElementsByTagName('fecha')[0].textContent,
 									contenido : messages[m].getElementsByTagName('cont')[0].textContent,
 									estado : messages[m].getElementsByTagName('estado')[0].textContent
-								}
+								};
 								msg = createMsgBubble(mensaje);
 								clear=document.createElement('div');
 								clear.setAttribute('clear','');
 								chatBody.appendChild(msg);
-								chatBody.appendChild(clear);				
+								chatBody.appendChild(clear);
 							}
 						}
 					}
-				}
+				};
 				//PETICION
 				conexionChat.open('POST','corChat', true);
 				conexionChat.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 				var envio="TipoPet="+encodeURIComponent("web")+"&Operacion="+encodeURIComponent("cargarChat");
 				envio+="&Nombre="+encodeURIComponent(jarvis.session.nombreUsu)+"&Chat="+encodeURIComponent(user);
-				conexionChat.send(envio);				
+				conexionChat.send(envio);
 			}
 		};
 		this.desactivarChat = function(){
 			var nodo = this.userChatCard.style.height='50px';
 			this.estado='inactivo';
-		}
+		};
 		this.agregarParte = function(tipo){
 			var nuevaParte;
 			var clear = document.createElement('div');
@@ -286,7 +282,7 @@ var ChatManager = function(){
 				case 'cabecera':
 					nuevaParte = new Cabecera(this.userChatCard.firstChild);
 					this.partes.cabecera=nuevaParte;
-				break
+				break;
 				case 'cuerpo':
 					nuevaParte = new Cuerpo(this.user.nombreUsu);
 					this.partes.cuerpo=nuevaParte;
@@ -294,11 +290,11 @@ var ChatManager = function(){
 				case 'pie':
 					nuevaParte = new Pie(this.user.nombreUsu);
 					this.partes.pie=nuevaParte;
-				break
+				break;
 			}
 			this.userChatCard.appendChild(clear);
 			this.userChatCard.appendChild(nuevaParte.nodo);
-		}
+		};
 		this.crearIdChat = function(){
 		    var text = "";
 		    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -308,12 +304,12 @@ var ChatManager = function(){
 		    this.id = text;
 		};
 		this.construirNodo();
-	}
+	};
 
 	//----------------------------------FIN ELEMENTO CHAT-----------------------------//
-	
 
-}
+
+};
 //--------------------------------------FUNCIONAMIENTO DE CARGA DE SCRIPT-------------------//
 arranque();
 function arranque(){
@@ -372,20 +368,20 @@ function createMsgBubble(data){
 	}else{
 		msg.setAttribute('orientacion','derecha');
 	}
-	//faltan elementos fecha, estado 
+	//faltan elementos fecha, estado
 	return msg;
 }
 function enviarMsg(btnEnviar){
 	var usuario = btnEnviar.parentNode.id.substr(10,btnEnviar.parentNode.id.length);
-	var chatField = btnEnviar.previousSibling;		
-	if(chatField.value.trim()!=""){		
+	var chatField = btnEnviar.previousSibling;
+	if(chatField.value.trim()!==""){
 		var data = {
 			id : crearIdChat(),
 			contenido : chatField.value,
 			receptor : usuario,
 			emisor : jarvis.session.nombreUsu,
 			tipo : 'envio'
-		}
+		};
 		console.log(data);
 		var msg = createMsgBubble(data);
 		var clear=document.createElement('div');
@@ -407,4 +403,4 @@ crearIdChat = function(){
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
-}
+};
