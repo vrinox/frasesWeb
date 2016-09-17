@@ -212,13 +212,9 @@ destruirCapaSelect = function(capaSelect){
 		};
 	},300);
 };
-<<<<<<< HEAD
 /****************************************************************************************************************************************/
 arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("ComboBox");
 }
-=======
-	/*------------------------------Fin Funciones del Objeto Select-------------------------------*/
->>>>>>> refs/remotes/origin/Actualizacion-Rhino

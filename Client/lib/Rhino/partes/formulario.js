@@ -120,12 +120,9 @@ var Formulario = function(atributos){
 	};
   this.construirNodo();
 };
-<<<<<<< HEAD
 /****************************************************************************************************************************************/
 arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("formulario");
 }
-=======
->>>>>>> refs/remotes/origin/Actualizacion-Rhino

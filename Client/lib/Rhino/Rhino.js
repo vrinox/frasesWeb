@@ -374,11 +374,4 @@ arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("Rhino");
-<<<<<<< HEAD
 }
-=======
-	console.log('hola');
-	UI = new Arquitecto();
-	UI.configure();
-}
->>>>>>> refs/remotes/origin/Actualizacion-Rhino

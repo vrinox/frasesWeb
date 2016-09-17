@@ -648,12 +648,9 @@ var Lista = function(data){
 	};
   this.construir();
 };
-<<<<<<< HEAD
 /****************************************************************************************************************************************/
 arranque();
 function arranque(){
   //aviso al motor que el script arranco
   jarvis.libCargada("lista");
 }
-=======
->>>>>>> refs/remotes/origin/Actualizacion-Rhino

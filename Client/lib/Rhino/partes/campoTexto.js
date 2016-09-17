@@ -84,12 +84,9 @@ var CampoDeTexto = function(info){
 	};
 	this.construir();
 };
-<<<<<<< HEAD
 /****************************************************************************************************************************************/
 arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("campoTexto");
 }
-=======
->>>>>>> refs/remotes/origin/Actualizacion-Rhino

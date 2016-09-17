@@ -135,12 +135,9 @@ var CheckBox = function(info){
 	};
 	this.construirNodo();
 };
-<<<<<<< HEAD
 /****************************************************************************************************************************************/
 arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("checkBox");
 }
-=======
->>>>>>> refs/remotes/origin/Actualizacion-Rhino

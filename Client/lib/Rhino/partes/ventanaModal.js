@@ -477,12 +477,9 @@ var modalWindow = function(){
 		}
 	};
 };
-<<<<<<< HEAD
 /****************************************************************************************************************************************/
 arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("ventanaModal");
 }
-=======
->>>>>>> refs/remotes/origin/Actualizacion-Rhino

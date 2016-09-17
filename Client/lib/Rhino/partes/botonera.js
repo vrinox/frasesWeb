@@ -219,12 +219,9 @@ var Botonera = function(atributos){
 	};
 	this.construir();
 };
-<<<<<<< HEAD
 /****************************************************************************************************************************************/
 arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("botonera");
 }
-=======
->>>>>>> refs/remotes/origin/Actualizacion-Rhino
