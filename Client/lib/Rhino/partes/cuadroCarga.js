@@ -108,5 +108,5 @@ var CuadroCarga = function(info,callback){
 arranque();
 function arranque(){
 	//aviso al motor que el script arranco
-	jarvis.libCargada("CuadroCarga");
+	jarvis.libCargada("cuadroCarga");
 }

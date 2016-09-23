@@ -274,7 +274,6 @@ var Asistente = function(){
 	};
 
 	this.usarLib = function(nombreLib){
-		console.log(jarvis.buscarLib(nombreLib));
 		jarvis.buscarLib(nombreLib).estado = 'enUso';
 		//TODO: carga de librerias css asincronas
 		if(jarvis.estado !== 'enLinea'){

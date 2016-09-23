@@ -25,13 +25,12 @@
 	jarvis.usarLib('Rhino');
 	var ID = setInterval(function arranque(){
 		if(jarvis.verificarLibreriasEnUso()){
-			// TODO: verificarlibreriasenUso no esta funcionando bien
 			clearInterval(ID);
 			UI = new Arquitecto();
 			UI.configure();
 			torque = new Motor('acceso');
 			jarvis.buscarLib("Acceso").op.crearFormulario();
 		}
-	})
+	});
 </script>
 </html>

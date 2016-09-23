@@ -216,5 +216,5 @@ destruirCapaSelect = function(capaSelect){
 arranque();
 function arranque(){
 	//aviso al motor que el script arranco
-	jarvis.libCargada("ComboBox");
+	jarvis.libCargada("comboBox");
 }
