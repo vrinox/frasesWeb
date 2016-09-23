@@ -64,7 +64,7 @@
 					}
 				]
 			},{
-				"nombre":"Motor Registros",
+				"nombre":"torque",
 				"ruta":"lib/Rhino/motorRegistros.js"
 			},{
 				"nombre":"Cuerpo",
@@ -93,7 +93,10 @@
 			},{
 				"nombre":"Estilos Rhino",
 				"ruta":"lib/Rhino/css/Rhino.css"
+			},{
+				"nombre":"Estilos login",
+				"ruta":"vistas/css/login.css"
 			}
 		]
-	}	
+	}
 }

@@ -137,7 +137,7 @@ var ComboBox = function(info){
 	this.construir();
 };
 
-};/*----------------------------------Funciones del Objeto Select-------------------------------*/
+/*----------------------------------Funciones del Objeto Select-------------------------------*/
 construirCapaSelect= function(capaSelect){
 	capaSelect.onclick=function(){};
 	var opciones =[];

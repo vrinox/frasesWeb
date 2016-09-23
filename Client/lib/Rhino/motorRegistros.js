@@ -9,11 +9,6 @@ var Motor = function(entidadActiva){
 	//todos los registros que tiene la entidad activa entidad activa
 	this.registrosEntAct = null;
 
-	//funcion de arranque del objeto
-	this.ignition = function(){
-		//TODO: MODIFICAR
-	};
-
 	//busqueda en bd
 	this.buscarRegistros = function(entidad,callback){
 		var conexionBuscar=crearXMLHttpRequest();
@@ -43,7 +38,7 @@ var Motor = function(entidadActiva){
 	};
 
 	this.Operacion = function(peticion,callback){
-		
+
 		//si no se le paso el valor de la entidad a afectar en la peticion el tomara por defecto a
 		//la entidad que se encuentra activa en el momento de la misma
 		peticion.entidad = peticion.entidad || this.entidadActiva;
@@ -65,7 +60,7 @@ var Motor = function(entidadActiva){
 		            	callback(respuesta);
 					}else{
 						UI.crearMensaje(respuesta.mensaje);
-						UI.elementos.formulario.ventanaForm.destruirNodo();
+						UI.elementos.formulario.forma.destruirNodo();
 					}
 				}
 		    }
@@ -99,7 +94,7 @@ var Motor = function(entidadActiva){
 	            	callback(respuesta);
 				}else{
 					UI.crearMensaje(respuesta.mensaje);
-					UI.elementos.formulario.ventanaForm.destruirNodo();
+					UI.elementos.formulario.forma.destruirNodo();
 				}
 		    }
 		};
@@ -111,8 +106,6 @@ var Motor = function(entidadActiva){
 		}
 		conexionMotor.send(envio);
 	};
-	//funcion de arranque
-	this.ignition();
 };
 //--------------------------------AJAX---------------------------------------
 function crearXMLHttpRequest()
@@ -124,4 +117,10 @@ function crearXMLHttpRequest()
     if (window.XMLHttpRequest)
       xmlHttp = new XMLHttpRequest();
   return xmlHttp;
+}
+/****************************************************************************************************************************************/
+arranque();
+function arranque(){
+	//aviso al motor que el script arranco
+	jarvis.libCargada("torque");
 }

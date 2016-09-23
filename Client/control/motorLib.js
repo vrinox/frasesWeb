@@ -158,6 +158,7 @@ var Libreria = function(nombre,ruta,tipo){
 	this.ruta = ruta;
 	this.tipo = tipo.toLowerCase();
 	this.cargada = false;
+	this.estado = 'sin usar';
 	this.dependencias = [];
 	//usado en la espera de la ejecucion del script de la libreria
 	this.intervaloID = null;
@@ -273,6 +274,8 @@ var Asistente = function(){
 	};
 
 	this.usarLib = function(nombreLib){
+		console.log(jarvis.buscarLib(nombreLib));
+		jarvis.buscarLib(nombreLib).estado = 'enUso';
 		//TODO: carga de librerias css asincronas
 		if(jarvis.estado !== 'enLinea'){
 			var intervaloID = setInterval(function(){
@@ -345,9 +348,37 @@ var Asistente = function(){
 				}
 			});
 			return true;
+		}else{
+			return false;
+		}
+	};
+	this.verificarLibreriasEnUso = function(){
+		var libreriasActivas = this.buscarLibreriasEnUso();
+		if (libreriasActivas.length) {
+			var lib;
+			for (var i = 0; i < libreriasActivas.length; i++) {
+				lib = this.buscarLib(libreriasActivas[i]);
+				if(!this.verificarDependencias(lib.nombre)){
+					return false;
+				}else{
+					lib.estado = 'cargada';
+				}
+			}
+			return true;
+		}else{
+			return false;
 		}
 	};
 
+	this.buscarLibreriasEnUso = function(){
+		var libreriasActivas = [];
+		for (var i = 0; i < this.librerias.length; i++) {
+			if(this.librerias[i].estado === 'enUso'){
+				libreriasActivas.push(this.librerias[i].nombre);
+			}
+		}
+		return libreriasActivas;
+	};
 	//--------------------------- Metodos Auxiliares ------------------------------------------//
 
 	this.mostrarlibrerias = function(){

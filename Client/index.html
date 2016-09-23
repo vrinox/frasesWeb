@@ -8,10 +8,10 @@
 <!-- Librerias Basicas -->
 	<meta charset="UTF-8">
 	<script type="text/javascript" nombre='motorLib' src='control/motorLib.js'>	</script>
-	<script type="text/javascript" nombre='Acceso' src='vistas/acceso.js'></script>	
-	<script type="text/javascript" nombre='Socket.io' src='/socket.io/socket.io.js'></script>	
-	<link rel="stylesheet" type="text/css" href="vistas/css/icons.css" nombre="Iconos">
+	<script type="text/javascript" nombre='Acceso' src='vistas/acceso.js'></script>
+	<script type="text/javascript" nombre='Socket.io' src='/socket.io/socket.io.js'></script>
 	<link rel="stylesheet" type="text/css" href="vistas/css/cuerpo.css" nombre="estilos cuerpo">
+	<link rel="stylesheet" type="text/css" href="vistas/css/login.css" nombre="estilos login">
 	<link rel="stylesheet" type="text/css" href="lib/Rhino/css/Rhino.css" nombre="estilos rhino">
 </head>
 
@@ -20,15 +20,18 @@
 </body>
 <script type="text/javascript">
 	var jarvis = new Asistente();
+	jarvis.usarLib('torque');
 	jarvis.buscarLib("Acceso").op = new Acceso;
 	jarvis.usarLib('Rhino');
 	var ID = setInterval(function arranque(){
-		if(jarvis.verificarDependencias('Rhino')){
-			clearInterval(ID);		
+		if(jarvis.verificarLibreriasEnUso()){
+			// TODO: verificarlibreriasenUso no esta funcionando bien
+			clearInterval(ID);
 			UI = new Arquitecto();
 			UI.configure();
+			torque = new Motor('acceso');
 			jarvis.buscarLib("Acceso").op.crearFormulario();
 		}
-	})	
+	})
 </script>
 </html>

@@ -117,7 +117,8 @@ function init(server) {
 	            if(plug.estado=='esperando'){
 	              rack.removePlug(plug.nombreUsu);
 	            }
-	      }})(plug), 120000);
+	      		};
+					})(plug), 120000);
 	    }
 	  });
 	});

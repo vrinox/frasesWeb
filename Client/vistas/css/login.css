@@ -1,0 +1,53 @@
+div[contenedor]{
+    position: absolute !important;
+    height: 100%;
+    background-image:url('../imagenes/fondo.jpg');
+}
+section[cuerpo]{
+	display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-around;
+}
+article[tituloAcesso]{
+	border-bottom: 10px;
+	width: 100%;
+}
+button[inicio]{
+	border: 0px;
+    background-color: white;
+    width: 100px;
+    height: 100px;
+    color: #4CAF50;
+    font-size: 14px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    float:left;
+    margin: 5px;
+    transition: all 0.3s ease-in-out;
+}
+button[inicio]:hover{
+	box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+div[clear]{
+	clear: both;
+}
+div[cont-log-input]{
+    position: relative;
+}
+div[primero]{
+    margin-top: 35px;
+}
+div[cont-log-input] i{
+    position: absolute;
+    top:30px;
+    left:24px;
+}
+div[contenedor] div[cabecera]{
+    background-color:  rgba(27,94,32,0);
+    border-bottom: 1px solid white;
+}
+div[contenedor] div[cabecera] button[menubtn]{
+    border-right: 1px solid white;
+}
