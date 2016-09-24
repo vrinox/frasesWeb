@@ -71,6 +71,7 @@ function ingresar(btn){
 				  });
 				jarvis.buscarLib("Acceso").op.darVida();
 			}else{
+				console.log(respuesta);
 				//armo la session
 				jarvis.session.nombreUsu=respuesta.NombreUsu;
 				jarvis.session.horaDeConexion=respuesta.HoraCon;

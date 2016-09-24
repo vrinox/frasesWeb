@@ -8,8 +8,8 @@ var accessModel = {};
 	accessModel.innerData = new Array();
 
 	accessModel.setData = function(outData){
-		if(outData.clave_usu){
-			outData.clave_usu=accessModel.encriptarPass(outData.clave_usu,outData.nombreUsu);
+		if(outData.clave){
+			outData.clave=accessModel.encriptarPass(outData.clave,outData.usuario);
 		}
 		accessModel.innerData=outData;
 	}
@@ -26,7 +26,7 @@ var accessModel = {};
 	accessModel.buscar = function(callback){
 		if (connection) 
 		{
-			var sql = 'SELECT * FROM usuario WHERE nombreUsu = ' + connection.escape(accessModel.innerData.nombreUsu);
+			var sql = 'SELECT * FROM usuario WHERE nombreUsu = ' + connection.escape(accessModel.innerData.usuario);
 			connection.query(sql, function(error, row) 
 			{
 				if(error)
@@ -63,7 +63,7 @@ var accessModel = {};
 	accessModel.acceder = function(callback){
 		if (connection) 
 		{
-			var sql = 'SELECT * FROM usuario WHERE nombreUsu = ' + connection.escape(accessModel.innerData.nombreUsu);
+			var sql = 'SELECT * FROM usuario WHERE nombreUsu = ' + connection.escape(accessModel.innerData.usuario);
 			connection.query(sql, function(error, row) 
 			{
 				if(error)
@@ -75,7 +75,7 @@ var accessModel = {};
 
 					if (typeof row !== 'undefined' && row.length > 0)
 					{
-						if(row[0].clave_usu==accessModel.innerData.clave_usu){
+						if(row[0].clave_usu==accessModel.innerData.clave){
 							var data={
 								"msg":"acceso realizado con exito",
 								"success":"1",
