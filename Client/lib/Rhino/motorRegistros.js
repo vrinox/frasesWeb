@@ -8,6 +8,8 @@ var Motor = function(entidadActiva){
 	this.entidadActiva=entidadActiva;
 	//todos los registros que tiene la entidad activa entidad activa
 	this.registrosEntAct = null;
+	//tipo de peticion
+	this.TipoPet = 'web';
 
 	//busqueda en bd
 	this.buscarRegistros = function(entidad,callback){
@@ -45,6 +47,9 @@ var Motor = function(entidadActiva){
 
 		//si no recive el parametro de manejarCarga toma por defecto el valor de falso
 		peticion.manejarOperacion = peticion.manejarOperacion || false;
+
+		//si no recibe el tipo de peticion toma por defecto web
+		peticion.TipoPet = peticion.TipoPet || this.TipoPet;
 		var conexionMotor=crearXMLHttpRequest();
 		conexionMotor.onreadystatechange = function(){
 			if (conexionMotor.readyState == 4){

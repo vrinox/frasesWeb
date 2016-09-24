@@ -48,7 +48,7 @@ function ingresar(btn){
 	if(formulario.validar()){
 		var pet = {
 		   entidad: "acceso",
-		   operacion: "accesar",
+		   operacion: "acceso",
 		};
 		pet = UI.juntarObjetos(pet,formulario.captarValores());
 		var cuadro ={

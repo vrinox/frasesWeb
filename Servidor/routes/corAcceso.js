@@ -2,17 +2,17 @@ var express = require('express');
 
 //modelo o clase necesario para su conexion
 var accessModel = require("../clases/clsAcceso");
+var utils = require('../utils');
 
 var corAcceso = {};
 
-corAcceso.prototype.gestionar = function(pet){
-
+corAcceso.gestionar = function(pet,res){
 	//mando la informacion a la clase para su utilizacion
-	if((Operacion!="recuperarSession")&&(Operacion!="actualizarClave")){
+	if((pet.operacion!="recuperarSession")&&(pet.operacion!="actualizarClave")){
 		accessModel.setData(pet);
 	}
 	var reqData = {};
-	switch(pet.Operacion){
+	switch(pet.operacion){
 		case 'acceso':
 			//realizo la busqueda para el acceso
 			accessModel.acceder(function(error,data){
@@ -30,8 +30,9 @@ corAcceso.prototype.gestionar = function(pet){
 					respuesta.success = 0;
 				}
 				respuesta.mensaje = data.msg;
+				utils.enviar(respuesta,res);
 			});
-			//TODO: como retornar dentro del callback
+			
 			break;
 
 		case 'registro':
@@ -53,6 +54,7 @@ corAcceso.prototype.gestionar = function(pet){
 						mensaje: 'Error interno del servidor'
 					};
 				}
+				utils.enviar(respuesta,res);
 			});
 			break;
 
@@ -79,7 +81,8 @@ corAcceso.prototype.gestionar = function(pet){
 						success: 0,
 						mensaje: data.msg
 					};
-				}
+				}				
+				utils.enviar(respuesta,res);
 			});
 			break;
 
@@ -98,6 +101,7 @@ corAcceso.prototype.gestionar = function(pet){
 					success: data.success,
 					msg: data.msg
 				};
+				utils.enviar(respuesta,res);
 			});
 			break;
 
@@ -112,7 +116,8 @@ corAcceso.prototype.gestionar = function(pet){
 				var respuesta = {
 					success: data.success,
 					mensaje: data.msg
-				};
+				};				
+				utils.enviar(respuesta,res);
 			});
 			break;
 
@@ -132,8 +137,16 @@ corAcceso.prototype.gestionar = function(pet){
 					success: data.success,
 					action: data.action
 				};
+				utils.enviar(respuesta,res);
 			});
 			break;
+
+		default:
+			var respuesta = {
+				success: 0,
+				mensaje: 'operacion '+pet.operacion+' no soportada por esta entidad'
+			}
+			utils.enviar(respuesta,res);
 	}
 	return respuesta;
 };
