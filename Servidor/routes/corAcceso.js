@@ -20,7 +20,7 @@ corAcceso.gestionar = function(pet,res){
 				if(data.success==1)
 				{
 					respuesta.session = {
-						NombreUsu: accessModel.innerData.nombreUsu,
+						NombreUsu: accessModel.innerData.usuario,
 						HoraCon: data.HoraCon
 					};
 					respuesta.success = 1;
@@ -31,8 +31,7 @@ corAcceso.gestionar = function(pet,res){
 				}
 				respuesta.mensaje = data.msg;
 				utils.enviar(respuesta,res);
-			});
-			
+			});			
 			break;
 
 		case 'registro':

@@ -1,5 +1,33 @@
 var conexionAcc;
 var Acceso = function(){
+	//planos de formularios a utilizar
+	this.plano = {
+		acceso: {
+			campos : [
+				{
+					tipo: 'campoDeTexto',
+					parametros: {requerido: true,titulo:'Nombre de usuario',nombre:'usuario',tipo:'simple',eslabon:'area',max: 25,usaToolTip:true}
+				},{
+					tipo: 'campoDeTexto',
+					parametros: {requerido: true,titulo:'Clave de acceso',nombre:'clave',tipo:'password',eslabon:'area',max: 25,usaToolTip:true}
+				}
+			]
+		},
+		registro: {
+			campos: [
+				{
+					tipo: 'campoDeTexto',
+					parametros: {requerido: true,titulo:'Nombre de usuario',nombre:'usuario',tipo:'simple',eslabon:'area',max: 25,usaToolTip:true}
+				},{
+					tipo: 'campoDeTexto',
+					parametros: {requerido: true,titulo:'Clave de acceso',nombre:'clave',tipo:'password',eslabon:'area',max: 25,usaToolTip:true}
+				},{
+					tipo: 'campoDeTexto',
+					parametros: {requerido: true,titulo:'Reingrese clave',nombre:'clave2',tipo:'password',eslabon:'area',max: 25,usaToolTip:true}
+				}
+			]
+		}
+	}
 
 	this.crearFormulario = function(){
 		var ventana = UI.agregarVentana({
@@ -12,17 +40,7 @@ var Acceso = function(){
 		  sectores:[
 				{
 					nombre: 'formulario', //puede ser lo que sea
-					formulario: {
-						campos : [
-							{
-								tipo: 'campoDeTexto',
-								parametros: {requerido: true,titulo:'Nombre de usuario',nombre:'usuario',tipo:'simple',eslabon:'area',max: 25,usaToolTip:true}
-							},{
-								tipo: 'campoDeTexto',
-								parametros: {requerido: true,titulo:'Clave de acceso',nombre:'clave',tipo:'password',eslabon:'area',max: 25,usaToolTip:true}
-							}
-						]
-					},
+					formulario: this.plano.acceso,
 					tipo: 'nuevo'
 				},
 				{
@@ -39,6 +57,14 @@ var Acceso = function(){
 			activarRegistro();
 		};
 	};
+
+	this.agregarForm = function(nombreForm){
+		var objForm = {
+			plano: this.plano[nombreForm],
+			tipo: 'nuevo'
+		}
+		UI.buscarVentana('Acceso').buscarSector('formulario').agregarFormulario(objForm);
+	}
 };
 //-----------------------------Acceso------------------------------------------------------------
 function ingresar(btn){
@@ -69,17 +95,17 @@ function ingresar(btn){
 				    texto: mensaje,
 				    tipo: 'web-arriba-derecha-alto'
 				  });
-				jarvis.buscarLib("Acceso").op.darVida();
+				jarvis.buscarLib("Acceso").op.agregarForm('acceso');
 			}else{
-				console.log(respuesta);
 				//armo la session
-				jarvis.session.nombreUsu=respuesta.NombreUsu;
-				jarvis.session.horaDeConexion=respuesta.HoraCon;
+				jarvis.session.nombreUsu=respuesta.session.NombreUsu;
+				jarvis.session.horaDeConexion=respuesta.session.HoraCon;
 				jarvis.session.estado="abierta";
 				//envio los datos para la creacion de la session en el servidor
 				jarvis.session.identificacion();
-				//construyo el inicio
-				jarvis.construc.construirInicio();
+				
+				//TODO: construir el inicio del chat
+				jarvis.usarLib('Cuerpo');
 			}
 		});
 	}else{
@@ -112,7 +138,7 @@ function registro(){
 				tipo: 'web-arriba-derecha-alto'
 			});
 			if(respuesta.success===0){
-				//TODO:reconstruir formulario registro
+				jarvis.buscarLib('Acceso').op.agregarForm('registro')
 			}else{
 				activarAcceso();
 			}
@@ -134,20 +160,7 @@ function activarRegistro(){
 		},
 		cuerpo:{
 			tipo: 'nuevo',
-			formulario: {
-				campos: [
-					{
-						tipo: 'campoDeTexto',
-						parametros: {requerido: true,titulo:'Nombre de usuario',nombre:'usuario',tipo:'simple',eslabon:'area',max: 25,usaToolTip:true}
-					},{
-						tipo: 'campoDeTexto',
-						parametros: {requerido: true,titulo:'Clave de acceso',nombre:'clave',tipo:'password',eslabon:'area',max: 25,usaToolTip:true}
-					},{
-						tipo: 'campoDeTexto',
-						parametros: {requerido: true,titulo:'Reingrese clave',nombre:'clave2',tipo:'password',eslabon:'area',max: 25,usaToolTip:true}
-					}
-				]
-			}
+			formulario: jarvis.buscarLib('Acceso').op.plano.registro
 		},
 		pie:{
 			html:'<section botonera><button type="button" class="icon material-icons md-24 white mat-indigo500">save</button>'+

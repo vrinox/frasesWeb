@@ -5,152 +5,10 @@ Object.prototype.getName = function() {
    return (results && results.length > 1) ? results[1] : "";
 };
 
-//variable para peticion asincrona de sesion
-var conexionSess;
 //variable para busqueda de indice de librerias
 var conexionIndice;
 
-//----------------------------------------------OBJETO SESSION--------------------------------------//
-var Session = function(){
 
-	this.nombreUsu = "";
-
-	this.horaDeConexion = "";
-
-	this.estado = "cerrada";
-
-	this.socket = null;
-
-	this.sesIntId = null;
-
-	this.cerrarSession= function(){
-		this.destruirSession();
-	};
-
-	this.destruirSession = function(){
-		this.socket.emit('session',{
-			text:'cerrar',
-			nombreUsu:this.nombreUsu
-		});
-	};
-
-	this.recuperarSession = function(){
-		console.log("peticion de recuperacion enviada");
-		this.socket.emit('session',{
-			text:"recuperar",
-			nombreUsu:this.nombreUsu
-		});
-		this.sesIntId = setInterval(function(){
-			if(jarvis.session.nombreUsu!==""){
-				console.log("temporalmente sin conexion");
-				//alert("conexion perdida");
-			}
-		},30000);
-	};
-
-	this.identificacion = function(){
-		console.log('identificacion enviada');
-		this.socket.emit('identificacion',{
-			nombre: jarvis.session.nombreUsu,
-			HDC: jarvis.session.horaDeConexion
-		});
-		if(this.sesIntId!==null){
-			clearInterval(this.sesIntId);
-			this.sesIntId=null;
-		}
-		setInterval(function(){
-				jarvis.session.recuperarSession();
-			},50000);
-	};
-
-	this.inicializarConexion = function(){
-		this.socket=io.connect('http://192.168.0.104:4000');
-		console.log('conectado1',this.socket.connected);
-		this.socket.on('connect',function(){
-			console.log('conectado2',jarvis.session.socket.connected);
-		});
-		var obj = this.socket;
-		this.socket.on('identificacion',function(data){
-			if(data.text=="falsa"){
-				jarvis.session.nombreUsu="";
-				jarvis.session.horaDeConexion="";
-				jarvis.session.estado="cerrada";
-				jarvis.construc.construirAcceso();
-			}
-		});
-		this.socket.on('session',function(data){
-			console.log('peticion recivida: '+data.text);
-			if(data.text=="recuperada")
-			{
-				jarvis.session.nombreUsu=data.nombreUsu;
-				jarvis.session.horaDeConexion=data.horaCon;
-				jarvis.session.estado="abierta";
-				clearInterval(jarvis.session.sesIntId);
-				jarvis.session.sesIntId=null;
-				if(jarvis.construc.mostrarEstEnUso()=="basica"){
-					jarvis.construc.construirInicio();
-				}
-			}
-			else if(data.text=="cerrada")
-			{
-				jarvis.session.nombreUsu="";
-				jarvis.session.horaDeConexion="";
-				jarvis.session.estado="cerrada";
-				jarvis.construc.construirAcceso();
-			}
-			else if(data.text=="agotada")
-			{
-				console.log('tiempo agotado inicie de nuevo');
-				jarvis.session.nombreUsu="";
-				jarvis.session.horaDeConexion="";
-				jarvis.session.estado="cerrada";
-				jarvis.construc.construirAcceso();
-			}
-			else if(data.text=="dobleSession")
-			{
-				console.log('sesion ya se encuentra iniciada en otro lugar');
-				alert("hubo un intento de acceso a su cuenta desde otra ubicacion");
-			}
-			else if(data.text=="no recuperada")
-			{
-				if(this.sesIntId!==null){
-					clearInterval(this.sesIntId);
-					this.sesIntId=null;
-				}
-			}
-			else
-			{
-				console.log('no hay sesion abierta');
-			}
-		});
-		this.socket.on('chatMsg',function(data){
-			if(data.tipo=='envio'){
-				console.log('mensaje llego a receptor');
-				jarvis.buscarLib('Chat').op.listarChats();
-				if(jarvis.buscarLib('Chat').op.buscarChatUnit(data.emisor).estado=='activo'){
-					console.log(data.emisor);
-					jarvis.buscarLib('Chat').op.agregarMsg(data);
-					var newData = {
-						id : data.id,
-						estado : 'recibidoPorReceptor',
-						emisor : data.emisor
-					};
-					console.log('envio cambio de estado');
-					jarvis.session.socket.emit('chatMsg',newData);
-				}else{
-					//cuando el chat esta inactivo aumento el numero de mensajes pendientes y los aumentos
-				}
-			}else if(data.tipo=='cambioEstado'){
-				console.log('cambio de estado\n'+data);
-			}
-		});
-		this.recuperarSession();
-
-	};
-
-	//metodos ejecutados en la instanciacion del objeto
-	this.inicializarConexion();
-};
 //----------------------------------------------OBJETO LIBRERIA--------------------------------------//
 var Libreria = function(nombre,ruta,tipo){
 
@@ -198,9 +56,15 @@ var Asistente = function(){
 	this.librerias = [ ];
 	this.contendor = document.getElementsByTagName("head")[0];
 	this.construc = null;
-	this.session = new Session();
+	this.session = null;
 	this.estado = "sinArrancar";
 	this.intervaloID = null;
+	//este valor marca si las trazas por consola se muestran o no:
+		//activa: muestra todos los tipos
+		//inactiva: no muestra ninguna
+		//o recibe un arreglo con los tipos que desea mostrar
+		//disponibles: chat, session y libreria
+	this.trazas = 'inactiva';
 
 	//--------------------------------------ATRIBUTOS SECUNDARIOS-------------------------------------//
 	this.intervaloID="";
@@ -245,13 +109,12 @@ var Asistente = function(){
 
 	this.buscarLib = function(nombre){
 		var librerias = this.librerias;
-		var lib = -1;
 		for(var x=0;x<librerias.length;x++){
 			if((librerias[x].nombre==nombre)&&(librerias[x].tipo=="javascript")){
-				lib = librerias[x];
+				return librerias[x];
 			}
 		}
-		return lib;
+		return false;
 	};
 
 	this.addLib=function(libreria,tipo){
@@ -268,7 +131,7 @@ var Asistente = function(){
 			//si no esta agregada con anterioridad la agrego al arreglo
 			this.librerias[this.librerias.length]=lib;
 			//dejo la traza de que fue agregada
-			console.log(libreria.nombre+" fue agregada al indice");
+			jarvis.traza(libreria.nombre+" fue agregada al indice",'libreria');
 		}
 		return lib;
 	};
@@ -291,18 +154,20 @@ var Asistente = function(){
 	};
 	this.montarLib = function(nombreLib){
 		var lib = jarvis.buscarLib(nombreLib);
-		if(lib.dependencias){
-			lib.dependencias.forEach(function(dep){
-				jarvis.usarLib(dep.nombre);
-			});
-		}
-		//luego la agrego al documento en forma de script
-		this.contendor.appendChild(lib.tag);
-		//ejecutamos un intervalo de carga
-		if(lib.tipo === 'javascript'){
-			if(lib.noUsaCarga){
-				this.iniciarEsperaCarga(lib.nombre);
+		if(lib){
+			if(lib.dependencias){
+				lib.dependencias.forEach(function(dep){
+					jarvis.usarLib(dep.nombre);
+				});
 			}
+			//luego la agrego al documento en forma de script
+			this.contendor.appendChild(lib.tag);
+			//ejecutamos un intervalo de carga
+			if(lib.tipo === 'javascript'){
+				if(lib.noUsaCarga){
+					this.iniciarEsperaCarga(lib.nombre);
+				}
+			}	
 		}
 	};
 	//------------------------------Metodos de carga de scripts--------------------------------//
@@ -311,9 +176,9 @@ var Asistente = function(){
 		var libreria = this.buscarLib(nombre);
 		if(libreria!=-1){
 			libreria.cargada = true;
-			console.log(nombre+" cargada");
+			jarvis.traza(nombre+" cargada",'libreria');
 		}else{
-			console.log("libreria "+nombre+" no se encuentra en el indice");
+			jarvis.traza("libreria "+nombre+" no se encuentra en el indice",'libreria');
 		}
 	};
 
@@ -330,11 +195,11 @@ var Asistente = function(){
 		if(this.buscarLib(nombreLib).cargada){
 			clearInterval(this.intervaloID);
 			this.intervaloID="";
-			console.log("libreria "+nombreLib+" ya se encuentra lista para usar");
+			jarvis.traza("libreria "+nombreLib+" ya se encuentra lista para usar",'libreria');
 			var avisoEsp=document.getElementById('avisoEsp');
 			avisoEsp.parentNode.removeChild(avisoEsp);
 		}else{
-			console.log("libreria "+nombreLib+" cargando");
+			jarvis.traza("libreria "+nombreLib+" cargando",'libreria');
 		}
 	};
 
@@ -385,7 +250,6 @@ var Asistente = function(){
 	};
 
 	this.arranque = function(){
-		window.onbeforeunload=function(){jarvis.session.socket.close();};
 		this.estado = "arrancando";
 		var lista=this.contendor.childNodes;
 		//agrego a mis librerias los scritps(js) y link(css) que se encuentran en el cuerpo del index
@@ -405,6 +269,21 @@ var Asistente = function(){
 				var lib = new Libreria(nombre,ruta,tipo);
 				this.librerias[this.librerias.length]=lib;
 				lib.cargada=true;
+			}
+		}
+		this.traza = function(aMostrar,tipo){
+			if(this.trazas === 'activa'){
+				console.traza(aMostrar);
+				return;
+			}else if(typeof this.trazas !== 'string'){
+				for(i = 0; i < this.trazas; i++){
+					if(this.trazas[i] === tipo){
+						console.log(aMostrar);
+						return;
+					}
+				}
+			}else {
+				return;
 			}
 		}
 		//luego cargo el indice

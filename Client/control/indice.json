@@ -6,6 +6,9 @@
 				"nombre":"motorLib",
 				"ruta":"control/motorLib.js"
 			},{
+				"nombre":"Session",
+				"ruta":"control/sesion.js"
+			},{
 				"nombre":"Rhino",
 				"ruta":"lib/Rhino/Rhino.js",
 				"dependencias":[

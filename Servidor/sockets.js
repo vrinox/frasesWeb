@@ -60,6 +60,7 @@ function init(server) {
 	      }
 	    }
 	  });
+	  /*
 	  //---------------------------Control de Chat--------------------------------------------------------
 	  //modelo o clase necesario para su conexion
 	  var chatModel = require("./clases/clsChat");
@@ -102,7 +103,7 @@ function init(server) {
 	        emisor.socket.emit('chatMsg',data);
 	      }
 	    }
-	  });
+	  });*/
 	  socket.on('connect_failed', function(){
 	    console.log('Connection Failed');
 	  });
