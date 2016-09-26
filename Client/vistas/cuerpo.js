@@ -5,6 +5,13 @@ var Construc = function(){
 Construc.prototype.construirInicio = function() {
 	this.estructuraActiva = 'chatGeneral';
 	//cargo las librerias necesarias(chat,...)
+	jarvis.usarLib('Chat',function(){
+		//TODO: cargar las librerias y usar un callback justo despues
+		if(!jarvis.buscarLib('Chat').op){
+			jarvis.buscarLib('Chat').op = new ChatManager();
+		}
+		jarvis.buscarLib('Chat').op.mostrarUsuario();
+	});
 
 	//elimino la ventana acceso
 	UI.quitarVentana('Acceso');

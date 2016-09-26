@@ -136,7 +136,7 @@ var Asistente = function(){
 		return lib;
 	};
 
-	this.usarLib = function(nombreLib){
+	this.usarLib = function(nombreLib,callback){
 		jarvis.buscarLib(nombreLib).estado = 'enUso';
 		//TODO: carga de librerias css asincronas
 		if(jarvis.estado !== 'enLinea'){
@@ -144,15 +144,15 @@ var Asistente = function(){
 				var lib = jarvis.buscarLib(nombreLib);
 				lib.intervaloID = intervaloID;
 				if(jarvis.estado === 'enLinea'){
-					jarvis.montarLib(nombreLib);
+					jarvis.montarLib(nombreLib,callback);
 					clearInterval(lib.intervaloID);
 				}
 			},30);
 		}else{
-			this.montarLib(nombreLib);
+			this.montarLib(nombreLib,callback);
 		}
 	};
-	this.montarLib = function(nombreLib){
+	this.montarLib = function(nombreLib,callback){
 		var lib = jarvis.buscarLib(nombreLib);
 		if(lib){
 			if(lib.dependencias){
@@ -165,16 +165,17 @@ var Asistente = function(){
 			//ejecutamos un intervalo de carga
 			if(lib.tipo === 'javascript'){
 				if(lib.noUsaCarga){
-					this.iniciarEsperaCarga(lib.nombre);
+					this.iniciarEsperaCarga(lib.nombre,callback);
 				}
-			}	
+				//BUG: error en la carga de las librerias 
+			}
 		}
 	};
 	//------------------------------Metodos de carga de scripts--------------------------------//
 
 	this.libCargada = function(nombre){
 		var libreria = this.buscarLib(nombre);
-		if(libreria!=-1){
+		if(libreria){
 			libreria.cargada = true;
 			jarvis.traza(nombre+" cargada",'libreria');
 		}else{
@@ -182,8 +183,10 @@ var Asistente = function(){
 		}
 	};
 
-	this.iniciarEsperaCarga = function(nombreLib){
-		this.intervaloID = setInterval(function(){jarvis.verificarCarga(nombreLib);},10);
+	this.iniciarEsperaCarga = function(nombreLib,callback){
+		this.intervaloID = setInterval(function(){
+			jarvis.verificarCarga(nombreLib);
+		},10);
 		var avisoEsp = document.createElement("div");
 		avisoEsp.setAttribute("cargando","");
 		avisoEsp.id="avisoEsp";
@@ -198,6 +201,9 @@ var Asistente = function(){
 			jarvis.traza("libreria "+nombreLib+" ya se encuentra lista para usar",'libreria');
 			var avisoEsp=document.getElementById('avisoEsp');
 			avisoEsp.parentNode.removeChild(avisoEsp);
+			if(callback){
+				callback();
+			}
 		}else{
 			jarvis.traza("libreria "+nombreLib+" cargando",'libreria');
 		}

@@ -140,6 +140,10 @@ var ChatManager = function(){
 		}
 		console.log(lista);
 	};
+
+	this.mostrarUsuario = function(){
+		console.log(jarvis.session.nombreUsu);
+	};
 	//------------------------------------ELEMENTO CHAT-------------------------------//
 
 	var ChatUnit = function(user){
@@ -315,12 +319,6 @@ arranque();
 function arranque(){
 	//aviso al motor que el script arranco
 	jarvis.libCargada("Chat");
-	//agrego el operador a la libreria
-	jarvis.buscarLib("Chat").op = new ChatManager();
-	jarvis.buscarLib("Chat").op.construirDashBoard();
-	jarvis.buscarLib("Chat").op.darVida();
-	//carga chat
-	jarvis.buscarLib("Chat").op.pedirP2P();
 }
 //---------------------------------Notificaciones------------------------
 function moverNot(notObj){
