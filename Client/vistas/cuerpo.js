@@ -1,7 +1,7 @@
 var Construc = function(){
 	this.estado = 'sinUsar';
 	this.estructuraActiva = null;
-}
+};
 Construc.prototype.construirInicio = function() {
 	this.estructuraActiva = 'chatGeneral';
 	//cargo las librerias necesarias(chat,...)
@@ -21,7 +21,7 @@ Construc.prototype.construirInicio = function() {
 
 	//TODO: agrego el contenedor del chat
 		//codigo...
-	
+
 };
 /*****************************************************************************************************************************/
 arranque();

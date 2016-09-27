@@ -31,7 +31,7 @@ corAcceso.gestionar = function(pet,res){
 				}
 				respuesta.mensaje = data.msg;
 				utils.enviar(respuesta,res);
-			});			
+			});
 			break;
 
 		case 'registro':
@@ -80,7 +80,7 @@ corAcceso.gestionar = function(pet,res){
 						success: 0,
 						mensaje: data.msg
 					};
-				}				
+				}
 				utils.enviar(respuesta,res);
 			});
 			break;
@@ -115,7 +115,7 @@ corAcceso.gestionar = function(pet,res){
 				var respuesta = {
 					success: data.success,
 					mensaje: data.msg
-				};				
+				};
 				utils.enviar(respuesta,res);
 			});
 			break;
@@ -144,7 +144,7 @@ corAcceso.gestionar = function(pet,res){
 			var respuesta = {
 				success: 0,
 				mensaje: 'operacion '+pet.operacion+' no soportada por esta entidad'
-			}
+			};
 			utils.enviar(respuesta,res);
 	}
 	return respuesta;

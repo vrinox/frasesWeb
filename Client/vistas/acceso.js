@@ -27,7 +27,7 @@ var Acceso = function(){
 				}
 			]
 		}
-	}
+	};
 
 	this.crearFormulario = function(){
 		var ventana = UI.agregarVentana({
@@ -62,9 +62,9 @@ var Acceso = function(){
 		var objForm = {
 			plano: this.plano[nombreForm],
 			tipo: 'nuevo'
-		}
+		};
 		UI.buscarVentana('Acceso').buscarSector('formulario').agregarFormulario(objForm);
-	}
+	};
 };
 //-----------------------------Acceso------------------------------------------------------------
 function ingresar(btn){
@@ -103,7 +103,7 @@ function ingresar(btn){
 				jarvis.session.estado="abierta";
 				//envio los datos para la creacion de la session en el servidor
 				jarvis.session.identificacion();
-				
+
 				//TODO: construir el inicio del chat
 				jarvis.usarLib('Cuerpo');
 			}
@@ -138,7 +138,7 @@ function registro(){
 				tipo: 'web-arriba-derecha-alto'
 			});
 			if(respuesta.success===0){
-				jarvis.buscarLib('Acceso').op.agregarForm('registro')
+				jarvis.buscarLib('Acceso').op.agregarForm('registro');
 			}else{
 				activarAcceso();
 			}
