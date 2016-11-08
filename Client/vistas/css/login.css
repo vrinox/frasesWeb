@@ -3,14 +3,6 @@ div[contenedor]{
     height: 100%;
     background-image:url('../imagenes/fondo.jpg');
 }
-section[cuerpo]{
-	display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    align-content: center;
-    justify-content: space-around;
-}
 article[tituloAcesso]{
 	border-bottom: 10px;
 	width: 100%;

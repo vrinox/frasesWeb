@@ -1,6 +1,7 @@
 var Cabecera = function(){
 
 	this.estado = 'porConstriur';
+	this.nodo = null;
 
 	this.construir = function(){
 		var contenedor = obtenerContenedor();
@@ -20,6 +21,7 @@ var Cabecera = function(){
 				menu.setAttribute('estado','visible');
 			}
 		};
+		this.nodo = elemento;
 		this.estado='enUso';
 	};
 	this.construir();

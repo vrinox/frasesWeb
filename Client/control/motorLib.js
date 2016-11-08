@@ -1,19 +1,13 @@
-//funcion para obtener el nombre del constructor
-Object.prototype.getName = function() {
-   var funcNameRegex = /function (.{1,})\(/;
-   var results = (funcNameRegex).exec((this).constructor.toString());
-   return (results && results.length > 1) ? results[1] : "";
-};
-
 //variable para busqueda de indice de librerias
 var conexionIndice;
 
 
 //----------------------------------------------OBJETO LIBRERIA--------------------------------------//
-var Libreria = function(nombre,ruta,tipo){
+var Libreria = function(atributos,tipo){
 
-	this.nombre = nombre;
-	this.ruta = ruta;
+	this.nombre = atributos.nombre;
+	this.ruta = atributos.ruta;
+	this.noUsaCarga = atributos.noUsaCarga;
 	this.tipo = tipo.toLowerCase();
 	this.cargada = false;
 	this.estado = 'sin usar';
@@ -50,7 +44,7 @@ var Libreria = function(nombre,ruta,tipo){
 	this.tag = this.crearTag();
 };
 //----------------------------------------------OBJETO ASISTENTE--------------------------------------//
-var Asistente = function(){
+var Asistente = function(objArranque){
 
 	//---------------------------------------ATRIBUTOS PRIMARIOS--------------------------------------//
 	this.librerias = [ ];
@@ -59,29 +53,37 @@ var Asistente = function(){
 	this.session = null;
 	this.estado = "sinArrancar";
 	this.intervaloID = null;
+
+	//--------------------------------------ATRIBUTOS SECUNDARIOS-------------------------------------//
+	this.intervaloID="";
 	//este valor marca si las trazas por consola se muestran o no:
 		//activa: muestra todos los tipos
 		//inactiva: no muestra ninguna
 		//o recibe un arreglo con los tipos que desea mostrar
 		//disponibles: chat, session y libreria
-	this.trazas = 'inactiva';
-
-	//--------------------------------------ATRIBUTOS SECUNDARIOS-------------------------------------//
-	this.intervaloID="";
-
+	this.trazas = ['chat'];
+	this.objArranque =objArranque;
+	this.indice = null;
 	//-------------------------------------------METODOS---------------------------------------------//
 	//---------------------------Metodos de utilizacion de indice------------------------------------//
 	this.buscarIndice = function(){
 		this.estado = "cargandoIndice";
 		var ruta = "control/indice.json";
 		conexionIndice=crearXMLHttpRequest();
-		conexionIndice.onreadystatechange = procesarIndice;
+		conexionIndice.onreadystatechange = function(){
+			if(conexionIndice.readyState == 4){
+				var json=JSON.parse(conexionIndice.responseText);
+				jarvis.estado = 'procesandoIndice';
+				jarvis.cargarIndice(json);
+			}
+		};
 		conexionIndice.open('GET',ruta, true);
 		conexionIndice.send();
 	};
 
 	this.cargarIndice = function(json){
 		var Librerias = json.librerias;
+		this.indice = Librerias;
 		this.estado = 'cargandoLibrerias';
 
 		//cargo el javascript
@@ -94,6 +96,7 @@ var Asistente = function(){
 		});
 
 		this.estado = "enLinea";
+
 	};
 	//---------------------------Metodos para la utilizacion de librerias---------------------------//
 	this.verificarLibreria = function(lib){
@@ -119,7 +122,7 @@ var Asistente = function(){
 
 	this.addLib=function(libreria,tipo){
 		//instancio una nueva libreria
-		var lib = new Libreria(libreria.nombre,libreria.ruta,tipo);
+		var lib = new Libreria(libreria,tipo);
 		if(libreria.dependencias){
 			for(var i = 0; i < libreria.dependencias.length; i++){
 				var newLib = this.addLib(libreria.dependencias[i],"javascript");
@@ -137,9 +140,12 @@ var Asistente = function(){
 	};
 
 	this.usarLib = function(nombreLib,callback){
-		jarvis.buscarLib(nombreLib).estado = 'enUso';
+		var libreria = jarvis.buscarLib(nombreLib);
+		libreria.estado = 'enUso';
 		//TODO: carga de librerias css asincronas
-		if(jarvis.estado !== 'enLinea'){
+		if(jarvis.estado === 'enLinea'){
+			this.montarLib(nombreLib,callback);
+		}else{
 			var intervaloID = setInterval(function(){
 				var lib = jarvis.buscarLib(nombreLib);
 				lib.intervaloID = intervaloID;
@@ -148,8 +154,6 @@ var Asistente = function(){
 					clearInterval(lib.intervaloID);
 				}
 			},30);
-		}else{
-			this.montarLib(nombreLib,callback);
 		}
 	};
 	this.montarLib = function(nombreLib,callback){
@@ -164,11 +168,12 @@ var Asistente = function(){
 			this.contendor.appendChild(lib.tag);
 			//ejecutamos un intervalo de carga
 			if(lib.tipo === 'javascript'){
-				if(lib.noUsaCarga){
+				if(!lib.noUsaCarga){
 					this.iniciarEsperaCarga(lib.nombre,callback);
 				}
-				//BUG: error en la carga de las librerias 
 			}
+		}else{
+			console.log('no existe '+nombreLib);
 		}
 	};
 	//------------------------------Metodos de carga de scripts--------------------------------//
@@ -184,23 +189,27 @@ var Asistente = function(){
 	};
 
 	this.iniciarEsperaCarga = function(nombreLib,callback){
-		this.intervaloID = setInterval(function(){
-			jarvis.verificarCarga(nombreLib);
+		this.buscarLib(nombreLib).intervaloID = setInterval(function(){
+			jarvis.verificarCarga(nombreLib,callback);
 		},10);
-		var avisoEsp = document.createElement("div");
-		avisoEsp.setAttribute("cargando","");
-		avisoEsp.id="avisoEsp";
-		avisoEsp.innerHTML = "<div gif></div><div texto>Cargando librerias Necesarias</div>";
-		document.body.insertBefore(avisoEsp,document.body.firstChild);
+		if(!document.getElementById('avisoEsp')){			
+			var avisoEsp = document.createElement("div");
+			avisoEsp.setAttribute("cargando","");
+			avisoEsp.id="avisoEsp";
+			avisoEsp.innerHTML = "<div gif></div><div texto>Cargando librerias Necesarias</div>";
+			document.body.insertBefore(avisoEsp,document.body.firstChild);
+		}
 	};
 
-	this.verificarCarga = function(nombreLib){
+	this.verificarCarga = function(nombreLib,callback){
 		if(this.buscarLib(nombreLib).cargada){
-			clearInterval(this.intervaloID);
+			clearInterval(this.buscarLib(nombreLib).intervaloID);
 			this.intervaloID="";
 			jarvis.traza("libreria "+nombreLib+" ya se encuentra lista para usar",'libreria');
-			var avisoEsp=document.getElementById('avisoEsp');
-			avisoEsp.parentNode.removeChild(avisoEsp);
+			var avisoEsp = document.getElementById('avisoEsp');
+			if(avisoEsp){
+				avisoEsp.parentNode.removeChild(avisoEsp);
+			}
 			if(callback){
 				callback();
 			}
@@ -243,7 +252,7 @@ var Asistente = function(){
 	this.buscarLibreriasEnUso = function(){
 		var libreriasActivas = [];
 		for (var i = 0; i < this.librerias.length; i++) {
-			if(this.librerias[i].estado === 'enUso'){
+			if((this.librerias[i].estado === 'enUso')&&(this.librerias[i].tipo === 'javascript')){
 				libreriasActivas.push(this.librerias[i].nombre);
 			}
 		}
@@ -252,7 +261,7 @@ var Asistente = function(){
 	//--------------------------- Metodos Auxiliares ------------------------------------------//
 
 	this.mostrarlibrerias = function(){
-		alert(JSON.stringify(this.librerias));
+		console.log(this.librerias);
 	};
 
 	this.arranque = function(){
@@ -275,37 +284,59 @@ var Asistente = function(){
 				var lib = new Libreria(nombre,ruta,tipo);
 				this.librerias[this.librerias.length]=lib;
 				lib.cargada=true;
+				lib.estado = 'enUso';
 			}
-		}
-		this.traza = function(aMostrar,tipo){
-			if(this.trazas === 'activa'){
-				console.traza(aMostrar);
-				return;
-			}else if(typeof this.trazas !== 'string'){
-				for(i = 0; i < this.trazas; i++){
-					if(this.trazas[i] === tipo){
-						console.log(aMostrar);
-						return;
-					}
-				}
-			}else {
-				return;
-			}
-		}
+		}		
 		//luego cargo el indice
 		this.buscarIndice();
+		//cargo la libreiras de arranque y ejecuto la funcion onLoad
+		this.iniciarCargaLibrerias();
 	};
-
+	this.iniciarCargaLibrerias = function(){
+		var yo =this;
+		//arranco un intervalo que esperara hasta que se cargue el indice
+		this.intervaloID = setInterval(function(){
+			//si el intervalo fue cargado el estado del asistenete cambiara a "enLinea"
+			if(yo.estado==='enLinea'){
+				//termino el intervalo y cargo las librerias de arranque
+				clearInterval(yo.intervaloID);
+				for(i = 0; i < yo.objArranque.LibreriasArranque.length; i++){
+					yo.usarLib(yo.objArranque.LibreriasArranque[i]);
+				}
+				//arranco unintervalo de espera para la carga de las librerias de arranque
+				yo.intervaloID = setInterval(function(){
+					//verifico si se cargron todas la librerias en uso
+					if(yo.verificarLibreriasEnUso()){
+						//termino el intervalo
+						clearInterval(yo.intervaloID);
+						//ejecuto la funcion de onLoad del asistenete
+						if(yo.load !== "completado"){
+							yo.load = "completado";
+							yo.objArranque.onLoad();
+						}
+					}
+				},30);
+			}
+		},30);
+	}
+	this.traza = function(aMostrar,tipo){
+		if(this.trazas === 'activa'){
+			console.log(aMostrar);
+			return;
+		}else if(typeof this.trazas !== 'string'){
+			for(i = 0; i < this.trazas.length; i++){
+				if(this.trazas[i] === tipo){
+					console.log(aMostrar);
+					return;
+				}
+			}
+		}else {
+			console.log('sinTrazasActivas');
+			return;
+		}
+	}
 	//metodos ejecutados en la creacion del objeto
 	this.arranque();
-};
-//--------------------------RESPUESTAS ---------------------------------------------------
-procesarIndice = function(){
-	if(conexionIndice.readyState == 4){
-		var json=JSON.parse(conexionIndice.responseText);
-		jarvis.estado = 'procesandoIndice';
-		jarvis.cargarIndice(json);
-	}
 };
 //--------------------------MOTOR AJAX---------------------------------------------------
 function crearXMLHttpRequest()

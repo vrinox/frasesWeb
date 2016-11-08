@@ -14,6 +14,7 @@ var Acceso = function(){
 			]
 		},
 		registro: {
+			altura: 250,
 			campos: [
 				{
 					tipo: 'campoDeTexto',
@@ -91,10 +92,10 @@ function ingresar(btn){
 				//extraigo el mensaje
 				var mensaje = respuesta.mensaje;
 				btn.classList.remove('accesando');
-				  UI.agregarToasts({
-				    texto: mensaje,
-				    tipo: 'web-arriba-derecha-alto'
-				  });
+				UI.agregarToasts({
+			    	texto: mensaje,
+			    	tipo: 'web-arriba-derecha-alto'
+			  	});
 				jarvis.buscarLib("Acceso").op.agregarForm('acceso');
 			}else{
 				//armo la session
@@ -104,15 +105,16 @@ function ingresar(btn){
 				//envio los datos para la creacion de la session en el servidor
 				jarvis.session.identificacion();
 
-				//TODO: construir el inicio del chat
-				jarvis.usarLib('Cuerpo');
+				//construir el inicio del chat
+				jarvis.construc.construirInicio();
+				jarvis.construc.llenarMenu();
 			}
 		});
 	}else{
-		  UI.agregarToasts({
-		    texto: "por favor llene los campos para poder ingresar",
-		    tipo: 'web-arriba-derecha-alto'
-		  });
+		UI.agregarToasts({
+			texto: "por favor llene los campos para poder ingresar",
+			tipo: 'web-arriba-derecha-alto'
+		});
 		activarAcceso();
 	}
 }
@@ -174,4 +176,10 @@ function activarRegistro(){
 	modal.partes.pie.nodo.querySelector('button.mat-indigo500').onclick = function(){
 		registro();
 	};
+}
+/*****************************************************************************************************************************/
+arranque();
+function arranque(){
+	//aviso al motor que el script arranco
+	jarvis.libCargada("Acceso");
 }

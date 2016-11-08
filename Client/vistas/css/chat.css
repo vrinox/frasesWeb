@@ -1,0 +1,147 @@
+.iconMjs{
+	float:left;
+	width: 40px;
+	height: 40px;
+	background-image: url("../imagenes/iconos/azules/wallet.png");
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+	margin-left: 10px;
+	transition:all 0.5s;
+}
+/*--------------------------------ChatIndividual--------------------------*/
+div[dashBoard] dashOpc{
+    float: left;
+    width: 100%;
+    box-shadow: 0px 0px 1px #451970;
+    height: 70px;
+}
+
+div[dashBoard] dashOpc div[contOpc]{
+	background: transparent;
+}
+/*----------------------------------Chat Card-----------------------------------------------*/
+card[cardChat] {
+	transition:all 0.3s ease-in-out;
+	width: calc(100%);
+    height: auto;
+    background: white;
+    box-shadow: 0px 0px 1px 0px black;
+    height: 50px;
+    float: left;
+    overflow: hidden;
+}
+
+card[cardChat] div[chatCab]{
+	overflow: hidden; 
+	height: 50px;
+}
+card[cardChat] div[chatCab] div[cardLogo]{
+	border-radius: 100px;
+    background-color: #27ae60;
+    color: #ecf0f1;
+    width: 38px;
+    height: 38px;
+    float: left;
+    margin-left: 10px;
+    margin-top: 6px;
+}
+card[cardChat] div[chatCab] div[cardTitle]{
+	color: #27ae60;
+	float: left;
+	padding: 6px 10px;
+	font-size: 15px;
+
+}
+
+card[cardChat] div[chatCab] div[iniciales]{
+	font-size: 100%;
+    width: auto;
+    padding: 9px 0px 8px 10px;
+}
+card[cardChat] div[chatCab] div[notificaciones]{
+	transition:all 0.3s ease-in-out;
+	border-radius: 100px;
+    border: 1px solid #c0392b;
+    color: white;
+    float: right;
+    background-color: #e74c3c;
+    z-index: 10;
+    width: 15px;
+    height: 15px;
+    margin: 2px -18px 0px 0px;
+    font-size: 13px;
+}
+card[cardChat] div[chatCab] div[opciones]{
+	transition:all 0.3s ease-in-out;
+	border:1px solid white;
+	border-radius: 100px;
+    color: black;
+    float: right;
+    background-color: white;
+    z-index: 5;
+    margin-right: 3px;
+    margin-top: 2px;
+    width: 15px;
+    height: 15px;
+    font-size: 13px;
+}
+card[cardChat] div[chatCab] div[opciones]:hover{
+	border: 1px solid silver;
+	color: silver;
+}
+card[cardChat] div[chatCab] div[opciones] div[contenido],
+card[cardChat] div[chatCab] div[notificaciones] div[contenido]{
+	padding: 0px 0px 0px 0px;
+	text-align: center;
+	cursor: pointer;
+}
+card[cardChat] div[chatCab] div[notificaciones].invisible{
+	opacity: 0;
+	z-index:1;
+}	
+card[cardChat] div[chatBody] div[gif]{
+	float: left;
+	background: transparent url("../imagenes/29.gif") no-repeat scroll 0% 0%;
+	width: 50px;
+	height: 50px;
+	margin: 5px 25px;
+}
+card[cardChat] div[chatBody] div[texto]{
+	float: left;
+	padding-top: 20px;
+	font-style: italic;
+	padding-right: 20px;
+}
+card[cardChat] div[chatFoot]{
+	float: left;
+	height: 40px;
+	width: 100%;
+	border-top:1px solid silver;
+}
+card[cardChat] div[chatFoot] textarea[chatField]{
+	float: left;
+	width: 80%;
+	height: 90%;
+	outline: medium none;
+	resize: none;
+	padding-left: 5px;
+	padding-top: 5px;
+	border: medium none !important;
+}
+card[cardChat] div[chatFoot] input[type='button']{
+	float: right;
+	border-radius: 100px;
+	border: 0px none;
+	width: 35px;
+	height: 35px;
+	margin: 3px 5px 0px 0px;
+	background-color: #00796B;
+}
+
+/*---------------------------------------Clear--------------------------------------------------------------------*/
+div[clear]{
+	clear: both;
+}
+.md-15{
+	font-size: 15px;
+}

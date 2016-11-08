@@ -4,13 +4,16 @@
 		"javascript":[
 			{
 				"nombre":"motorLib",
-				"ruta":"control/motorLib.js"
+				"ruta":"control/motorLib.js",
+				"noUsaCarga":true
 			},{
 				"nombre":"Session",
-				"ruta":"control/sesion.js"
+				"ruta":"control/sesion.js",
+				"noUsaCarga":true
 			},{
 				"nombre":"Rhino",
 				"ruta":"lib/Rhino/Rhino.js",
+				"noUsaCarga":true,
 				"dependencias":[
 					{
 						"nombre":"botonera",
@@ -68,16 +71,19 @@
 				]
 			},{
 				"nombre":"torque",
-				"ruta":"lib/Rhino/motorRegistros.js"
+				"ruta":"lib/Rhino/motorRegistros.js",
+				"noUsaCarga":true
 			},{
 				"nombre":"Cuerpo",
 				"ruta":"vistas/cuerpo.js"
 			},{
 				"nombre":"Acceso",
-				"ruta":"vistas/acceso.js"
+				"ruta":"vistas/acceso.js",
+				"noUsaCarga":true
 			},{
 				"nombre":"Socket.io",
-				"ruta":"socket.io/socket.io.js"
+				"ruta":"socket.io/socket.io.js",
+				"noUsaCarga":true
 			},{
 				"nombre":"Chat",
 				"ruta":"vistas/chat.js"
@@ -85,8 +91,8 @@
 				"nombre":"Opciones",
 				"ruta":"vistas/opciones.js"
 			},{
-				"nombre":"Chat",
-				"ruta":"vistas/chat.js"
+				"nombre":"Contactos",
+				"ruta":"vistas/contactos.js"
 			}
 		],
 		"css":[
@@ -99,6 +105,12 @@
 			},{
 				"nombre":"Estilos login",
 				"ruta":"vistas/css/login.css"
+			},{
+				"ruta":"https://fonts.googleapis.com/css?family=Open+Sans|Oswald",
+				"nombre" : "fuente"
+			},{
+				"ruta":"https://fonts.googleapis.com/icon?family=Material+Icons", 
+				"nombre":"gooIconos" 
 			}
 		]
 	}

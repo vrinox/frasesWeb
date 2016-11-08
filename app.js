@@ -28,7 +28,6 @@ app.use(express.static(path.join(__dirname, 'Client')));
 app.use('/', routes);
 app.use('/corMotor', motor);
 app.use('/corfrase', frase);
-app.use('/corChat', chat);
 
 
 // catch 404 and forward to error handler

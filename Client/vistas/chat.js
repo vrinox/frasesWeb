@@ -4,105 +4,41 @@ var ChatManager = function(){
 	this.chatSession = jarvis.session;
 
 	this.chats = [];
-	//---------------------------------FUNCIONES DASHBOARD----------------------------//
-	this.construirDashBoard = function(){
-		var chatContenedor = document.createElement('div');
-		chatContenedor.id = "chatCon";
-		var html = "<div dashBoard id='dashBoard' >"+
-						"<div estado='oculto' id='dashCab' dashCab><i id='chatIcon' class='iconMjs'><div id='chatTitle' dashtitle>Mensajes</div></i></div>"+
-						"<div dashOpcs id='dashOpcs'>"+
-							"<div dashOpc>Cargando</div>"+
-						"</div>"+
-					"</div>";
-		chatContenedor.innerHTML = html;
-		document.body.appendChild(chatContenedor);
-	};
-	this.mostarDash = function(){
-		var dash = document.getElementById('chatCon');
-		var cabecera = document.getElementById('dashCab');
-		var titulo = document.getElementById('chatTitle');
-		var icon = document.getElementById('chatIcon');
-		dash.style.left="0%";
-		cabecera.style.marginRight="0px";
-		cabecera.style.width="100%";
-		titulo.style.width = "100px";
-	};
-
-	this.ocultarDash = function(){
-		var dash = document.getElementById('chatCon');
-		var cabecera = document.getElementById('dashCab');
-		var titulo = document.getElementById('chatTitle');
-		var icon = document.getElementById('chatIcon');
-		dash.style.left="-31%";
-		cabecera.style.marginRight="-60px";
-		cabecera.style.width="60px";
-		titulo.style.width = "0px";
-	};
-	this.darVida = function(){
-		var cabecera = document.getElementById('dashCab');
-		dashCab.onclick = function(){
-			if(this.getAttribute('estado')=="oculto"){
-				jarvis.buscarLib('Chat').op.mostarDash();
-				this.setAttribute('estado','visible');
-			}else if(this.getAttribute('estado')=="visible"){
-				jarvis.buscarLib('Chat').op.ocultarDash();
-				this.setAttribute('estado','oculto');
-			}
+	this.contactos = [];
+	this.chatActivo = null;
+	//---------------------------------FUNCIONES DE DATOS----------------------------//
+	this.pedirP2P = function(callback){
+		var peticion = {
+			Nombre: jarvis.session.nombreUsu,
+			Operacion: "cargarp2p",
+			entidad: "chat",
+			TipoPet:"web"
 		};
-	};
-	//---------------------------------FUNCIONES DASHBOARD----------------------------//
-	this.pedirP2P = function(){
-		conexionChat=crearXMLHttpRequest();
-		conexionChat.onreadystatechange = function(){
-			//RESPUESTA
-			if(conexionChat.readyState == 4){
-				var xml=conexionChat.responseXML;
-				var success = xml.getElementsByTagName('success')[0].textContent;
-				var contenedor=document.getElementById('dashOpcs');
-				if(success==1){
-					var p2p = xml.getElementsByTagName('p2p')[0].childNodes;
-					var persona;
-					var html="";
-					var user;
-					var userChatCard;
-					contenedor.innerHTML="";
-					for(var x=0;x<p2p.length;x++){
-						persona=p2p[x];
-						user = {
-							nombreUsu : persona.getElementsByTagName('nombreUsu')[0].textContent,
-							nombre : persona.getElementsByTagName('nombre')[0].textContent,
-							apellido : persona.getElementsByTagName('apellido')[0].textContent,
-						};
-						//cargo la lista de chat en el arreglo
-						var newChat = jarvis.buscarLib('Chat').op.crearChatUnit(user);
-						//lo agrego al dashboard
-						contenedor.appendChild(newChat.userChatCard);
-					}
-				}else{
-					contenedor.innerHTML="<div dashOpc>Fallo la carga</div>";
-					jarvis.buscarLib("Chat").op.pedirP2P();
+		var yo = this;
+		torque.Operacion(peticion,function(respuesta){
+			if(respuesta.success){
+				var p2p = respuesta.p2p;
+				for(var x=0;x<p2p.length;x++){
+					yo.contactos.push({
+						nombreUsu : p2p[x].nombreUsu,
+						nombre : p2p[x].nombre,
+						apellido : p2p[x].apellido,
+						pendientes : p2p[x].pendientes
+					});
 				}
+				if(callback){
+					callback(yo.contactos);
+				}
+			}else{
+				UI.agregarToasts({
+				    texto:'error al cargar contactos intente mas tarde',
+				    tipo: 'web-arriba-derecha-alto'
+				});
+				jarvis.buscarLib("Chat").op.pedirP2P(callback);
 			}
-		};
-
-		//PETICION
-		conexionChat.open('POST','corChat', true);
-		conexionChat.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-		var envio="TipoPet="+encodeURIComponent("web")+"&Operacion="+encodeURIComponent("cargarp2p");
-		envio+="&Nombre="+encodeURIComponent(jarvis.session.nombreUsu);
-		conexionChat.send(envio);
+		});
 	};
-	this.agregarMsg = function(dataMsg){
-		console.log('mensaje Agregado por recepcion\n'+dataMsg);
-		var usuario = dataMsg.emisor;
-		var msg = createMsgBubble(dataMsg);
-		var clear=document.createElement('div');
-		clear.setAttribute('clear','');
-		var chatBody = document.getElementById('chatBodyOf'+usuario);
-		chatBody.appendChild(msg);
-		chatBody.appendChild(clear);
-	};
-	//-----------------------------------GESTION DE CHATS--------------------------------------------
+	//---------------------------------FUNCIONES DE CONSTRUCCION----------------------------//
 	this.crearChatUnit = function(user){
 		var newChat=new ChatUnit(user);
 		this.chats.push(newChat);
@@ -115,22 +51,7 @@ var ChatManager = function(){
 				return chatArray[x];
 			}
 		}
-		return -1;
-	};
-	this.controlChats = function(nombreUsu){
-		var chats = this.chats;
-		Chat=this.buscarChatUnit(nombreUsu);
-		for(var x = 0;x<chats.length;x++){
-			if(Chat.id==chats[x].id){
-				if(chats[x].estado=='activo'){
-					chats[x].desactivarChat();
-				}else{
-					chats[x].activarChat();
-				}
-			}else{
-				chats[x].desactivarChat();
-			}
-		}
+		return false;
 	};
 	this.listarChats = function(){
 		var chatArray = this.chats;
@@ -144,53 +65,51 @@ var ChatManager = function(){
 	this.mostrarUsuario = function(){
 		console.log(jarvis.session.nombreUsu);
 	};
-	//------------------------------------ELEMENTO CHAT-------------------------------//
-
-	var ChatUnit = function(user){
-		//-------------------------- Partes ----------------------//
-		var Cabecera = function(nodo){
-			this.estado = 'enUso';
-			this.nodo=nodo;
-		};
-
-		var Cuerpo = function(user){
-			this.estado = 'porConstruir';
-			this.nodo = null;
-
-			this.construirNodo = function(){
-				var contenido = document.createElement("div");
-				contenido.setAttribute('chatBody','');
-				contenido.setAttribute('contChat','iniciando');
-				contenido.id='chatBodyOf'+user;
-				//contenido cuando esta cargando
-				var html="";
-				html+="<div gif></div><div texto>Cargando Chat</div>";
-				contenido.innerHTML = html;
-				this.nodo=contenido;
-				this.estado = 'enUso';
-			};
-			this.construirNodo();
-		};
-
-		var Pie =function(user){
-			this.estado = 'porConstruir';
-			this.nodo = null;
-
-			this.construirNodo = function(){
-				var pie = document.createElement('div');
-				html = '<textarea chatField placeholder="Escriba un mensaje aqui"></textarea>';
-				html += '<input chatSendBtn type="button" onclick="enviarMsg(this)">';
-				pie.setAttribute('chatFoot','');
-				pie.id = 'chatFootOf' + user;
-				pie.innerHTML = html;
-				this.nodo=pie;
-				this.estado = 'enUso';
-			};
-			this.construirNodo();
-		};
-		//--------------------------Fin Partes ----------------------//
+	//---------------------------------FUNCIONES DE MENSAJES----------------------------//
+	this.actualizarMensaje = function(msgData){
+		var contenedorMensajes = UI.buscarVentana('contenedorMensajes');
+		var burbuja = contenedorMensajes.nodo.querySelector('div#msg'+msgData.id);
+		if(!burbuja){
+			burbuja = contenedorMensajes.nodo.querySelector('div#msg'+msgData.idtemp);
+		}
+		if(burbuja){
+			var contFecha = burbuja.querySelector('article[hora]');
+			var contEstado = burbuja.querySelector('article[estado]');
+			if(msgData.fecha){
+				contFecha.textContent = msgData.fecha.substr(0,16);
+			}
+			if(contEstado){				
+				contEstado.textContent = msgData.estado;
+				contEstado.setAttribute('estado',msgData.estado);
+			}
+		}
+	};
+	this.agregarMensaje = function(data){
+		var msg = createMsgBubble(data);
+		var clear=document.createElement('div');
+		clear.setAttribute('clear','');
+		var chatBody =  UI.buscarVentana('contenedorMensajes').nodo;
+		chatBody.appendChild(msg);
+		chatBody.appendChild(clear);
+    	chatBody.scrollTop = '9999';
+	};
+	//---------------------------------FUNCIONES DE NOTIFICACIONES----------------------------//
+	this.activarNotificacion = function(data){
+		var chat = this.buscarChatUnit(data.emisor);
+		console.log(chat);
+		var divPendientes =chat.userChatCard.querySelector('div[notificaciones]');
+		var texto = divPendientes.querySelector('div[contenido]');
+		if(divPendientes.classList.contains('invisible')){
+			divPendientes.classList.remove('invisible');
+		}
+		var valor = parseInt(texto.textContent);
+		texto.textContent = valor + 1;
+	};
+};
+var ChatUnit = function(user){
 		this.id = null;
 		this.estado = 'inactivo';
+		this.nodo = null;
 
 		//datos del usuario
 		this.user = user;
@@ -200,125 +119,169 @@ var ChatManager = function(){
 
 		//nodo fisico del chat
 		this.userChatCard = null;
-		this.partes = [];
 
 		this.construirNodo = function(){
-			this.crearIdChat();
+			this.id = this.crearIdUnico();
 			var user = this.user;
 			this.userChatCard = createCard(user,'chat');
-			this.agregarParte('cabecera');
-			this.partes.cabecera.nodo.onclick=function(){
-				jarvis.buscarLib('Chat').op.controlChats(user.nombreUsu);
-			};
+			var yo = this;
+			this.userChatCard.onclick = function(){
+				yo.activarChat();
+			}
 		};
 
 		this.activarChat = function(){
-			if(this.partes.cuerpo){
-				this.userChatCard.style.height='290px';
-				this.estado='activo';
-			}else{
-				var user = this.user.nombreUsu;
-				var chatUnit=this;
-
-				//cambios en chat
-				this.userChatCard.style.height="90px";
-
-				//agrego las partes al chat
-				chatUnit.agregarParte('cuerpo');
-				chatUnit.agregarParte('pie');
-
-				//Funcionamiento de peticion y respuesta
-				conexionChat = crearXMLHttpRequest();
-				conexionChat.onreadystatechange = function(){
-					//RESPUESTA
-					if(conexionChat.readyState == 4){
-						console.log('RESPUESTA CARGA CHAT');
-						var xml = conexionChat.responseXML;
-						var success = xml.getElementsByTagName('success')[0].textContent;
-						var userName = xml.getElementsByTagName('user')[0].textContent;
-						var chat = jarvis.buscarLib('Chat').op.buscarChatUnit(userName);
-						//cambio el estado chat a activo
-						chat.estado='activo';
-						var chatBody = chat.partes.cuerpo.nodo;
-						var mensaje;
-						chatBody.innerHTML="";
-						chatBody.style.height='200px';
-						chat.userChatCard.style.height='290px';
-						if(success==1){
-							var messages = xml.getElementsByTagName('messages')[0].childNodes;
-							var msg;
-							var clear;
-							for(var m = 0;m < messages.length;m++){
-								//estructura de la etiqueta msg
-								mensaje = {
-									id : messages[m].getElementsByTagName('id')[0].textContent,
-									emisor : messages[m].getElementsByTagName('emisor')[0].textContent,
-									fecha : messages[m].getElementsByTagName('fecha')[0].textContent,
-									contenido : messages[m].getElementsByTagName('cont')[0].textContent,
-									estado : messages[m].getElementsByTagName('estado')[0].textContent
-								};
-								msg = createMsgBubble(mensaje);
-								clear=document.createElement('div');
-								clear.setAttribute('clear','');
-								chatBody.appendChild(msg);
-								chatBody.appendChild(clear);
-							}
-						}
+			jarvis.buscarLib('Chat').op.chatActivo = this;
+			//vacio el campo de texto
+			UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('textarea').value="";
+			var user = this.user.nombreUsu;
+			var chatUnit=this;
+			var contenedorMensajes = UI.buscarVentana('contenedorMensajes');
+			//busco los mensajes
+			var peticion = {
+				entidad: "chat",
+				operacion: 'cargarChat',
+				nombre: jarvis.session.nombreUsu,
+				chat:user
+			};
+			var cuadro = {
+				contenedor: contenedorMensajes.nodo,
+				cuadro:{
+					nombre:'Mensajes'+user,
+					mensaje: "Cargando Mensajes de "+user
+				}
+			};
+			torque.manejarOperacion(peticion,cuadro,function(respuesta){
+				var userName = respuesta.user;
+				var chat = jarvis.buscarLib('Chat').op.buscarChatUnit(userName);
+				//elimino el div de los mesajes pendientes
+				var divPendientes = chat.userChatCard.querySelector('div[notificaciones]');
+				if(divPendientes){
+					var texto = divPendientes.querySelector('div[contenido]');
+					divPendientes.classList.add('invisible');
+					texto.textContent = 0;
+				}
+				//cambio el estado chat a activo
+				chat.estado='activo';
+				if(respuesta.success){
+					var mensajes = respuesta.mensajes;
+					var msg;
+					var clear;
+					for(var m = 0;m < mensajes.length;m++){
+						//estructura de la etiqueta msg
+						mensaje = {
+							id : mensajes[m].id,
+							emisor : mensajes[m].emisor,
+							fecha : mensajes[m].fecha,
+							contenido : mensajes[m].cont,
+							estado : mensajes[m].estado
+						};
+						jarvis.buscarLib('Chat').op.agregarMensaje(mensaje);
 					}
+    				contenedorMensajes.nodo.scrollTop = '9999';
+				}else{
+					UI.agregarToasts({
+						texto:'Error en la carga de mensajes',
+						tipo:'web-arriba-derecha-alto'
+					});
+				}			
+				UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('button').onclick = function(){
+					enviarMsg();
 				};
-				//PETICION
-				conexionChat.open('POST','corChat', true);
-				conexionChat.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-				var envio="TipoPet="+encodeURIComponent("web")+"&Operacion="+encodeURIComponent("cargarChat");
-				envio+="&Nombre="+encodeURIComponent(jarvis.session.nombreUsu)+"&Chat="+encodeURIComponent(user);
-				conexionChat.send(envio);
-			}
+			});
 		};
 		this.desactivarChat = function(){
-			var nodo = this.userChatCard.style.height='50px';
 			this.estado='inactivo';
 		};
-		this.agregarParte = function(tipo){
-			var nuevaParte;
-			var clear = document.createElement('div');
-			clear.setAttribute('clear','');
-			switch(tipo.toLowerCase()){
-				case 'cabecera':
-					nuevaParte = new Cabecera(this.userChatCard.firstChild);
-					this.partes.cabecera=nuevaParte;
-				break;
-				case 'cuerpo':
-					nuevaParte = new Cuerpo(this.user.nombreUsu);
-					this.partes.cuerpo=nuevaParte;
-				break;
-				case 'pie':
-					nuevaParte = new Pie(this.user.nombreUsu);
-					this.partes.pie=nuevaParte;
-				break;
-			}
-			this.userChatCard.appendChild(clear);
-			this.userChatCard.appendChild(nuevaParte.nodo);
-		};
-		this.crearIdChat = function(){
+		this.crearIdUnico = function(){
 		    var text = "";
 		    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 		    for( var i=0; i < 5; i++ ){
 		        text += possible.charAt(Math.floor(Math.random() * possible.length));
 		    }
-		    this.id = text;
+		    return text;
 		};
 		this.construirNodo();
 	};
 
-	//----------------------------------FIN ELEMENTO CHAT-----------------------------//
-
-
-};
-//--------------------------------------FUNCIONAMIENTO DE CARGA DE SCRIPT-------------------//
-arranque();
-function arranque(){
-	//aviso al motor que el script arranco
-	jarvis.libCargada("Chat");
+function createCard(data,tipo,forma){
+	forma = forma || 'objeto';
+	var card = document.createElement('card');
+	var iniciales 
+	if(data.nombre){
+		iniciales = data.nombre.substr(0,1).toUpperCase()+data.apellido.substr(0,1).toUpperCase();
+	}else{
+		iniciales = data.nombreUsu.substr(0,1).toUpperCase();
+	}
+	var seccionDerecha = "";
+	if(tipo == 'chat'){
+		card.id = 'cardChatOf'+data.nombreUsu;
+		card.setAttribute('cardChat',data.nombreUsu);
+		seccionDerecha = "<div opciones onmouseout='regresarNot(this)'>"+
+							"<div contenido class='material-icons bluegrey500 md-15'>settings</div>"+
+						 "</div>";
+		if(parseInt(data.pendientes)){
+			seccionDerecha += "<div notificaciones onmouseover='moverNot(this)'>";
+		}else{
+			seccionDerecha += "<div notificaciones class='invisible' onmouseover='moverNot(this)'>";
+		}
+		seccionDerecha+="<div contenido >"+data.pendientes+"</div>"+
+						"</div>";
+	}
+	var html = "";
+	html += "<div chatCab>"+
+				"<div cardLogo>"+
+					"<div iniciales>"+iniciales+"</div>"+
+				"</div>";
+	if(data.nombre){
+		html += "<div cardTitle >"+data.nombre+" "+data.apellido+"</div>";
+	}else{
+		html += "<div cardTitle >"+data.nombreUsu+"</div>";
+	}
+	html += seccionDerecha+"</div>";
+	card.innerHTML = html;
+	return card;
+}
+/*-------------------------------------------------------Mensajes----------------------------------------------*/
+function createMsgBubble(data){
+	var msg = document.createElement('div');
+	msg.setAttribute('msgBubble','');
+	msg.id='msg'+data.id;
+	var fecha = "";
+	if(data.fecha){
+		msg.fecha=separarFecha(data.fecha);
+		fecha = msg.fecha.completa+" "+msg.fecha.hora;
+	}
+	var html = data.contenido+
+					"<article hora>"+fecha+"</article>";					
+	if(data.emisor!==jarvis.session.nombreUsu){
+		msg.setAttribute('orientacion','izquierda');
+	}else{
+		msg.setAttribute('orientacion','derecha');
+		html+="<article estado = "+data.estado+">"+data.estado+"</article>";
+	}
+	msg.innerHTML = html;
+	//faltan elementos fecha, estado
+	return msg;
+}
+function enviarMsg(){
+	var chat = jarvis.buscarLib('Chat').op.chatActivo;
+	var usuario = chat.user.nombreUsu;
+	var chatField = UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('textarea');
+	if(chatField.value.trim()!==""){
+		var data = {
+			id : chat.crearIdUnico(),
+			contenido : chatField.value,
+			receptor : usuario,
+			emisor : jarvis.session.nombreUsu,
+			estado: 'E',
+			tipo : 'envio'
+		};
+		jarvis.buscarLib('Chat').op.agregarMensaje(data);
+		chatField.value = "";
+		//Funcion de Envio
+		jarvis.session.socket.emit('chatMsg',data);
+	}
 }
 //---------------------------------Notificaciones------------------------
 function moverNot(notObj){
@@ -333,72 +296,20 @@ function regresarNot(opcObj){
 		notObj.style.marginRight = "-18px";
 	}
 }
-//--------------------------------Fin Notificaciones ------------------------
-function createCard(data,tipo,forma){
-		forma = forma || 'objeto';
-		var card = document.createElement('card');
-		var iniciales = data.nombre.substr(0,1).toUpperCase()+data.apellido.substr(0,1).toUpperCase();
-		var seccionDerecha = "";
-		if(tipo == 'chat'){
-
-			card.id = 'cardChatOf'+data.nombreUsu;
-			card.setAttribute('cardChat',data.nombreUsu);
-			seccionDerecha = "<div opciones onmouseout='regresarNot(this)'><div contenido >2</div></div><div notificaciones onmouseover='moverNot(this)'><div contenido>1</div></div>";
-
-		}
-		var html = "";
-		html += "<div chatCab><div cardLogo><div iniciales>"+iniciales+"</div></div><div cardTitle >"+data.nombre+" "+data.apellido+"</div>";
-		html += seccionDerecha+"</div>";
-		card.innerHTML = html;
-		return card;
-	}
-/*-------------------------------------------------------Mensajes----------------------------------------------*/
-function createMsgBubble(data){
-	var msg = document.createElement('div');
-	msg.setAttribute('msgBubble','');
-	msg.textContent = data.contenido;
-	msg.id='msg'+data.id;
-	if(data.fecha){
-		msg.fecha=data.fecha;
-	}
-	if(data.emisor!=jarvis.session.nombreUsu){
-		msg.setAttribute('orientacion','izquierda');
-	}else{
-		msg.setAttribute('orientacion','derecha');
-	}
-	//faltan elementos fecha, estado
-	return msg;
+function separarFecha(string){
+	var fecha = {
+		ano: string.substr(0,4),
+		mes: string.substr(5,2),
+		dia: string.substr(8,2),
+		completa: "",
+		hora: string.substr(11,5)
+	};
+	fecha.completa = fecha.dia+'-'+fecha.mes+'-'+fecha.ano;
+	return fecha;
 }
-function enviarMsg(btnEnviar){
-	var usuario = btnEnviar.parentNode.id.substr(10,btnEnviar.parentNode.id.length);
-	var chatField = btnEnviar.previousSibling;
-	if(chatField.value.trim()!==""){
-		var data = {
-			id : crearIdChat(),
-			contenido : chatField.value,
-			receptor : usuario,
-			emisor : jarvis.session.nombreUsu,
-			tipo : 'envio'
-		};
-		console.log(data);
-		var msg = createMsgBubble(data);
-		var clear=document.createElement('div');
-		clear.setAttribute('clear','');
-		var chatBody = document.getElementById('chatBodyOf'+usuario);
-		chatBody.appendChild(msg);
-		chatBody.appendChild(clear);
-		chatField.value="";
-		//-----------------------------------------------------------------Funcion de Envio ---------------------------------
-		var socket=jarvis.session.socket;
-		socket.emit('chatMsg',data);
-	}
+//--------------------------------------FUNCIONAMIENTO DE CARGA DE SCRIPT-------------------//
+arranque();
+function arranque(){
+	//aviso al motor que el script arranco
+	jarvis.libCargada("Chat");
 }
-//Borrar
-crearIdChat = function(){
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for( var i=0; i < 5; i++ ){
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-};

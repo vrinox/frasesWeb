@@ -106,7 +106,11 @@ var accessModel = {};
 	//posible error por no usar id
 	accessModel.registrar = function(callback){
 		if(connection){
-			connection.query('INSERT INTO usuario SET ?', accessModel.innerData, function(error, result){
+			var data = {
+				nombreUsu : accessModel.innerData.usuario,
+				clave_usu :  accessModel.innerData.clave
+			}
+			connection.query('INSERT INTO usuario SET ?', data, function(error, result){
 				if(error)
 				{
 					throw error;
@@ -172,58 +176,6 @@ var accessModel = {};
 				}
 			});
 		}
-	};
-	accessModel.seguir = function(callback){
-		var data=this.getData();
-		var sql = "SELECT * FROM sigue WHERE seguidor="+connection.escape(data.nombreUsu)+
-		 			"AND seguido="+connection.escape(data.parametro);
-		connection.query(sql,function(error,row){
-			if(error)
-			{
-				throw error;
-			}
-			else
-			{
-
-				if (typeof row !== 'undefined' && row.length > 0)
-				{
-
-					sql='DELETE FROM sigue WHERE codigo='+connection.escape(row[0].codigo);
-
-					connection.query(sql,function(error,result){
-						if(error)
-						{
-							throw error;
-						}
-						else
-						{
-							callback(null,{
-								"affectedRows" : result.affectedRows,
-								"accion" : "borrar"
-							});
-						}
-					});
-				}else{
-					var insertData = {
-						seguidor : data.nombreUsu,
-						seguido : data.parametro
-					};
-					connection.query('INSERT INTO sigue SET ?',insertData,function(error,result){
-						if(error)
-						{
-							throw error;
-						}
-						else
-						{
-							callback(null,{
-								"affectedRows" : result.affectedRows,
-								"accion" :"seguir"
-							});
-						}
-					});
-				}
-			}
-		});
 	};
 function obtenerHoraActual () {
   now = new Date();

@@ -49,12 +49,17 @@ var Session = function(){
 			this.sesIntId=null;
 		}
 		setInterval(function(){
-				jarvis.session.recuperarSession();
-			},50000);
+			jarvis.session.recuperarSession();
+		},50000);
 	};
 
+	this.listarPlugs = function(){
+		this.socket.emit('plugs',{
+			operacion: 'listar',
+		});
+	}
 	this.inicializarConexion = function(){
-		this.socket=io.connect('http://192.168.0.105:4000');
+		this.socket=io.connect('http://192.168.0.101:4000');
 		jarvis.traza('conectado1: '+this.socket.connected,'session');
 		this.socket.on('connect',function(){
 			jarvis.traza('conectado2: '+jarvis.session.socket.connected,'session');
@@ -77,8 +82,13 @@ var Session = function(){
 				jarvis.session.estado="abierta";
 				clearInterval(jarvis.session.sesIntId);
 				jarvis.session.sesIntId=null;
-				if(jarvis.construc.estructuraActiva=="acceso"){
+				if(jarvis.construc.estructuraActiva===null){
 					jarvis.construc.construirInicio();
+					jarvis.construc.llenarMenu();
+					UI.agregarToasts({
+						texto: "Bienvenido "+jarvis.session.nombreUsu,
+						tipo: 'web-arriba-derecha'
+					});
 				}
 			}
 			else if(data.text=="cerrada")
@@ -116,26 +126,40 @@ var Session = function(){
 		this.socket.on('chatMsg',function(data){
 			if(data.tipo=='envio'){
 				jarvis.traza('mensaje llego a receptor','chat');
-				jarvis.buscarLib('Chat').op.listarChats();
-				if(jarvis.buscarLib('Chat').op.buscarChatUnit(data.emisor).estado=='activo'){
-					jarvis.traza(data.emisor,'chat');
-					jarvis.buscarLib('Chat').op.agregarMsg(data);
-					var newData = {
-						id : data.id,
-						estado : 'recibidoPorReceptor',
-						emisor : data.emisor
-					};
-					jarvis.traza('envio cambio de estado','chat');
-					jarvis.session.socket.emit('chatMsg',newData);
+				data.estado = 'R';
+				//envio el cambio de estado
+				var newData = {
+					tipo: 'cambioEstado',
+					id : data.id,
+					mensaje : 'recibidoPorReceptor',
+					emisor : data.emisor
+				};
+				//en caso de que este el chat abierto lo escribo en el chat
+				if(jarvis.buscarLib('Chat').op.chatActivo){
+					if(jarvis.buscarLib('Chat').op.chatActivo.user.nombreUsu === data.emisor){						
+						newData.estado = 'L';
+						jarvis.buscarLib('Chat').op.agregarMensaje(data);
+					}else{
+						//cuando el chat esta inactivo aumento el numero de mensajes pendientes y los aumento
+						newData.estado='R';
+						jarvis.buscarLib('Chat').op.activarNotificacion(data);
+					}
 				}else{
-					//cuando el chat esta inactivo aumento el numero de mensajes pendientes y los aumentos
-				}
+					//cuando no hay ningun chat activo
+					newData.estado='R';
+					jarvis.buscarLib('Chat').op.activarNotificacion(data);
+				}				
+				jarvis.traza('envio cambio de estado','chat');
+				jarvis.session.socket.emit('chatMsg',newData);
 			}else if(data.tipo=='cambioEstado'){
-				jarvis.traza('cambio de estado\n'+data,'chat');
+				jarvis.traza('cambio de estado '+data.estado,'chat');
+				jarvis.traza(data,'chat');
+				if(jarvis.buscarLib('Chat')){
+					jarvis.buscarLib('Chat').op.actualizarMensaje(data);
+				}
 			}
 		});
 		this.recuperarSession();
-
 	};
 
 	//metodos ejecutados en la instanciacion del objeto

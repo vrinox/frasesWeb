@@ -65,7 +65,6 @@ var Motor = function(entidadActiva){
 		            	callback(respuesta);
 					}else{
 						UI.crearMensaje(respuesta.mensaje);
-						UI.elementos.formulario.forma.destruirNodo();
 					}
 				}
 		    }

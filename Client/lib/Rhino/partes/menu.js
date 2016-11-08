@@ -8,24 +8,32 @@ var Menu = function(){
 			this.contenido = data.nombre;
 			this.nodo = null;
 			this.enlace = data.enlace || '#';
+			this.click = data.click || null;
 
 			this.construirNodo = function(){
 				var nodo = document.createElement('section');
 				nodo.innerHTML = this.contenido;
-				var finalEnlace =this.enlace.split('/')[this.enlace.split('/').length-1];
-				var seleccionado = location.href.substring((location.href.length - finalEnlace.length),location.href.length);
-				if(seleccionado == finalEnlace){
-					this.estado = 'seleccionado';
-				}
-				nodo.setAttribute('enlace',this.enlace);
-				if(this.enlace.substring(0,1)=='>'){
-					nodo.onclick=function(e){
-						UI.elementos.menu.avanzar(this);
-					};
-				}else{
-					nodo.onclick=function(e){
-						location.href=this.getAttribute('enlace');
-					};
+				if(this.click!==null){
+					var yo =this;
+					nodo.onclick = function(){
+						yo.click();
+					}
+				}else{					
+					var finalEnlace =this.enlace.split('/')[this.enlace.split('/').length-1];
+					var seleccionado = location.href.substring((location.href.length - finalEnlace.length),location.href.length);
+					if(seleccionado == finalEnlace){
+						this.estado = 'seleccionado';
+					}
+					nodo.setAttribute('enlace',this.enlace);
+					if(this.enlace.substring(0,1)=='>'){
+						nodo.onclick=function(e){
+							UI.elementos.menu.avanzar(this);
+						};
+					}else{
+						nodo.onclick=function(e){
+							location.href=this.getAttribute('enlace');
+						};
+					}
 				}
 				this.nodo = nodo;
 			};
@@ -66,7 +74,9 @@ var Menu = function(){
 					nombre:hijos[x].titulo,
 					enlace:hijos[x].URL
 				};
-
+				if(hijos[x].click){
+					data.click = hijos[x].click;
+				}
 				var elementoNuevo = this.agregarElemento(data);
 				if(elementoNuevo.estado==='seleccionado'){
 					UI.elementos.menu.seleccionado = this;
@@ -131,30 +141,7 @@ var Menu = function(){
 		this.partes.pie = pie;
 		this.nodo.appendChild(pie);
 
-		//si la sesion no esta creada dejo el centro vacio
-		if(typeof(sesion)!=='undefined'){
-			//creo el intervalo y guarda el id
-			this.intervaloCarga = setInterval(function(){
-				if(sesion.arbol!==null){
-					//cierro el intervalo
-					clearInterval(UI.elementos.menu.intervaloCarga);
-					this.intervaloCarga=null;
-					//agrego capas
-					var capaNueva;
-
-					capaNueva = new SubCapa(sesion.arbol,null);
-					UI.elementos.menu.activarCapa(capaNueva);
-					if(UI.elementos.menu.seleccionado){
-						UI.elementos.menu.activarSeleccionado(capaNueva);
-					}
-				}
-			},30);
-			html+='<article off onclick="sesion.cerrarSesion()"><i></i></article>';
-
-		}
-		html+='<article contact><i></i></article>';
-		html+='<article seguridad  onclick="location.href=\'vis_Cuenta.html\'"><i></i></article>';
-		html+='<article books><i></i></article>';
+		html+='<article off onclick="jarvis.session.cerrarSession()"><i></i></article>';
 		pie.innerHTML=html;
 	};
 	this.getEstado = function(){
@@ -241,6 +228,14 @@ var Menu = function(){
 		}
 		titulo.textContent = texto;
 	};
+	this.agregarModulo = function(data){
+		var capaNueva;
+		capaNueva = new SubCapa(data,null);
+		UI.elementos.menu.activarCapa(capaNueva);
+		if(UI.elementos.menu.seleccionado){
+			UI.elementos.menu.activarSeleccionado(capaNueva);
+		}
+	}
 	this.construir();
 };
 /****************************************************************************************************************************************/

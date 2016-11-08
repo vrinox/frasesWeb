@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.44, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.11
 --
 -- Host: localhost    Database: frasesWeb
 -- ------------------------------------------------------
--- Server version	5.5.44-0ubuntu0.14.04.1
+-- Server version	5.0.51b-community-nt-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -20,15 +20,15 @@
 --
 
 DROP TABLE IF EXISTS `discusion`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `discusion` (
-  `codigo` int(11) NOT NULL AUTO_INCREMENT,
-  `tema` varchar(45) COLLATE utf8_spanish_ci NOT NULL,
-  `descripcion` varchar(200) COLLATE utf8_spanish_ci NOT NULL,
-  PRIMARY KEY (`codigo`)
+  `codigo` int(11) NOT NULL auto_increment,
+  `tema` varchar(45) collate utf8_spanish_ci NOT NULL,
+  `descripcion` varchar(200) collate utf8_spanish_ci NOT NULL,
+  PRIMARY KEY  (`codigo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `discusion`
@@ -44,18 +44,18 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `frase`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `frase` (
-  `codigo` int(11) NOT NULL AUTO_INCREMENT,
-  `contenido` varchar(200) COLLATE utf8_spanish_ci NOT NULL,
-  `autor` varchar(20) COLLATE utf8_spanish_ci NOT NULL,
-  `seudonimo` char(1) COLLATE utf8_spanish_ci NOT NULL,
-  PRIMARY KEY (`codigo`),
+  `codigo` int(11) NOT NULL auto_increment,
+  `contenido` varchar(200) collate utf8_spanish_ci NOT NULL,
+  `autor` varchar(20) collate utf8_spanish_ci NOT NULL,
+  `seudonimo` char(1) collate utf8_spanish_ci NOT NULL,
+  PRIMARY KEY  (`codigo`),
   KEY `autor` (`autor`),
   CONSTRAINT `frase_ibfk_1` FOREIGN KEY (`autor`) REFERENCES `usuario` (`nombreUsu`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `frase`
@@ -63,7 +63,7 @@ CREATE TABLE `frase` (
 
 LOCK TABLES `frase` WRITE;
 /*!40000 ALTER TABLE `frase` DISABLE KEYS */;
-INSERT INTO `frase` VALUES (1,'victor','victor','0'),(2,'Frase 2','victor','0'),(3,'mas frases','victor','0'),(4,'necesito mas frases','victor','0'),(5,'anaPuentes','AnaPuentes','0'),(6,'veronica','veronica','0');
+INSERT INTO `frase` VALUES (1,'victor','VICTOR','0'),(2,'Frase 2','VICTOR','0'),(3,'mas frases','VICTOR','0'),(4,'necesito mas frases','VICTOR','0'),(5,'anaPuentes','ANAPUENTES','0'),(6,'veronica','VERONICA','0');
 /*!40000 ALTER TABLE `frase` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -72,18 +72,18 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `integrante`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `integrante` (
   `codigoDis` int(11) NOT NULL,
-  `usuario` varchar(20) COLLATE utf8_spanish_ci NOT NULL,
+  `usuario` varchar(20) collate utf8_spanish_ci NOT NULL,
   `rol` int(11) NOT NULL,
-  PRIMARY KEY (`codigoDis`,`usuario`),
+  PRIMARY KEY  (`codigoDis`,`usuario`),
   KEY `usuario` (`usuario`),
   CONSTRAINT `integrante_ibfk_1` FOREIGN KEY (`codigoDis`) REFERENCES `discusion` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `integrante_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuario` (`nombreUsu`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `integrante`
@@ -99,19 +99,20 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `mensaje`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `mensaje` (
-  `codigo` int(11) NOT NULL AUTO_INCREMENT,
-  `contenido` varchar(200) COLLATE utf8_spanish_ci NOT NULL,
-  `emisor` varchar(20) COLLATE utf8_spanish_ci NOT NULL,
-  `estado` varchar(10) COLLATE utf8_spanish_ci NOT NULL DEFAULT 'E',
-  `fecha` datetime DEFAULT NULL,
-  PRIMARY KEY (`codigo`),
+  `codigo` int(11) NOT NULL auto_increment,
+  `contenido` varchar(200) collate utf8_spanish_ci NOT NULL,
+  `emisor` varchar(20) collate utf8_spanish_ci NOT NULL,
+  `estado` varchar(10) collate utf8_spanish_ci NOT NULL default 'E',
+  `fecha` datetime default NULL,
+  `idtemp` varchar(5) collate utf8_spanish_ci default NULL,
+  PRIMARY KEY  (`codigo`),
   KEY `emisor` (`emisor`),
   CONSTRAINT `mensaje_ibfk_1` FOREIGN KEY (`emisor`) REFERENCES `usuario` (`nombreUsu`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `mensaje`
@@ -119,7 +120,6 @@ CREATE TABLE `mensaje` (
 
 LOCK TABLES `mensaje` WRITE;
 /*!40000 ALTER TABLE `mensaje` DISABLE KEYS */;
-INSERT INTO `mensaje` VALUES (12,'Victor','veronica','E','2016-02-29 01:53:33'),(13,'digame','victor','E','2016-02-29 01:54:11'),(14,'Todo fino?','veronica','E','2016-02-29 01:56:07'),(15,'alpelo','victor','E','2016-02-29 01:56:20'),(16,'hablame','victor','E','2016-02-29 02:45:24'),(17,'Todo fino','veronica','E','2016-02-29 02:45:42'),(18,'no llgan o si\n','victor','E','2016-02-29 02:46:09'),(19,'Mira si llegan','veronica','E','2016-02-29 02:46:22'),(20,'Llegan?','veronica','E','2016-02-29 02:52:33'),(21,'si llgan','victor','E','2016-02-29 02:54:45'),(22,'claro que llegan','victor','E','2016-02-29 02:56:10'),(23,'Pos claro','veronica','E','2016-02-29 02:56:22'),(24,'estoy prbando\n','victor','E','2016-02-29 02:56:49'),(25,'Aquí igual','veronica','E','2016-02-29 02:56:56');
 /*!40000 ALTER TABLE `mensaje` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -128,17 +128,17 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `receptordis`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `receptordis` (
   `codigoMen` int(11) NOT NULL,
   `codigoDis` int(11) NOT NULL,
-  PRIMARY KEY (`codigoMen`,`codigoDis`),
+  PRIMARY KEY  (`codigoMen`,`codigoDis`),
   KEY `codigoDis` (`codigoDis`),
   CONSTRAINT `receptordis_ibfk_1` FOREIGN KEY (`codigoDis`) REFERENCES `discusion` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `receptordis_ibfk_2` FOREIGN KEY (`codigoMen`) REFERENCES `mensaje` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `receptordis`
@@ -154,15 +154,15 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `receptorusu`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `receptorusu` (
   `codigoMen` int(11) NOT NULL,
-  `usuario` varchar(20) COLLATE utf8_spanish_ci NOT NULL,
-  PRIMARY KEY (`codigoMen`,`usuario`),
+  `usuario` varchar(20) collate utf8_spanish_ci NOT NULL,
+  PRIMARY KEY  (`codigoMen`,`usuario`),
   KEY `usuario` (`usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `receptorusu`
@@ -170,7 +170,6 @@ CREATE TABLE `receptorusu` (
 
 LOCK TABLES `receptorusu` WRITE;
 /*!40000 ALTER TABLE `receptorusu` DISABLE KEYS */;
-INSERT INTO `receptorusu` VALUES (13,'veronica'),(15,'veronica'),(16,'veronica'),(18,'veronica'),(21,'veronica'),(22,'veronica'),(24,'veronica'),(12,'victor'),(14,'victor'),(17,'victor'),(19,'victor'),(20,'victor'),(23,'victor'),(25,'victor');
 /*!40000 ALTER TABLE `receptorusu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -179,17 +178,17 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `sigue`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `sigue` (
-  `codigo` int(11) NOT NULL AUTO_INCREMENT,
-  `seguidor` varchar(20) COLLATE utf8_spanish_ci NOT NULL,
-  `seguido` varchar(20) COLLATE utf8_spanish_ci NOT NULL,
-  PRIMARY KEY (`codigo`),
+  `codigo` int(11) NOT NULL auto_increment,
+  `seguidor` varchar(20) collate utf8_spanish_ci NOT NULL,
+  `seguido` varchar(20) collate utf8_spanish_ci NOT NULL,
+  PRIMARY KEY  (`codigo`),
   KEY `seguidor` (`seguidor`),
   KEY `seguido` (`seguido`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `sigue`
@@ -197,7 +196,7 @@ CREATE TABLE `sigue` (
 
 LOCK TABLES `sigue` WRITE;
 /*!40000 ALTER TABLE `sigue` DISABLE KEYS */;
-INSERT INTO `sigue` VALUES (2,'veronica','victor'),(5,'victor','AnaPuentes'),(6,'AnaPuentes','veronica');
+INSERT INTO `sigue` VALUES (14,'ANAPUENTES','VERONICA'),(15,'VERONICA','ARKANTHOS'),(16,'VERONICA','VICTOR');
 /*!40000 ALTER TABLE `sigue` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -206,18 +205,18 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `usuario`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `usuario` (
-  `nombreUsu` varchar(20) COLLATE utf8_spanish_ci NOT NULL,
-  `nombre` varchar(45) COLLATE utf8_spanish_ci NOT NULL,
-  `apellido` varchar(45) COLLATE utf8_spanish_ci NOT NULL,
-  `email` varchar(60) COLLATE utf8_spanish_ci NOT NULL,
-  `clave_usu` varchar(40) COLLATE utf8_spanish_ci NOT NULL,
-  `seudonimo` varchar(20) COLLATE utf8_spanish_ci NOT NULL,
-  PRIMARY KEY (`nombreUsu`)
+  `nombreUsu` varchar(20) collate utf8_spanish_ci NOT NULL,
+  `nombre` varchar(45) collate utf8_spanish_ci NOT NULL,
+  `apellido` varchar(45) collate utf8_spanish_ci NOT NULL,
+  `email` varchar(60) collate utf8_spanish_ci NOT NULL,
+  `clave_usu` varchar(40) collate utf8_spanish_ci NOT NULL,
+  `seudonimo` varchar(20) collate utf8_spanish_ci NOT NULL,
+  PRIMARY KEY  (`nombreUsu`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `usuario`
@@ -225,7 +224,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES ('AnaPuentes','Ana','Puentes','','fb3ee9f2180c3c3f7a9236923f678715ba6e013b',''),('veronica','Veronica','Escobar','','dc8bb0f295ba8ccda25786244ca989e3301edfda',''),('victor','victor','leon','xonirv@gmail.com','fbd10d99594e8e66aa2b946a035cadc1ace7ba65','VRhino');
+INSERT INTO `usuario` VALUES ('ANAPUENTES','Ana','Puentes','','fb3ee9f2180c3c3f7a9236923f678715ba6e013b',''),('ARKANTHOS','','','','54a3f75708b9e70f10e74bf28455a36f1f8be0d8',''),('VERONICA','Veronica','Escobar','','2d6c02f9c144fec34f0a543ba9cf85387eb01f4c',''),('VICTOR','victor','leon','xonirv@gmail.com','f13a1a6f29d3609f98ea6844b3943c94f6e9de95','VRhino');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -238,4 +237,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-28 22:38:57
+-- Dump completed on 2016-11-08 22:59:32
