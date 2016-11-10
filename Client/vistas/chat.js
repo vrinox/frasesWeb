@@ -53,6 +53,13 @@ var ChatManager = function(){
 		}
 		return false;
 	};
+	this.eliminarChatUnit = function(userName){
+		var chatUnit = this.buscarChatUnit(userName);
+		if(chatUnit){
+			chatUnit.userChatCard.parentNode.removeChild(chatUnit.userChatCard);
+			this.chats.splice(this.chats.indexOf(chatUnit),1);
+		}
+	};
 	this.listarChats = function(){
 		var chatArray = this.chats;
 		var lista = "lista de chats:\n";
@@ -78,7 +85,7 @@ var ChatManager = function(){
 			if(msgData.fecha){
 				contFecha.textContent = msgData.fecha.substr(0,16);
 			}
-			if(contEstado){				
+			if(contEstado){
 				contEstado.textContent = msgData.estado;
 				contEstado.setAttribute('estado',msgData.estado);
 			}
@@ -127,7 +134,7 @@ var ChatUnit = function(user){
 			var yo = this;
 			this.userChatCard.onclick = function(){
 				yo.activarChat();
-			}
+			};
 		};
 
 		this.activarChat = function(){
@@ -184,7 +191,7 @@ var ChatUnit = function(user){
 						texto:'Error en la carga de mensajes',
 						tipo:'web-arriba-derecha-alto'
 					});
-				}			
+				}
 				UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('button').onclick = function(){
 					enviarMsg();
 				};
@@ -207,7 +214,7 @@ var ChatUnit = function(user){
 function createCard(data,tipo,forma){
 	forma = forma || 'objeto';
 	var card = document.createElement('card');
-	var iniciales 
+	var iniciales ;
 	if(data.nombre){
 		iniciales = data.nombre.substr(0,1).toUpperCase()+data.apellido.substr(0,1).toUpperCase();
 	}else{
@@ -253,7 +260,7 @@ function createMsgBubble(data){
 		fecha = msg.fecha.completa+" "+msg.fecha.hora;
 	}
 	var html = data.contenido+
-					"<article hora>"+fecha+"</article>";					
+					"<article hora>"+fecha+"</article>";
 	if(data.emisor!==jarvis.session.nombreUsu){
 		msg.setAttribute('orientacion','izquierda');
 	}else{

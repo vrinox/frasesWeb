@@ -1,17 +1,17 @@
 var connection = require('../Core/Core');
-var dateParser = require('../dateParser')
+var dateParser = require('../dateParser');
 //creamos el objeto que contendra todos los metodos y atributos
-var chatModel = {}
+var chatModel = {};
 
-chatModel.innerData = new Array();
+chatModel.innerData = [];
 
 	chatModel.setData = function(outData){
 		this.innerData=outData;
-	}
+	};
 
 	chatModel.getData = function(){
 		return this.innerData;
-	}
+	};
 
 	chatModel.cargarp2p = function(callback){
 		if(connection){
@@ -30,7 +30,6 @@ chatModel.innerData = new Array();
 						"left join mensaje as m on p.codigoMen = m.codigo and m.emisor = s.seguido and m.estado = 'R' "+
 						"WHERE seguidor ="+connection.escape(this.innerData.nombre)+
 						" group by seguido ,u.nombre , u.apellido ";
-						console.log(sql);
 			connection.query(sql, function(error, rows) {
 				if(error)
 				{
@@ -42,18 +41,18 @@ chatModel.innerData = new Array();
 				}
 			});
 		}
-	}
+	};
 
 	chatModel.cargarChat = function(callback){
 		var data = this.innerData;
-		var sql = 'SELECT * FROM(SELECT m.estado AS estado,m.contenido AS cont,m.fecha,m.emisor,m.codigo as id,idtemp FROM mensaje AS m '
-					+'INNER JOIN receptorusu AS ru ON(m.codigo=ru.codigoMen)'
-					+' WHERE m.emisor='+connection.escape(data.nombre)+' AND ru.usuario='+connection.escape(data.user)
-					+' UNION '
-					+' SELECT m.estado AS estado,m.contenido AS cont,m.fecha,m.emisor,m.codigo as id,idtemp FROM mensaje AS m '
-					+' INNER JOIN receptorusu AS ru ON(m.codigo=ru.codigoMen)'
-					+' WHERE m.emisor='+connection.escape(data.user)+' AND ru.usuario='+connection.escape(data.nombre)
-					+') AS mensajes ORDER BY fecha ';
+		var sql = 'SELECT * FROM(SELECT m.estado AS estado,m.contenido AS cont,m.fecha,m.emisor,m.codigo as id,idtemp FROM mensaje AS m '+
+					'INNER JOIN receptorusu AS ru ON(m.codigo=ru.codigoMen)'+
+					' WHERE m.emisor='+connection.escape(data.nombre)+' AND ru.usuario='+connection.escape(data.user)+
+					' UNION '+
+					' SELECT m.estado AS estado,m.contenido AS cont,m.fecha,m.emisor,m.codigo as id,idtemp FROM mensaje AS m '+
+					' INNER JOIN receptorusu AS ru ON(m.codigo=ru.codigoMen)'+
+					' WHERE m.emisor='+connection.escape(data.user)+' AND ru.usuario='+connection.escape(data.nombre)+
+					') AS mensajes ORDER BY fecha ';
 			connection.query(sql, function(error, rows) {
 				if(error)
 				{
@@ -64,7 +63,7 @@ chatModel.innerData = new Array();
 					callback(null, rows);
 				}
 			});
-	}
+	};
 
 	chatModel.guardarMensaje = function(callback){
 		var data = this.innerData;
@@ -75,7 +74,7 @@ chatModel.innerData = new Array();
 				estado: data.estado,
 				fecha:dateParser.getParseDate(),
 				idtemp:data.id
-			}
+			};
 			connection.query('INSERT INTO mensaje SET ?', dataIns1, function(error, result){
 				if(error)
 				{
@@ -86,7 +85,7 @@ chatModel.innerData = new Array();
 					dataIns2={
 						codigoMen:result.insertId,
 						usuario:data.receptor
-					}
+					};
 					connection.query('INSERT INTO receptorusu SET ?', dataIns2, function(error, result){
 						if(error)
 						{
@@ -101,7 +100,7 @@ chatModel.innerData = new Array();
 				}
 			});
 		}
-	}
+	};
 
 	chatModel.actualizar = function(mensajes,estado){
 		if(connection){
@@ -115,7 +114,7 @@ chatModel.innerData = new Array();
 			}
 			valores +=")";
 			if(estado === 'leidos'){
-				valorEstado = 'L' ; 
+				valorEstado = 'L' ;
 			}else if(estado === 'recibidos'){
 				valorEstado = 'R';
 			}
@@ -131,5 +130,5 @@ chatModel.innerData = new Array();
 				}
 			});
 		}
-	}
+	};
 module.exports = chatModel;

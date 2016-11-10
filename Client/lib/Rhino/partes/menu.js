@@ -17,8 +17,8 @@ var Menu = function(){
 					var yo =this;
 					nodo.onclick = function(){
 						yo.click();
-					}
-				}else{					
+					};
+				}else{
 					var finalEnlace =this.enlace.split('/')[this.enlace.split('/').length-1];
 					var seleccionado = location.href.substring((location.href.length - finalEnlace.length),location.href.length);
 					if(seleccionado == finalEnlace){
@@ -235,7 +235,7 @@ var Menu = function(){
 		if(UI.elementos.menu.seleccionado){
 			UI.elementos.menu.activarSeleccionado(capaNueva);
 		}
-	}
+	};
 	this.construir();
 };
 /****************************************************************************************************************************************/

@@ -16,6 +16,7 @@ var Session = function(){
 
 	this.cerrarSession= function(){
 		this.destruirSession();
+		jarvis.construc.construirAcceso();
 	};
 
 	this.destruirSession = function(){
@@ -57,9 +58,9 @@ var Session = function(){
 		this.socket.emit('plugs',{
 			operacion: 'listar',
 		});
-	}
+	};
 	this.inicializarConexion = function(){
-		this.socket=io.connect('http://192.168.0.101:4000');
+		this.socket=io.connect('http://192.168.88.156:4000');
 		jarvis.traza('conectado1: '+this.socket.connected,'session');
 		this.socket.on('connect',function(){
 			jarvis.traza('conectado2: '+jarvis.session.socket.connected,'session');
@@ -123,6 +124,18 @@ var Session = function(){
 				jarvis.traza('no hay sesion abierta','session');
 			}
 		});
+		this.socket.on('contacto',function(data){
+			if(data.accion === 'seguir'){
+				var newContac = jarvis.buscarLib('Chat').op.crearChatUnit(data.user);
+				UI.buscarVentana('ListadoChats').nodo.appendChild(newContac.userChatCard);
+			  UI.agregarToasts({
+			    texto: data.user.nombreUsu+' te ha agregado',
+			    tipo: 'web-arriba-derecha-alto'
+			  });
+			}else if(data.accion === 'borrar'){
+				jarvis.buscarLib('Chat').op.eliminarChatUnit(data.user.nombreUsu);
+			}
+		});
 		this.socket.on('chatMsg',function(data){
 			if(data.tipo=='envio'){
 				jarvis.traza('mensaje llego a receptor','chat');
@@ -136,7 +149,7 @@ var Session = function(){
 				};
 				//en caso de que este el chat abierto lo escribo en el chat
 				if(jarvis.buscarLib('Chat').op.chatActivo){
-					if(jarvis.buscarLib('Chat').op.chatActivo.user.nombreUsu === data.emisor){						
+					if(jarvis.buscarLib('Chat').op.chatActivo.user.nombreUsu === data.emisor){
 						newData.estado = 'L';
 						jarvis.buscarLib('Chat').op.agregarMensaje(data);
 					}else{
@@ -148,7 +161,7 @@ var Session = function(){
 					//cuando no hay ningun chat activo
 					newData.estado='R';
 					jarvis.buscarLib('Chat').op.activarNotificacion(data);
-				}				
+				}
 				jarvis.traza('envio cambio de estado','chat');
 				jarvis.session.socket.emit('chatMsg',newData);
 			}else if(data.tipo=='cambioEstado'){

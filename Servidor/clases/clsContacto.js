@@ -1,19 +1,19 @@
 var connection = require('../Core/Core');
-var dateParser = require('../dateParser')
+var dateParser = require('../dateParser');
 //creamos el objeto que contendra todos los metodos y atributos
-var contactoModel = {}
+var contactoModel = {};
 
-contactoModel.innerData = new Array();
+contactoModel.innerData = [];
 
 	contactoModel.setData = function(outData){
 		this.innerData=outData;
-	}
+	};
 
 	contactoModel.getData = function(){
 		return this.innerData;
-	}
+	};
 
-	contactoModel.buscar = function(callback){
+	contactoModel.listar = function(callback){
 		var data = this.innerData;
 		var sql = "SELECT * FROM usuario where nombreUsu <> '"+data.usuario+"'";
 		connection.query(sql, function(error, rows) {
@@ -26,11 +26,24 @@ contactoModel.innerData = new Array();
 				callback(null, rows);
 			}
 		});
-	}
+	};
+	contactoModel.buscar = function(callback){
+		var data = this.innerData;
+		var sql = "SELECT * FROM usuario WHERE nombreUsu="+connection.escape(data.nombreusu);
+		connection.query(sql, function(error, row) {
+			if(error)
+			{
+				throw error;
+			}
+			else
+			{
+				callback(null, row[0]);
+			}
+		});
+	};
 
 	contactoModel.agregar = function(callback){
 		var data=this.getData();
-		console.log(data);
 		var sql = "SELECT * FROM sigue WHERE seguidor="+connection.escape(data.nombreusu)+
 		 			"AND seguido="+connection.escape(data.parametro);
 		connection.query(sql,function(error,row){
@@ -83,6 +96,8 @@ contactoModel.innerData = new Array();
 										callback(null,{
 											success: 1,
 											contacto: row[0],
+											seguido: data.nombreusu,
+											seguidor:data.parametro,
 											accion:'seguir'
 										});
 									}
@@ -95,6 +110,4 @@ contactoModel.innerData = new Array();
 		});
 	};
 
-
-	
 module.exports = contactoModel;

@@ -1,7 +1,5 @@
 var conexionContactos;
-var Contactos = function(){
-	
-}
+var Contactos = function(){};
 Contactos.prototype.construirBusqueda = function(){
 	var modal = UI.crearVentanaModal({
 		cuerpo:{
@@ -17,7 +15,7 @@ Contactos.prototype.construirBusqueda = function(){
 			uso:true,
 			peticion:{
 				entidad:'contacto',
-				operacion:'buscar',
+				operacion:'listar',
 				usuario:jarvis.session.nombreUsu
 			},
 			espera:{
@@ -59,7 +57,7 @@ Contactos.prototype.verContacto = function(slot) {
 				nombre: 'agregarContacto',
 				mensaje:'Agregando a '+nombre
 			}
-		}
+		};
 		torque.manejarOperacion(pet,cuadro,function(respuesta){
 			if(respuesta.success){
 				UI.agregarToasts({

@@ -88,12 +88,15 @@ function init(server) {
 	  		rack.mostrarListaPlugs();
 	  	}
 	  });
+    socket.on('contacto',function(data){
+      console.log('data');
+    });
 	  //---------------------------Control de Chat--------------------------------------------------------
 	  //modelo o clase necesario para su conexion
 	  socket.on('chatMsg',function(data){
 	    if(data.tipo=='envio')
 	    {
-	    	//pase el estado del mensaje a s que significa recibido por el server 
+	    	//pase el estado del mensaje a s que significa recibido por el server
 		    data.estado = "S";
 		    //----------prueba chatModel en app-------------------
 		    chatModel.setData(data);
@@ -120,18 +123,18 @@ function init(server) {
 	          	msg : 'recibidoServidor',
 	          	estado: 'S',
 	          	fecha : fecha
-			};
-			socket.emit('chatMsg',newData);
+  			};
+  			socket.emit('chatMsg',newData);
 	    }
 	    else if(data.tipo=='cambioEstado'){
 			channel.emit('actualizarMensajes',[data]);
 	    	if(data.estado){
-	        	var emisor = rack.buscarPlug(data.emisor);
-	        	if(emisor){
-	        		console.log('cambio de estado a '+data.estado);
-	        		emisor.socket.emit('chatMsg',data);
-	        	}
-	      	}
+        	var emisor = rack.buscarPlug(data.emisor);
+        	if(emisor){
+        		console.log('cambio de estado a '+data.estado);
+        		emisor.socket.emit('chatMsg',data);
+        	}
+      	}
 	    }
 	  });
 	  socket.on('connect_failed', function(){

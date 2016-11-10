@@ -6,8 +6,6 @@ Construc.prototype.construirInicio = function() {
 	this.estructuraActiva = {
 		nombre: 'chatGeneral'
 	};
-	
-
 	//elimino la ventana acceso
 	UI.quitarVentana('Acceso');
 
@@ -31,7 +29,7 @@ Construc.prototype.construirInicio = function() {
 	},document.body.querySelector('div[contenedor]'));
 
 	//agrego el panel de escritura
-	this.estructuraActiva.contenedorMensajes = UI.agregarVentana({
+	this.estructuraActiva.panelEsc = UI.agregarVentana({
 		clases: ['panelEsc'],
 	    nombre: 'panelEsc',
 	    sectores:[
@@ -68,6 +66,14 @@ Construc.prototype.llenarMenu = function() {
 		padre:null,
 		hijos:[
 			{
+				codigo:"4",
+				titulo: "Opciones",
+				padre: "1",
+				hijos:[],
+				click: function(){
+					jarvis.usarLib('Opciones');
+				}
+			},{
 				codigo:"2",
 				titulo: "contactos",
 				padre: "1",
@@ -84,7 +90,7 @@ Construc.prototype.llenarMenu = function() {
 				]
 			}
 		]
-	}
+	};
 	UI.elementos.menu.agregarModulo(data);
 };
 Construc.prototype.buscarContactos = function(){
@@ -94,6 +100,23 @@ Construc.prototype.buscarContactos = function(){
 		}
 		jarvis.buscarLib('Contactos').op.construirBusqueda();
 	});
+};
+Construc.prototype.construirAcceso = function(){
+	var capas = UI.elementos.menu.nodo.querySelectorAll('div[subcapamenu]');
+	capas.forEach(function(capa){
+		capa.parentNode.removeChild(capa);
+	});
+	this.estructuraActiva = "acceso";
+	if(UI.buscarVentana('contenedorMensajes')){
+		UI.quitarVentana('contenedorMensajes');
+	}
+	if(UI.buscarVentana('panelEsc')){
+		UI.quitarVentana('panelEsc');
+	}
+	if(UI.buscarVentana('ListadoChats')){
+		UI.quitarVentana('ListadoChats');
+	}
+	jarvis.buscarLib("Acceso").op.crearFormulario();
 };
 /*****************************************************************************************************************************/
 arranque();

@@ -61,7 +61,7 @@ var Asistente = function(objArranque){
 		//inactiva: no muestra ninguna
 		//o recibe un arreglo con los tipos que desea mostrar
 		//disponibles: chat, session y libreria
-	this.trazas = ['chat'];
+	this.trazas = [];
 	this.objArranque =objArranque;
 	this.indice = null;
 	//-------------------------------------------METODOS---------------------------------------------//
@@ -192,7 +192,7 @@ var Asistente = function(objArranque){
 		this.buscarLib(nombreLib).intervaloID = setInterval(function(){
 			jarvis.verificarCarga(nombreLib,callback);
 		},10);
-		if(!document.getElementById('avisoEsp')){			
+		if(!document.getElementById('avisoEsp')){
 			var avisoEsp = document.createElement("div");
 			avisoEsp.setAttribute("cargando","");
 			avisoEsp.id="avisoEsp";
@@ -286,7 +286,7 @@ var Asistente = function(objArranque){
 				lib.cargada=true;
 				lib.estado = 'enUso';
 			}
-		}		
+		}
 		//luego cargo el indice
 		this.buscarIndice();
 		//cargo la libreiras de arranque y ejecuto la funcion onLoad
@@ -318,7 +318,7 @@ var Asistente = function(objArranque){
 				},30);
 			}
 		},30);
-	}
+	};
 	this.traza = function(aMostrar,tipo){
 		if(this.trazas === 'activa'){
 			console.log(aMostrar);
@@ -334,7 +334,7 @@ var Asistente = function(objArranque){
 			console.log('sinTrazasActivas');
 			return;
 		}
-	}
+	};
 	//metodos ejecutados en la creacion del objeto
 	this.arranque();
 };

@@ -17,7 +17,7 @@ channel.on('actualizarMensajes', function(data,emisor){
 	var plugEmisor = rack.buscarPlug(emisor.toUpperCase());
     data.forEach(function(each){
 		if(each.emisor === emisor){
-			if(each.estado!='L'){				
+			if(each.estado!='L'){
 				each.estado = 'L';
 				mensajes.push(each.id);
 				if(plugEmisor){
@@ -40,7 +40,7 @@ corChat.gestionar = function(pet,res){
 		case 'cargarp2p':
 			var reqData = {
 				nombre : pet.nombre
-			}
+			};
 			chatModel.setData(reqData);
 			chatModel.cargarp2p(function(error,data){
 				var respuesta = {};
@@ -66,7 +66,7 @@ corChat.gestionar = function(pet,res){
 								"En el menu lateral en el apartado <b>CONTACTOS</b> esta la opcion "+
 								"<b>BUSCAR CONTACTO</b> hai podra conseguir personas para empezar"+
 								" a comunicase"
-					}
+					};
 				}
 				utils.enviar(respuesta,res);
 			});
@@ -75,7 +75,7 @@ corChat.gestionar = function(pet,res){
 			var reqData = {
 				nombre : pet.nombre,
 				user : pet.chat
-			}
+			};
 			chatModel.setData(reqData);
 			chatModel.cargarChat(function(error,data){
 				var respuesta = {};
@@ -92,7 +92,7 @@ corChat.gestionar = function(pet,res){
 							fecha: data[x].fecha,
 							emisor: data[x].emisor,
 							idtemp: data[x].idtemp
-						}
+						};
 						respuesta.mensajes.push(msg);
 					}
 					//actualizo a leidos todos los mensajes del chat
@@ -101,7 +101,7 @@ corChat.gestionar = function(pet,res){
 					respuesta.success = 0;
 					respuesta.msg = "chat vacio";
 					respuesta.user = reqData.user;
-				}  
+				}
 				utils.enviar(respuesta,res);
 			});
 			break;
