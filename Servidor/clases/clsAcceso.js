@@ -109,7 +109,7 @@ var accessModel = {};
 			var data = {
 				nombreUsu : accessModel.innerData.usuario,
 				clave_usu :  accessModel.innerData.clave
-			}
+			};
 			connection.query('INSERT INTO usuario SET ?', data, function(error, result){
 				if(error)
 				{
