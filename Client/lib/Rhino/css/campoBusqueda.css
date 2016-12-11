@@ -1,0 +1,45 @@
+div[campoBusqueda]{
+  width: 32%;
+  position: relative;
+  margin-left: 0px !important;
+  float: left;
+}
+div[campoBusqueda][area]{
+  width: calc(100% - 24px);
+}
+div[campoBusqueda] div[formelements]{
+  width: calc(100%);
+}
+div[campoBusqueda] button{
+  position: absolute;
+  margin-left: calc(100% - 34px);
+  z-index: 10;
+  margin-top: 3px;
+}
+div[capa='contenido'] div[lista] section[busqueda]{
+  width: 100%;
+}
+button.mat-but-transp{
+  transition: all 0.2s ease-in-out;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 60px;
+    z-index: 10;
+    margin-left: 10px;
+    background-repeat: no-repeat;
+    background-position: 12px;
+    float: left;
+    overflow: visible;
+}
+div[campoBusqueda] select{
+  padding: 6px 9px 7px 9px;
+}
+div[campoBusqueda] button.deshabilitado{
+  background-color: #999 !important;
+}
+@media only screen and (max-device-width: 480px) {
+    div[campoBusqueda]{
+      width: calc(100% - 10px);
+    }
+}

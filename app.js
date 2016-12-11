@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 //archivos que se encargan de manejar la rutas
 var routes = require('./Servidor/routes/index');
-var acceso = require('./Servidor/routes/corAcceso');
+var motor = require('./Servidor/routes/corMotor');
 var frase = require('./Servidor/routes/corFrase');
 var chat = require('./Servidor/routes/corChat');
 //aplicacion
@@ -26,9 +26,8 @@ app.use(express.static(path.join(__dirname, 'Client')));
 
 //rutas externas
 app.use('/', routes);
-app.use('/corAcceso', acceso);
+app.use('/corMotor', motor);
 app.use('/corfrase', frase);
-app.use('/corChat', chat);
 
 
 // catch 404 and forward to error handler

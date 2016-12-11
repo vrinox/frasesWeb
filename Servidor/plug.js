@@ -1,5 +1,5 @@
 var plugAssembler= {};
- 
+
 plugAssembler.configure = function(attr,socket){
 	var plug = {
 		nombreUsu : attr.nombreUsu,
@@ -9,7 +9,7 @@ plugAssembler.configure = function(attr,socket){
 		estado : "conectado",
 		idIntSes : null,
 		ip : socket.client.conn.remoteAddress
-	}
+	};
 	return plug;
-}
+};
 module.exports=plugAssembler;
