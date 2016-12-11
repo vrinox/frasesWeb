@@ -1,0 +1,29 @@
+div.campo-identificacion{
+    margin-left: 0px !important;
+    float: left;
+    overflow: visible;
+    position: relative;
+    z-index: 4;
+    width: 32%;
+}
+div[campo-rif].combo-letra{
+  width:28%;
+}
+div[campo-rif].campo-numero{
+  width: 44%;
+}
+div[campo-rif].campo-final{
+  width: 28%;
+}
+div[campo-cedula].combo-letra{
+  width:30%;
+}
+div[campo-cedula].campo-numero{
+  width: 70%;
+}
+/*-----------------------------------Media screen-------------------------------*/
+@media only screen and (max-device-width: 480px) {
+    div.campo-identificacion{
+      width: calc(100% - 10px);
+    }
+}
