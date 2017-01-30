@@ -314,9 +314,3 @@ function separarFecha(string){
 	fecha.completa = fecha.dia+'-'+fecha.mes+'-'+fecha.ano;
 	return fecha;
 }
-//--------------------------------------FUNCIONAMIENTO DE CARGA DE SCRIPT-------------------//
-arranque();
-function arranque(){
-	//aviso al motor que el script arranco
-	jarvis.libCargada("Chat");
-}

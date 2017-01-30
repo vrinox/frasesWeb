@@ -177,9 +177,3 @@ function activarRegistro(){
 		registro();
 	};
 }
-/*****************************************************************************************************************************/
-arranque();
-function arranque(){
-	//aviso al motor que el script arranco
-	jarvis.libCargada("Acceso");
-}

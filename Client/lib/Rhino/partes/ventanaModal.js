@@ -477,9 +477,3 @@ var modalWindow = function(){
 		}
 	};
 };
-/****************************************************************************************************************************************/
-arranque();
-function arranque(){
-	//aviso al motor que el script arranco
-	jarvis.libCargada("ventanaModal");
-}

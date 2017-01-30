@@ -77,9 +77,3 @@ Contactos.prototype.verContacto = function(slot) {
 		});
 	});
 };
-//--------------------------------------FUNCIONAMIENTO DE CARGA DE SCRIPT-------------------//
-arranque();
-function arranque(){
-	//aviso al motor que el script arranco
-	jarvis.libCargada("Contactos");
-}

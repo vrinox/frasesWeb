@@ -238,9 +238,3 @@ var Menu = function(){
 	};
 	this.construir();
 };
-/****************************************************************************************************************************************/
-arranque();
-function arranque(){
-	//aviso al motor que el script arranco
-	jarvis.libCargada("menu");
-}
