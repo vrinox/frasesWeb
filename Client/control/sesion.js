@@ -178,11 +178,3 @@ var Session = function(){
 	//metodos ejecutados en la instanciacion del objeto
 	this.inicializarConexion();
 };
-//***********************************************************************************************************************
-arranque();
-function arranque(){
-	//aviso al motor que el script arranco
-	jarvis.libCargada("Session");
-	//agrego el operador a la libreria
-	jarvis.session = new Session();
-}

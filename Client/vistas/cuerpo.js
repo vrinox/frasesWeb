@@ -118,12 +118,3 @@ Construc.prototype.construirAcceso = function(){
 	}
 	jarvis.buscarLib("Acceso").op.crearFormulario();
 };
-/*****************************************************************************************************************************/
-arranque();
-function arranque(){
-	//aviso al motor que el script arranco
-	jarvis.libCargada("Cuerpo");
-	//agrego el operador a la libreria
-	jarvis.construc = new Construc();
-	jarvis.construc.estado = 'enUso';
-}

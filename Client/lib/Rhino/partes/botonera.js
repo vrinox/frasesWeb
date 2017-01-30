@@ -219,9 +219,3 @@ var Botonera = function(atributos){
 	};
 	this.construir();
 };
-/****************************************************************************************************************************************/
-arranque();
-function arranque(){
-	//aviso al motor que el script arranco
-	jarvis.libCargada("botonera");
-}

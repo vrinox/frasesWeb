@@ -69,34 +69,50 @@ var Asistente = function(objArranque){
 	this.buscarIndice = function(){
 		this.estado = "cargandoIndice";
 		var ruta = "control/indice.json";
-		conexionIndice=crearXMLHttpRequest();
-		conexionIndice.onreadystatechange = function(){
-			if(conexionIndice.readyState == 4){
-				var json=JSON.parse(conexionIndice.responseText);
-				jarvis.estado = 'procesandoIndice';
-				jarvis.cargarIndice(json);
-			}
-		};
-		conexionIndice.open('GET',ruta, true);
-		conexionIndice.send();
+		return new Promise(function(resolve,reject){
+
+			req=crearXMLHttpRequest();
+			req.onreadystatechange = function(){
+				if (req.readyState == 4){
+					if (req.status == 200) {
+						//la resuelvo
+								jarvis.estado = 'procesandoIndice';
+				        resolve(req.responseText);
+
+					}else{
+				      //la rechazo
+							jarvis.estado = 'ErrorEnCargaDeIndice';
+				    	reject('rechazada');
+					}
+			  }
+			};
+			req.open('GET',ruta, true);
+			req.send();
+		})
+			.then(JSON.parse,function(){
+				console.log('ErrorEnCargaDeIndice');
+			});
 	};
 
 	this.cargarIndice = function(json){
-		var Librerias = json.librerias;
-		this.indice = Librerias;
-		this.estado = 'cargandoLibrerias';
+		var yo = this;
+		return new Promise(function(resolve,reject){
+			var Librerias = json.librerias;
+			yo.indice = Librerias;
+			yo.estado = 'cargandoLibrerias';
 
-		//cargo el javascript
-		Librerias.javascript.forEach(function(libreria){
-			jarvis.addLib(libreria,"javascript");
+			//cargo el javascript
+			Librerias.javascript.forEach(function(libreria){
+				yo.addLib(libreria,"javascript");
+			});
+			//y luego el css
+			Librerias.css.forEach(function(libreria){
+				yo.addLib(libreria,"css");
+			});
+
+			yo.estado = "enLinea";
+			resolve();
 		});
-		//y luego el css
-		Librerias.css.forEach(function(libreria){
-			jarvis.addLib(libreria,"css");
-		});
-
-		this.estado = "enLinea";
-
 	};
 	//---------------------------Metodos para la utilizacion de librerias---------------------------//
 	this.verificarLibreria = function(lib){
@@ -119,7 +135,6 @@ var Asistente = function(objArranque){
 		}
 		return false;
 	};
-
 	this.addLib=function(libreria,tipo){
 		//instancio una nueva libreria
 		var lib = new Libreria(libreria,tipo);
@@ -175,79 +190,57 @@ var Asistente = function(objArranque){
 		}else{
 			console.log('no existe '+nombreLib);
 		}
+		return lib;
+	};
+
+	this.usarLib = function(nombreLib,callback){
+		var libreria = jarvis.buscarLib(nombreLib);
+		//TODO: carga de librerias css asincronas
+		if(libreria.estado == 'enUso'){
+			return this.montarLib(nombreLib,callback)
+				.then(function(lib){
+					lib.estado = 'enUso';
+					return lib;
+				});
+		}else{
+			return lib;
+		}
+	};
+
+	this.montarLib = function(nombreLib,callback){
+		var yo = this;
+		return new Promise(function(resolve,reject){
+			var lib = jarvis.buscarLib(nombreLib);
+			if(lib){
+
+				if(lib.dependencias){
+					lib.dependencias
+						.map(function(dep){
+							yo.montarLib(dep.nombre);
+						})
+						.reduce(function(sequence,lib){
+							return sequence.then(function(){
+								return lib;
+							});
+						},Promise.resolve());
+				}
+				var r = false;
+        lib.tag.async = true;
+        lib.tag.onload = lib.tag.onreadystatechange = function () {
+            if (!r && (!this.readyState || this.readyState == "complete")) {
+                r = true;
+                resolve(lib);
+            }
+        };
+        lib.tag.onerror = lib.tag.onabort = reject;
+				yo.contendor.appendChild(lib.tag);
+			}else{
+				console.log(nombreLib);
+				reject('no existe '+nombreLib);
+			}
+		});
 	};
 	//------------------------------Metodos de carga de scripts--------------------------------//
-
-	this.libCargada = function(nombre){
-		var libreria = this.buscarLib(nombre);
-		if(libreria){
-			libreria.cargada = true;
-			jarvis.traza(nombre+" cargada",'libreria');
-		}else{
-			jarvis.traza("libreria "+nombre+" no se encuentra en el indice",'libreria');
-		}
-	};
-
-	this.iniciarEsperaCarga = function(nombreLib,callback){
-		this.buscarLib(nombreLib).intervaloID = setInterval(function(){
-			jarvis.verificarCarga(nombreLib,callback);
-		},10);
-		if(!document.getElementById('avisoEsp')){
-			var avisoEsp = document.createElement("div");
-			avisoEsp.setAttribute("cargando","");
-			avisoEsp.id="avisoEsp";
-			avisoEsp.innerHTML = "<div gif></div><div texto>Cargando librerias Necesarias</div>";
-			document.body.insertBefore(avisoEsp,document.body.firstChild);
-		}
-	};
-
-	this.verificarCarga = function(nombreLib,callback){
-		if(this.buscarLib(nombreLib).cargada){
-			clearInterval(this.buscarLib(nombreLib).intervaloID);
-			this.intervaloID="";
-			jarvis.traza("libreria "+nombreLib+" ya se encuentra lista para usar",'libreria');
-			var avisoEsp = document.getElementById('avisoEsp');
-			if(avisoEsp){
-				avisoEsp.parentNode.removeChild(avisoEsp);
-			}
-			if(callback){
-				callback();
-			}
-		}else{
-			jarvis.traza("libreria "+nombreLib+" cargando",'libreria');
-		}
-	};
-
-	this.verificarDependencias = function(nombreLib){
-		var lib = this.buscarLib(nombreLib);
-		if(lib.cargada){
-			lib.dependencias.forEach(function(each){
-				if(!each.cargada){
-					return false;
-				}
-			});
-			return true;
-		}else{
-			return false;
-		}
-	};
-	this.verificarLibreriasEnUso = function(){
-		var libreriasActivas = this.buscarLibreriasEnUso();
-		if (libreriasActivas.length) {
-			var lib;
-			for (var i = 0; i < libreriasActivas.length; i++) {
-				lib = this.buscarLib(libreriasActivas[i]);
-				if(!this.verificarDependencias(lib.nombre)){
-					return false;
-				}else{
-					lib.estado = 'cargada';
-				}
-			}
-			return true;
-		}else{
-			return false;
-		}
-	};
 
 	this.buscarLibreriasEnUso = function(){
 		var libreriasActivas = [];
@@ -288,36 +281,27 @@ var Asistente = function(objArranque){
 			}
 		}
 		//luego cargo el indice
-		this.buscarIndice();
-		//cargo la libreiras de arranque y ejecuto la funcion onLoad
-		this.iniciarCargaLibrerias();
+		var yo = this;
+		this.buscarIndice()
+			.then(function(indice){
+				return yo.cargarIndice(indice);
+			})
+			.then(function(){
+				return yo.iniciarCargaLibrerias();
+			})
+			.then(function(){
+					yo.load = "completado";
+					yo.objArranque.onLoad();
+			},function(){
+				console.log('error');
+			});
 	};
 	this.iniciarCargaLibrerias = function(){
 		var yo =this;
-		//arranco un intervalo que esperara hasta que se cargue el indice
-		this.intervaloID = setInterval(function(){
-			//si el intervalo fue cargado el estado del asistenete cambiara a "enLinea"
-			if(yo.estado==='enLinea'){
-				//termino el intervalo y cargo las librerias de arranque
-				clearInterval(yo.intervaloID);
-				for(i = 0; i < yo.objArranque.LibreriasArranque.length; i++){
-					yo.usarLib(yo.objArranque.LibreriasArranque[i]);
-				}
-				//arranco unintervalo de espera para la carga de las librerias de arranque
-				yo.intervaloID = setInterval(function(){
-					//verifico si se cargron todas la librerias en uso
-					if(yo.verificarLibreriasEnUso()){
-						//termino el intervalo
-						clearInterval(yo.intervaloID);
-						//ejecuto la funcion de onLoad del asistenete
-						if(yo.load !== "completado"){
-							yo.load = "completado";
-							yo.objArranque.onLoad();
-						}
-					}
-				},30);
-			}
-		},30);
+		return Promise.all(yo.objArranque.LibreriasArranque.map(function(nombre){return yo.montarLib(nombre);})
+		).then(function(result){
+			console.log(result);
+		});
 	};
 	this.traza = function(aMostrar,tipo){
 		if(this.trazas === 'activa'){

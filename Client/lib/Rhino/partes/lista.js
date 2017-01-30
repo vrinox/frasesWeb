@@ -648,9 +648,3 @@ var Lista = function(data){
 	};
   this.construir();
 };
-/****************************************************************************************************************************************/
-arranque();
-function arranque(){
-  //aviso al motor que el script arranco
-  jarvis.libCargada("lista");
-}

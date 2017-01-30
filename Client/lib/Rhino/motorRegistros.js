@@ -122,9 +122,3 @@ function crearXMLHttpRequest()
       xmlHttp = new XMLHttpRequest();
   return xmlHttp;
 }
-/****************************************************************************************************************************************/
-arranque();
-function arranque(){
-	//aviso al motor que el script arranco
-	jarvis.libCargada("torque");
-}
