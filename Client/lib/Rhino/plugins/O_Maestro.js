@@ -3,7 +3,7 @@ var Maestro = function(atributos){
 	this.entidadActiva = atributos.entidad;
 	this.atributos = atributos;
 	this.ventanaList = null;
-	this.ventanaForm = null;
+	this.forma = null;
 	this.interval = null;
 	this.estado = 'sinInicializar';
 	//-----------------------------Metodos----------------------------------------------
@@ -43,7 +43,7 @@ var Maestro = function(atributos){
 			atributos.tipo = 'modificar';
 		}
 		var tiempo = 0;
-		if(this.ventanaForm){
+		if(this.forma){
 			tiempo = 1000;
 			var yo = this;
 			yo.quitarformulario();
@@ -55,11 +55,11 @@ var Maestro = function(atributos){
 		}
 	};
 	this.quitarformulario = function(){
-		this.ventanaForm.nodo.classList.remove('aparecer');
+		this.forma.nodo.classList.remove('aparecer');
 		var yo = this;
 		setTimeout(function () {
-			yo.ventanaForm.nodo.parentNode.removeChild(yo.ventanaForm.nodo);
-			yo.ventanaForm = null;
+			yo.forma.nodo.parentNode.removeChild(yo.forma.nodo);
+			yo.forma = null;
 		}, 500);
 	};
 	this.crearformulario = function(atributos){
@@ -71,7 +71,7 @@ var Maestro = function(atributos){
 		}
 	};
 	this.construirVentana = function(){
-		this.ventanaForm = UI.agregarVentana({
+		this.forma = UI.agregarVentana({
 			nombre:'formulario '+UI.buscarConstructor(this.entidadActiva).nombre,
 			clases: ['maestro'],
 			sectores:[
@@ -81,7 +81,7 @@ var Maestro = function(atributos){
 				}
 			]
 		},this.atributos.contenedor);
-		this.ventanaForm.nodo.classList.add('aparecer');
+		this.forma.nodo.classList.add('aparecer');
 	};
 	this.agregarSectorFormulario = function(tipo,registro){
 		var sector = {
@@ -92,16 +92,16 @@ var Maestro = function(atributos){
 		if(registro){
 			sector.registro = registro;
 		}
-		this.ventanaForm.agregarSector(sector);
-		this.ventanaForm.formulario = this.ventanaForm.buscarSector('formulario').formulario;
-		return this.ventanaForm.buscarSector('formulario').formulario;
+		this.forma.agregarSector(sector);
+		this.forma.formulario = this.forma.buscarSector('formulario').formulario;
+		return this.forma.buscarSector('formulario').formulario;
 	};
 	this.cambiosNuevo = function(){
-		this.ventanaForm.agregarTitulo({
+		this.forma.agregarTitulo({
 				tipo:'basico',
 				html: 'Nueva '+UI.buscarConstructor(this.entidadActiva).titulo
 		});
-		this.ventanaForm.buscarSector('carga').destruirNodo();
+		this.forma.buscarSector('carga').destruirNodo();
 		this.agregarSectorFormulario('nuevo');
 		var quitar = ['nuevo','modificar','eliminar','guardar'];
 		var agregar = [
@@ -112,7 +112,7 @@ var Maestro = function(atributos){
 				}
 			}
 		];
-		var formulario = UI.elementos.maestro.ventanaForm.formulario;
+		var formulario = UI.elementos.maestro.forma.formulario;
 		if(formulario.plano.botones){
 			if(formulario.plano.botones.nuevo.quitar){
 				quitar = formulario.plano.botones.nuevo.quitar.concat(quitar);
@@ -127,7 +127,7 @@ var Maestro = function(atributos){
 		});
 	};
 	this.cambiosModificar = function(atributos){
-		this.ventanaForm.agregarTitulo({
+		this.forma.agregarTitulo({
 			tipo:'basico',
 			html: 'Modificar Registro'
 		});
@@ -138,14 +138,14 @@ var Maestro = function(atributos){
 			codigo: atributos.codigo
 		};
 		var cuadro = {
-			contenedor : this.ventanaForm.buscarSector('carga').nodo,
+			contenedor : this.forma.buscarSector('carga').nodo,
 			cuadro: {
 				nombre: 'cargaRegistros',
 				mensaje: 'Cargando Registro '+atributos.nombre
 			}
 		};
 		torque.manejarOperacion(peticion,cuadro,function(respuesta){
-			UI.elementos.maestro.ventanaForm.buscarSector('carga').destruirNodo();
+			UI.elementos.maestro.forma.buscarSector('carga').destruirNodo();
 			if(respuesta.success){
 				var formulario = UI.elementos.maestro.agregarSectorFormulario('modificar',respuesta.registros);
 				formulario.registroId = atributos.codigo;
@@ -186,7 +186,7 @@ var Maestro = function(atributos){
 		});
 	};
 	this.modificar = function(){
-		var formulario = this.ventanaForm.formulario;
+		var formulario = this.forma.formulario;
 		formulario.habilitar();
 		var gestionar = {
 			quitar: ['modificar'],
@@ -202,14 +202,14 @@ var Maestro = function(atributos){
 		UI.elementos.botonera.gestionarBotones(gestionar);
 	};
 	this.guardarCambios = function(){
-		var formulario = this.ventanaForm.formulario;
+		var formulario = this.forma.formulario;
 		var peticion = formulario.captarValores();
 		peticion.entidad = this.entidadActiva;
 		peticion.modulo = formulario.plano.modulo;
 		peticion.codigo = formulario.registroId;
 		peticion.operacion = 'modificar';
 		var cuadro = {
-			contenedor: this.ventanaForm.buscarSector('formulario').nodo,
+			contenedor: this.forma.buscarSector('formulario').nodo,
 			cuadro: {
 				nombre: 'guardandoCambiosMaestro',
 				mensaje: 'Guardando Cambios'
@@ -225,14 +225,14 @@ var Maestro = function(atributos){
 		});
 	};
 	this.guardar = function(){
-		var formulario = this.ventanaForm.formulario;
+		var formulario = this.forma.formulario;
 		if(formulario.validar()){
 			var peticion = formulario.captarValores();
 			peticion.entidad = formulario.plano.nombre;
 			peticion.modulo = formulario.plano.modulo;
 			peticion.operacion = 'guardar';
 			var cuadro = {
-				contenedor : this.ventanaForm.buscarSector('formulario').nodo,
+				contenedor : this.forma.buscarSector('formulario').nodo,
 				cuadro: {
 				  nombre: 'guardandoMaestro',
 				  mensaje: 'Guardando registro'

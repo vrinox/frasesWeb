@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Cuerpo>
+	<Librerias>
+		<!-- JAVASCRIPTs -->
+		<libreria>
+			<nombre>motorLib</nombre>
+			<ruta>control/motorLib.js</ruta>
+			<tipo>javascript</tipo>
+		</libreria>
+		<libreria>
+			<nombre>cuerpo</nombre>
+			<ruta>vistas/cuerpo.js</ruta>
+			<tipo>javascript</tipo>
+		</libreria>		
+		<libreria>
+			<nombre>Acceso</nombre>
+			<ruta>vistas/acceso.js</ruta>
+			<tipo>javascript</tipo>
+		</libreria>
+		<libreria>
+			<nombre>Socket.io</nombre>
+			<ruta>socket.io/socket.io.js</ruta>
+			<tipo>javascript</tipo>
+		</libreria>
+		<libreria>
+			<nombre>Chat</nombre>
+			<ruta>vistas/chat.js</ruta>
+			<tipo>javascript</tipo>
+		</libreria>	
+		<libreria>
+			<nombre>Opciones</nombre>
+			<ruta>vistas/opciones.js</ruta>
+			<tipo>javascript</tipo>
+		</libreria>
+		<!-- CSS -->
+		<libreria>
+			<nombre>Iconos</nombre>
+			<ruta>vistas/css/icons.css</ruta>
+			<tipo>css</tipo>
+		</libreria>	
+		<libreria>
+			<nombre>estilos cuerpo</nombre>
+			<ruta>vistas/css/cuerpo.css</ruta>
+			<tipo>css</tipo>
+		</libreria>
+	</Librerias>
+</Cuerpo>

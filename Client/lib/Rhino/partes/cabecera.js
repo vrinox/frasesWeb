@@ -1,12 +1,13 @@
 var Cabecera = function(){
 
 	this.estado = 'porConstriur';
+	this.nodo = null;
 
 	this.construir = function(){
 		var contenedor = obtenerContenedor();
 		var elemento = document.createElement('div');
 		elemento.setAttribute('cabecera','');
-		elemento.innerHTML = "<button type='button' menuBtn id='menuBtn'><i class='material-icons md-36 white'>menu</i></button><div titulo>SOCA-PORTUGUESA</div>";
+		elemento.innerHTML = "<button type='button' menuBtn id='menuBtn'><i class='material-icons md-36 white'>menu</i></button><div titulo>CloudRhino</div>";
 		contenedor.insertBefore(elemento,contenedor.firstChild);
 		//funcionamiento boton
 		var botonMenu=document.getElementById('menuBtn');
@@ -20,6 +21,7 @@ var Cabecera = function(){
 				menu.setAttribute('estado','visible');
 			}
 		};
+		this.nodo = elemento;
 		this.estado='enUso';
 	};
 	this.construir();

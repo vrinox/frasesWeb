@@ -4,10 +4,16 @@
 		"javascript":[
 			{
 				"nombre":"motorLib",
-				"ruta":"control/motorLib.js"
+				"ruta":"control/motorLib.js",
+				"noUsaCarga":true
+			},{
+				"nombre":"Session",
+				"ruta":"control/sesion.js",
+				"noUsaCarga":true
 			},{
 				"nombre":"Rhino",
 				"ruta":"lib/Rhino/Rhino.js",
+				"noUsaCarga":true,
 				"dependencias":[
 					{
 						"nombre":"botonera",
@@ -19,7 +25,7 @@
 						"noUsaCarga":true
 					},{
 						"nombre":"campoTexto",
-						"ruta":"lib/Rhino/partes/.campoTextojs",
+						"ruta":"lib/Rhino/partes/campoTexto.js",
 						"noUsaCarga":true
 					},{
 						"nombre":"checkBox",
@@ -64,17 +70,20 @@
 					}
 				]
 			},{
-				"nombre":"Motor Registros",
-				"ruta":"lib/Rhino/motorRegistros.js"
+				"nombre":"torque",
+				"ruta":"lib/Rhino/motorRegistros.js",
+				"noUsaCarga":true
 			},{
 				"nombre":"Cuerpo",
 				"ruta":"vistas/cuerpo.js"
 			},{
 				"nombre":"Acceso",
-				"ruta":"vistas/acceso.js"
+				"ruta":"vistas/acceso.js",
+				"noUsaCarga":true
 			},{
 				"nombre":"Socket.io",
-				"ruta":"socket.io/socket.io.js"
+				"ruta":"socket.io/socket.io.js",
+				"noUsaCarga":true
 			},{
 				"nombre":"Chat",
 				"ruta":"vistas/chat.js"
@@ -82,21 +91,27 @@
 				"nombre":"Opciones",
 				"ruta":"vistas/opciones.js"
 			},{
-				"nombre":"Chat",
-				"ruta":"vistas/chat.js"
+				"nombre":"Contactos",
+				"ruta":"vistas/contactos.js"
 			}
 		],
 		"css":[
 			{
-				"nombre":"Iconos",
-				"ruta":"vistas/css/iconos.css"
-			},{
 				"nombre":"estilos cuerpo",
 				"ruta":"vistas/css/cuerpo.css"
 			},{
 				"nombre":"Estilos Rhino",
 				"ruta":"lib/Rhino/css/Rhino.css"
+			},{
+				"nombre":"Estilos login",
+				"ruta":"vistas/css/login.css"
+			},{
+				"ruta":"https://fonts.googleapis.com/css?family=Open+Sans|Oswald",
+				"nombre" : "fuente"
+			},{
+				"ruta":"https://fonts.googleapis.com/icon?family=Material+Icons", 
+				"nombre":"gooIconos" 
 			}
 		]
-	}	
+	}
 }

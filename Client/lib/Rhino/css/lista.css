@@ -20,7 +20,7 @@ div[lista] section[cont-slots]{
     height: auto;
 }
 div[lista] section[busqueda]{
-  background-color: #4CAF50;
+  background-color:#2196F3;
   position: absolute;
   z-index: 2;
   padding: 10px 0px;

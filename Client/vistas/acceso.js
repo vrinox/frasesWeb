@@ -1,154 +1,179 @@
 var conexionAcc;
 var Acceso = function(){
+	//planos de formularios a utilizar
+	this.plano = {
+		acceso: {
+			campos : [
+				{
+					tipo: 'campoDeTexto',
+					parametros: {requerido: true,titulo:'Nombre de usuario',nombre:'usuario',tipo:'simple',eslabon:'area',max: 25,usaToolTip:true}
+				},{
+					tipo: 'campoDeTexto',
+					parametros: {requerido: true,titulo:'Clave de acceso',nombre:'clave',tipo:'password',eslabon:'area',max: 25,usaToolTip:true}
+				}
+			]
+		},
+		registro: {
+			altura: 250,
+			campos: [
+				{
+					tipo: 'campoDeTexto',
+					parametros: {requerido: true,titulo:'Nombre de usuario',nombre:'usuario',tipo:'simple',eslabon:'area',max: 25,usaToolTip:true}
+				},{
+					tipo: 'campoDeTexto',
+					parametros: {requerido: true,titulo:'Clave de acceso',nombre:'clave',tipo:'password',eslabon:'area',max: 25,usaToolTip:true}
+				},{
+					tipo: 'campoDeTexto',
+					parametros: {requerido: true,titulo:'Reingrese clave',nombre:'clave2',tipo:'password',eslabon:'area',max: 25,usaToolTip:true}
+				}
+			]
+		}
+	};
 
 	this.crearFormulario = function(){
-		var html = "<div fondo><div>\
-					<div contenedor-acc >\
-						<div titulo-acc id='tituloAcc'>Acceso</div>\
-						<div contenido-acc>\
-							<form name='Acceso' method='Post' action='corAcceso'>\
-								<i class='icono-usuario'></i>\
-								<input type='text' name='AccNom' id='AccNom' placeholder='Nombre de Usuario'/><div salto></div>\
-								<i class='icono-llave'></i>\
-								<input type='password' name='AccPass' id='AccPass' placeholder='Clave'/><br>\
-								<div ordenar></div>\
-							</form>\
-						</div>\
-						<div botonera-acc><button type='button' id='BtAcc'>Ingresar</button><label id='registro'>Registrece</label></div>\
-					</div>\
-					<div ordenar></div>";
-		return html;
-	}
-	 this.darVida = function(){
-	 	var btEnviar = document.getElementById("BtAcc");
-	 	var btRegistro = document.getElementById('registro');
+		var ventana = UI.agregarVentana({
+		  tipo: 'centrado',
+		  nombre: 'Acceso',
+		  titulo:{
+		    html: 'Acceso',
+		    tipo: 'inverso'
+		  },
+		  sectores:[
+				{
+					nombre: 'formulario', //puede ser lo que sea
+					formulario: this.plano.acceso,
+					tipo: 'nuevo'
+				},
+				{
+					nombre:'botonera',
+					html:'<section botonera><button type="button" class="icon material-icons md-24 white mat-blue500">send</button>'+
+								'<button type="button" class="icon material-icons md-24 white mat-indigo500">person_add</button></section>'
+				}
+		  ]
+		},document.body.querySelector('div[contenedor]'));
+		ventana.buscarSector('botonera').nodo.querySelector('button.icon.mat-blue500').onclick = function(){
+			ingresar(this);
+		};
+		ventana.buscarSector('botonera').nodo.querySelector('button.icon.mat-indigo500').onclick = function(){
+			activarRegistro();
+		};
+	};
 
-	 	btEnviar.onclick=function(){
-	 		ingresar();
-	 		btEnviar.onclick=function(){}
-	 	};
-
-	 	btRegistro.onclick = function(){
-	 		activarRegistro();
-	 	};
-	 };
-}
-function activarRegistro(){
- 	var titulo = document.getElementById('tituloAcc');
- 	var btEnviar = document.getElementById("BtAcc");
- 	var btRegistro = document.getElementById('registro');
- 	titulo.textContent='Registro';
- 	btEnviar.textContent="Enviar";
- 	btRegistro.textContent='¿Desea ingresar?';
-
- 	btRegistro.onclick = function(){
- 		activarAcceso();
- 	};
-
- 	btEnviar.onclick = function(){
- 		registro();
- 	};
-
- }
- function activarAcceso(){
- 	var titulo = document.getElementById('tituloAcc');
- 	var btEnviar = document.getElementById("BtAcc");
- 	var btRegistro = document.getElementById('registro');
- 	titulo.textContent='Acceso';
- 	btEnviar.textContent="Ingresar";
- 	btRegistro.textContent='Registrece';
- 	
- 	btRegistro.onclick = function(){
- 		activarRegistro();
- 	};
-
- 	btEnviar.onclick = function(){
- 		ingresar();
- 	}
- }
+	this.agregarForm = function(nombreForm){
+		var objForm = {
+			plano: this.plano[nombreForm],
+			tipo: 'nuevo'
+		};
+		UI.buscarVentana('Acceso').buscarSector('formulario').agregarFormulario(objForm);
+	};
+};
 //-----------------------------Acceso------------------------------------------------------------
-function ingresar(){
+function ingresar(btn){
+	//TODO: animacion css de boton de acceso
+ 	btn.classList.add('accesando');
+	var formulario = UI.buscarVentana('Acceso').buscarSector('formulario').formulario;
+	if(formulario.validar()){
+		var pet = {
+		   entidad: "acceso",
+		   operacion: "acceso",
+		};
+		pet = UI.juntarObjetos(pet,formulario.captarValores());
+		var cuadro ={
+			contenedor : UI.buscarVentana('Acceso').buscarSector('formulario').nodo,
+			cuadro: {
+			  nombre: 'acceso',
+			  mensaje: 'accesando'
+			}
+		};
+		torque.manejarOperacion(pet,cuadro,function(respuesta){
+			console.log("respuesta aceptada");
+			//cadenaHtml donde se guardan todas las partes a agregar
+			if(respuesta.success===0){
+				//extraigo el mensaje
+				var mensaje = respuesta.mensaje;
+				btn.classList.remove('accesando');
+				UI.agregarToasts({
+			    	texto: mensaje,
+			    	tipo: 'web-arriba-derecha-alto'
+			  	});
+				jarvis.buscarLib("Acceso").op.agregarForm('acceso');
+			}else{
+				//armo la session
+				jarvis.session.nombreUsu=respuesta.session.NombreUsu;
+				jarvis.session.horaDeConexion=respuesta.session.HoraCon;
+				jarvis.session.estado="abierta";
+				//envio los datos para la creacion de la session en el servidor
+				jarvis.session.identificacion();
 
- 	var btEnviar = document.getElementById("BtAcc");
- 	btEnviar.textContent='Accesando...';
-	var campNom = document.getElementById("AccNom");
-	var campPass = document.getElementById("AccPass");
-	if((campNom.value!="")&&(campPass.value!="")){
-		conexionAcc=crearXMLHttpRequest();
-		conexionAcc.onreadystatechange = procesarAcc;
-		conexionAcc.open('POST','corAcceso', true);
-		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-		var envio="TipoPet="+encodeURIComponent("web")+"&Operacion="+encodeURIComponent("acceso");
-		envio+="&Nombre="+encodeURIComponent(campNom.value)+"&Pass="+encodeURIComponent(campPass.value);
-		conexionAcc.send(envio);
+				//construir el inicio del chat
+				jarvis.construc.construirInicio();
+				jarvis.construc.llenarMenu();
+			}
+		});
 	}else{
-		alert("por favor llene los campos para poder ingresar");
+		UI.agregarToasts({
+			texto: "por favor llene los campos para poder ingresar",
+			tipo: 'web-arriba-derecha-alto'
+		});
 		activarAcceso();
-	}
-}
-function procesarAcc(){
-	if(conexionAcc.readyState == 4){
-
-	 	var btEnviar = document.getElementById("BtAcc");
-	 	btEnviar.value='Ingresar';
-		//recivo el xml con los usuarios
-		var xml=conexionAcc.responseXML;
-		console.log("respuesta aceptada");
-		//cadenaHtml donde se guardan todas las partes a agregar
-		if(xml.getElementsByTagName('success')[0].textContent==0){
-			//extraigo el mensaje
-			var mensaje=xml.getElementsByTagName('mensaje')[0].textContent;
-			var btEnviar = document.getElementById("BtAcc");
- 			btEnviar.textContent='Ingresar';
-			alert(mensaje);
-			jarvis.buscarLib("Acceso").op.darVida();
-		}else{
-			//extarigo los elementos
-			var NombreUsu=xml.getElementsByTagName('NombreUsu')[0].textContent;
-			var HoraCon=xml.getElementsByTagName('HoraCon')[0].textContent;
-			//armo la session
-			jarvis.session.nombreUsu=NombreUsu;
-			jarvis.session.horaDeConexion=HoraCon;
-			jarvis.session.estado="abierta";
-			//envio los datos para la creacion de la session en el servidor
-			jarvis.session.identificacion();
-			//construyo el inicio
-			jarvis.construc.construirInicio();			
-		}
 	}
 }
 //-------------------------------------Registro----------------------------------------------
 function registro(){
-	var campNom = document.getElementById("AccNom");
-	var campPass = document.getElementById("AccPass");
-	if((campNom.value!="")&&(campPass.value!="")){
-		conexionAcc=crearXMLHttpRequest();
-		conexionAcc.onreadystatechange = procesarReg;
-		conexionAcc.open('POST','corAcceso', true);
-		conexionAcc.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-		var envio="TipoPet="+encodeURIComponent("web")+"&Operacion="+encodeURIComponent("registro");
-		envio+="&Nombre="+encodeURIComponent(campNom.value)+"&Pass="+encodeURIComponent(campPass.value);
-		conexionAcc.send(envio);
+	var formulario = UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.formulario;
+	if(formulario.validar()){
+		if(formulario.buscarCampo('clave').captarValor() !== formulario.buscarCampo('clave2').captarValor()){
+			  UI.agregarToasts({
+			    texto: 'claves no coinsiden',
+			    tipo: 'web-arriba-derecha'
+			  });
+				return;
+		}
+		var pet = UI.juntarObjetos(formulario.captarValores(),{entidad: "acceso",operacion: "registro"});
+		var cuadro ={
+			contenedor : UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
+			cuadro: {nombre: 'registro',mensaje: 'creando nuevo usuario'}
+		};
+		torque.manejarOperacion(pet,cuadro,function(respuesta){
+			UI.agregarToasts({
+				texto: respuesta.mensaje,
+				tipo: 'web-arriba-derecha-alto'
+			});
+			if(respuesta.success===0){
+				jarvis.buscarLib('Acceso').op.agregarForm('registro');
+			}else{
+				activarAcceso();
+			}
+		});
 	}else{
-		alert("por favor llene los campos para poder ingresar");
-		activarRegistro();
+		  UI.agregarToasts({
+		    texto: "por favor llene los campos para poder ingresar",
+		    tipo: 'web-arriba-derecha-alto'
+		  });
 	}
 }
-function procesarReg(){
-	if(conexionAcc.readyState == 4){
-		//recivo el xml con los usuarios
-		var xml=conexionAcc.responseXML;
-		//cadenaHtml donde se guardan todas las partes a agregar
-		if(xml.getElementsByTagName('success')[0].textContent==0){
-			//extraigo el mensaje
-			var mensaje=xml.getElementsByTagName('mensaje')[0].textContent;
-			alert(mensaje);
-			activarRegistro();
-		}else{
-			//extarigo los elementos
-			var mensaje=xml.getElementsByTagName('mensaje')[0].textContent;
-			alert(mensaje);
-			activarAcceso();
+function activarAcceso(){
+	UI.elementos.modalWindow.eliminarUltimaCapa();
+}
+function activarRegistro(){
+	var modal = UI.crearVentanaModal({
+		cabecera:{
+			html: 'Registro'
+		},
+		cuerpo:{
+			tipo: 'nuevo',
+			formulario: jarvis.buscarLib('Acceso').op.plano.registro
+		},
+		pie:{
+			html:'<section botonera><button type="button" class="icon material-icons md-24 white mat-indigo500">save</button>'+
+						'<button type="button" class="icon material-icons md-24 white mat-red500">close</button></section>'
 		}
-	}
+	});
+	modal.partes.pie.nodo.querySelector('button.mat-red500').onclick = function(){
+		UI.elementos.modalWindow.eliminarUltimaCapa();
+	};
+
+	modal.partes.pie.nodo.querySelector('button.mat-indigo500').onclick = function(){
+		registro();
+	};
 }
