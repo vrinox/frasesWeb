@@ -174,18 +174,30 @@ var Asistente = function(objArranque){
 		return new Promise(function(resolve,reject){
 			var lib = jarvis.buscarLib(nombreLib);
 			if(lib){
+
 				if(lib.dependencias){
-					return lib.dependencias.reduce(function(sequence, dep) {
-						console.log(sequence);
-				    return sequence.then(function() {
-				      return yo.montarLib(dep.nombre);
-				    });
-				  }, Promise.resolve());
+					lib.dependencias
+						.map(function(dep){
+							yo.montarLib(dep.nombre);
+						})
+						.reduce(function(sequence,lib){
+							return sequence.then(function(){
+								return lib;
+							});
+						},Promise.resolve());
 				}
+				var r = false;
+        lib.tag.async = true;
+        lib.tag.onload = lib.tag.onreadystatechange = function () {
+            if (!r && (!this.readyState || this.readyState == "complete")) {
+                r = true;
+                resolve(lib);
+            }
+        };
+        lib.tag.onerror = lib.tag.onabort = reject;
 				yo.contendor.appendChild(lib.tag);
-				resolve(lib);
 			}else{
-				console.log('no existe '+nombreLib);
+				console.log(nombreLib);
 				reject('no existe '+nombreLib);
 			}
 		});
