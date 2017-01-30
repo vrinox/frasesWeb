@@ -15,7 +15,7 @@ var ChatManager = function(){
 			TipoPet:"web"
 		};
 		var yo = this;
-		torque.Operacion(peticion,function(respuesta){
+		torque.Operacion(peticion).then(JSON.parse).then(function(respuesta){
 			if(respuesta.success){
 				var p2p = respuesta.p2p;
 				for(var x=0;x<p2p.length;x++){
@@ -290,7 +290,6 @@ function enviarMsg(){
 		jarvis.session.socket.emit('chatMsg',data);
 	}
 }
-
 //---------------------------------Notificaciones------------------------
 function moverNot(notObj){
 	if(notObj.style.marginRight != "0px"){

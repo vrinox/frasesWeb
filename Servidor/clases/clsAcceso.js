@@ -26,7 +26,7 @@ var accessModel = {};
 	accessModel.buscar = function(callback){
 		if (connection)
 		{
-			var sql = 'SELECT * FROM usuario WHERE nombreUsu = ' + connection.escape(accessModel.innerData.usuario);
+			var sql = 'SELECT * FROM usuario WHERE nombreUsu = ' + connection.escape(accessModel.innerData.nombre);
 			connection.query(sql, function(error, row)
 			{
 				if(error)

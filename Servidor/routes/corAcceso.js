@@ -65,10 +65,10 @@ corAcceso.gestionar = function(pet,res){
 					var formData=accessModel.getData();
 					respuesta = {
 						usuario:{
-							Nombre: formData.nombre,
-							Apellido: formData.apellido,
-							Email: formData.email,
-							Seudonimo: formData.seudonimo
+							nombre: formData.nombre,
+							apellido: formData.apellido,
+							email: formData.email,
+							seudonimo: formData.seudonimo
 						},
 						success: 1,
 						mensaje: data.msg

@@ -212,44 +212,37 @@ var Asistente = function(objArranque){
 		return new Promise(function(resolve,reject){
 			var lib = jarvis.buscarLib(nombreLib);
 			if(lib){
-
-				if(lib.dependencias){
-					lib.dependencias
-						.map(function(dep){
-							yo.montarLib(dep.nombre);
-						})
-						.reduce(function(sequence,lib){
-							return sequence.then(function(){
-								return lib;
-							});
-						},Promise.resolve());
+				if(lib.tipo === 'javascript'){
+					if(lib.dependencias){
+						lib.dependencias
+							.map(function(dep){
+								yo.montarLib(dep.nombre);
+							})
+							.reduce(function(sequence,lib){
+								return sequence.then(function(){
+									return lib;
+								});
+							},Promise.resolve());
+					}
+					var r = false;
+			        lib.tag.async = true;
+			        lib.tag.onload = lib.tag.onreadystatechange = function () {
+			            if (!r && (!this.readyState || this.readyState == "complete")) {
+			                r = true;
+			                resolve(lib);
+			            }
+			        };
+			        lib.tag.onerror = lib.tag.onabort = reject;
+					yo.contendor.appendChild(lib.tag);
+				}else{
+					console.log(nombreLib);
+					reject('no existe '+nombreLib);
 				}
-				var r = false;
-        lib.tag.async = true;
-        lib.tag.onload = lib.tag.onreadystatechange = function () {
-            if (!r && (!this.readyState || this.readyState == "complete")) {
-                r = true;
-                resolve(lib);
-            }
-        };
-        lib.tag.onerror = lib.tag.onabort = reject;
-				yo.contendor.appendChild(lib.tag);
 			}else{
-				console.log(nombreLib);
-				reject('no existe '+nombreLib);
+				this.contendor.appendChild(lib.tag);
+		    	return Promise.resolve(lib);
 			}
 		});
-	};
-	//------------------------------Metodos de carga de scripts--------------------------------//
-
-	this.buscarLibreriasEnUso = function(){
-		var libreriasActivas = [];
-		for (var i = 0; i < this.librerias.length; i++) {
-			if((this.librerias[i].estado === 'enUso')&&(this.librerias[i].tipo === 'javascript')){
-				libreriasActivas.push(this.librerias[i].nombre);
-			}
-		}
-		return libreriasActivas;
 	};
 	//--------------------------- Metodos Auxiliares ------------------------------------------//
 
@@ -287,7 +280,13 @@ var Asistente = function(objArranque){
 				return yo.cargarIndice(indice);
 			})
 			.then(function(){
-				return yo.iniciarCargaLibrerias();
+				return Promise.all(
+					yo.objArranque.LibreriasArranque.map(function(nombre){
+						return yo.montarLib(nombre);
+					}))
+				.then(function(result){
+					console.log(result);
+				});
 			})
 			.then(function(){
 					yo.load = "completado";
@@ -295,13 +294,6 @@ var Asistente = function(objArranque){
 			},function(){
 				console.log('error');
 			});
-	};
-	this.iniciarCargaLibrerias = function(){
-		var yo =this;
-		return Promise.all(yo.objArranque.LibreriasArranque.map(function(nombre){return yo.montarLib(nombre);})
-		).then(function(result){
-			console.log(result);
-		});
 	};
 	this.traza = function(aMostrar,tipo){
 		if(this.trazas === 'activa'){

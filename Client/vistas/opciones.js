@@ -11,7 +11,7 @@ var Settings = function(){
 					parametros: {requerido: true,titulo:'Nombres',nombre:'nombre',tipo:'simple',eslabon:'simple',max: 25,usaToolTip:true}
 				},{
 					tipo: 'campoDeTexto',
-					parametros: {requerido: true,titulo:'Apellidos',nombre:'apellidos',tipo:'simple',eslabon:'simple',max: 25,usaToolTip:true}
+					parametros: {requerido: true,titulo:'Apellidos',nombre:'apellido',tipo:'simple',eslabon:'simple',max: 25,usaToolTip:true}
 				},{
 					tipo: 'campoDeTexto',
 					parametros: {requerido: true,titulo:'Seudonimo',nombre:'seudonimo',tipo:'simple',eslabon:'simple',max: 25,usaToolTip:true}
@@ -39,7 +39,7 @@ var Settings = function(){
 	};
 };
 Settings.prototype.construirOpciones = function(){
-	UI.crearVentanaModal({
+	var opciones = UI.crearVentanaModal({
 	  contenido: 'ancho',
 	  cabecera:{
 	    html: 'Opciones '
@@ -55,21 +55,5 @@ Settings.prototype.construirOpciones = function(){
 	              '</section>'
 	  }
 	});
+	return opciones;
 };
-//--------------------------------------FUNCIONAMIENTO DE CARGA DE SCRIPT-------------------//
-arranque();
-function arranque(){
-	//aviso al motor que el script arranco
-	jarvis.libCargada("Opciones");
-	//agrego el operador a la libreria
-	jarvis.buscarLib("Opciones").op = new Settings();
-	//construyo las opciones
-	jarvis.buscarLib("Opciones").op.construirOpciones();
-	torque.Operacion({
-		operacion:'datosPer',
-		nombre:jarvis.session.nombreUsu,
-		entidad:"acceso"
-	},function(respuesta){
-		console.log(respuesta);
-	});
-}
