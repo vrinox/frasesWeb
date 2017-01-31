@@ -36,7 +36,7 @@ var Acceso = function(){
 		  nombre: 'Acceso',
 		  titulo:{
 		    html: 'Acceso',
-		    tipo: 'inverso'
+		    tipo: 'basico'
 		  },
 		  sectores:[
 				{
