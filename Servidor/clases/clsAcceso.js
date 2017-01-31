@@ -30,26 +30,9 @@ accessModel.buscar = function(){
 		{
 			var sql = 'SELECT * FROM usuario WHERE nombreusu = $1';
 			query = connection.query(sql,[accessModel.innerData.usuario]);
-			query.on('row', function(result)
-			{
-				var data;
-				if (typeof row !== 'undefined' && row.length > 0)
-				{
-
-					data={
-						"msg":"datos encontrados con exito",
-						"success":"1",
-						"resultado":row
-					};
-					resolve(data);
-
-				}else{
-					data={
-						"msg":"usuario no existe",
-						"success":"0"
-					};
-					reject(data);
-				}
+			query.on('row',function(result){
+				console.log(result);
+				resolve(result);
 			});
 		}else{
 			data={
@@ -65,8 +48,10 @@ accessModel.acceder = function(){
 	return new Promise(function(resolve,reject){
 		if (connection)
 		{
-			var sql = 'SELECT * FROM usuario WHERE nombreusu = $1';
+			var sql = 'SELECT * FROM usuario  WHERE nombreusu = $1';
+
 			var query = connection.query(sql,[accessModel.innerData.usuario]);
+
 			query.on('row',function(result){
 				console.log(result,'clsAcceso linea:71');
 				var data;
@@ -78,7 +63,7 @@ accessModel.acceder = function(){
 					};
 					reject(data);
 				}else{
-					if(row[0].clave_usu==accessModel.innerData.clave){
+					if(result.clave_usu==accessModel.innerData.clave){
 						data={
 							"msg":"acceso realizado con exito",
 							"success":"1",
@@ -94,6 +79,17 @@ accessModel.acceder = function(){
 						reject(data);
 					}
 				}
+			});
+
+			query.on('error',function(error){
+				connection.end();
+				reject(error);
+			});
+			query.on('entidad',function(result){
+				connection.end();
+				reject({
+					"msg":"no retorno valores"
+				});
 			});
 		}else{
 			data={
