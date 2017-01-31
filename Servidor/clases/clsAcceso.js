@@ -26,10 +26,12 @@ var accessModel = {};
 	accessModel.buscar = function(callback){
 		if (connection)
 		{
-			var sql = 'SELECT * FROM usuario WHERE nombreUsu = ' + connection.escape(accessModel.innerData.usuario);
-			connection.query(sql, function(error, row)
+			var sql = 'SELECT * FROM usuario WHERE nombreUsu = $1';
+			query = connection.query(sql,[accessModel.innerData.usuario]);
+			query.on('row', function(result)
 			{
-				if(error)
+				console.log(result);
+				/*if(error)
 				{
 					throw error;
 				}
@@ -56,7 +58,7 @@ var accessModel = {};
 						};
 						callback(null,data);
 					}
-				}
+				}*/
 			});
 		}
 	};
@@ -64,15 +66,18 @@ var accessModel = {};
 	accessModel.acceder = function(callback){
 		if (connection)
 		{
-			var sql = 'SELECT * FROM usuario WHERE nombreUsu = ' + connection.escape(accessModel.innerData.usuario);
-			connection.query(sql, function(error, row)
+			var sql = 'SELECT * FROM usuario WHERE nombreUsu = $1';
+			var query = connection.query(sql,[accessModel.innerData.usuario]);
+
+			query.on(function(result)
 			{
-				if(error)
+				if(!result)
 				{
-					throw error;
+					console.log('sin registros');
 				}
 				else
 				{
+					/*
 					var data;
 					if (typeof row !== 'undefined' && row.length > 0)
 					{
@@ -98,6 +103,7 @@ var accessModel = {};
 						};
 						callback(null,data);
 					}
+					*/
 				}
 			});
 		}
