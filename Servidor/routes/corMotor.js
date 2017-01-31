@@ -1,9 +1,8 @@
 var express = require('express');
 var router = express.Router();
-//var acceso = require('./corAcceso');
-//var chat = require('./corChat');
-//var contacto = require('./corContacto');
-var prueba = require('./prueba');
+var acceso = require('./corAcceso');
+var chat = require('./corChat');
+var contacto = require('./corContacto');
 var utils = require('../utils');
 
 router.post("/", function(req,res)
@@ -13,14 +12,13 @@ router.post("/", function(req,res)
 	if(pet.tipopet=="web"){
 		switch(pet.entidad){
 			case 'acceso':
-				prueba.mostrar();
-				//acceso.gestionar(pet,res);
+				acceso.gestionar(pet,res);
 				break;
 			case 'chat':
-				//chat.gestionar(pet,res);
+				chat.gestionar(pet,res);
 				break;
 			case 'contacto':
-				//contacto.gestionar(pet,res);
+				contacto.gestionar(pet,res);
 				break;
 
 			default:

@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 //archivos que se encargan de manejar la rutas
 var routes = require('./Servidor/routes/index');
 var motor = require('./Servidor/routes/corMotor');
-var frase = require('./Servidor/routes/corFrase');
 var chat = require('./Servidor/routes/corChat');
 //aplicacion
 var app = express();
@@ -27,7 +26,6 @@ app.use(express.static(path.join(__dirname, 'Client')));
 //rutas externas
 app.use('/', routes);
 app.use('/corMotor', motor);
-app.use('/corfrase', frase);
 
 
 // catch 404 and forward to error handler

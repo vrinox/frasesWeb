@@ -7,136 +7,136 @@ var accessModel = {};
 
 	accessModel.innerData = [];
 
-	accessModel.setData = function(outData){
-		if(outData.clave){
-			outData.clave=accessModel.encriptarPass(outData.clave,outData.usuario);
-		}
-		accessModel.innerData=outData;
-	};
+accessModel.setData = function(outData){
+	if(outData.clave){
+		outData.clave=accessModel.encriptarPass(outData.clave,outData.usuario);
+	}
+	accessModel.innerData=outData;
+	return Promise.resolve();
+};
 
-	accessModel.getData = function(){
-		return accessModel.innerData;
-	};
+accessModel.getData = function(){
+	return Promise.resolve(accessModel.innerData);
+};
 
-	accessModel.encriptarPass = function(pass,key){
-		pass = crypto.createHmac('sha1',key).update(pass).digest('hex');
-		return pass;
-	};
+accessModel.encriptarPass = function(pass,key){
+	pass = crypto.createHmac('sha1',key).update(pass).digest('hex');
+	return pass;
+};
 
-	accessModel.buscar = function(callback){
+accessModel.buscar = function(){
+	return new Promise(function(resolve,reject){
 		if (connection)
 		{
-			var sql = 'SELECT * FROM usuario WHERE nombreUsu = $1';
+			var sql = 'SELECT * FROM usuario WHERE nombreusu = $1';
 			query = connection.query(sql,[accessModel.innerData.usuario]);
 			query.on('row', function(result)
 			{
-				console.log(result);
-				/*if(error)
+				var data;
+				if (typeof row !== 'undefined' && row.length > 0)
 				{
-					throw error;
+
+					data={
+						"msg":"datos encontrados con exito",
+						"success":"1",
+						"resultado":row
+					};
+					resolve(data);
+
+				}else{
+					data={
+						"msg":"usuario no existe",
+						"success":"0"
+					};
+					reject(data);
 				}
-				else
-				{
-					var data;
-					if (typeof row !== 'undefined' && row.length > 0)
-					{
-
-						data={
-							"msg":"datos encontrados con exito",
-							"success":"1"
-						};
-						accessModel.innerData.nombre=row[0].nombre;
-						accessModel.innerData.apellido=row[0].apellido;
-						accessModel.innerData.email=row[0].email;
-						accessModel.innerData.seudonimo=row[0].seudonimo;
-						callback(null,data);
-
-					}else{
-						data={
-							"msg":"usuario no existe",
-							"success":"0"
-						};
-						callback(null,data);
-					}
-				}*/
 			});
+		}else{
+			data={
+				"msg":"'no existe conexion'",
+				"success":"0"
+			};
+			reject();
 		}
-	};
+	});
+};
 
-	accessModel.acceder = function(callback){
+accessModel.acceder = function(){
+	return new Promise(function(resolve,reject){
 		if (connection)
 		{
-			var sql = 'SELECT * FROM usuario WHERE nombreUsu = $1';
+			var sql = 'SELECT * FROM usuario WHERE nombreusu = $1';
 			var query = connection.query(sql,[accessModel.innerData.usuario]);
-
-			query.on(function(result)
-			{
+			query.on('row',function(result){
+				console.log(result,'clsAcceso linea:71');
+				var data;
 				if(!result)
 				{
-					console.log('sin registros');
-				}
-				else
-				{
-					/*
-					var data;
-					if (typeof row !== 'undefined' && row.length > 0)
-					{
-						if(row[0].clave_usu==accessModel.innerData.clave){
-							data={
-								"msg":"acceso realizado con exito",
-								"success":"1",
-								"HoraCon": obtenerHoraActual()
+					data={
+						"msg":"usuario no existe",
+						"success":"0"
+					};
+					reject(data);
+				}else{
+					if(row[0].clave_usu==accessModel.innerData.clave){
+						data={
+							"msg":"acceso realizado con exito",
+							"success":"1",
+							"HoraCon": obtenerHoraActual()
 
-							};
-							callback(null,data);
-						}else{
-							data={
-								"msg":"usuario/contraseña no concuerda",
-								"success":"0"
-							};
-							callback(null,data);
-						}
+						};
+						resolve(data);
 					}else{
 						data={
-							"msg":"usuario no existe",
+							"msg":"usuario/contraseña no concuerda",
 							"success":"0"
 						};
-						callback(null,data);
+						reject(data);
 					}
-					*/
 				}
 			});
+		}else{
+			data={
+				"msg":"'no existe conexion'",
+				"success":"0"
+			};
+			reject(data);
 		}
-	};
+	});
+};
 
-	//posible error por no usar id
-	accessModel.registrar = function(callback){
+//posible error por no usar id
+accessModel.registrar = function(){
+	return new Promise(function(resolve,reject){
 		if(connection){
 			var data = {
-				nombreUsu : accessModel.innerData.usuario,
+				nombreusu : accessModel.innerData.usuario,
 				clave_usu :  accessModel.innerData.clave
 			};
 			connection.query('INSERT INTO usuario SET ?', data, function(error, result){
 				if(error)
 				{
-					throw error;
+					reject(error);
 				}
 				else
 				{
 					//devolvemos la última id insertada
-					callback(null,{"affectedRows" : result.affectedRows});
+					resolve(result);
 				}
 			});
 		}
-	};
+	});
+};
+//----------------------------------------- Falta por Migrar ---------------------------------------------
+//TODO: Migrar a Postrges
 	accessModel.actualizarDatos = function(callback){
 		if(connection){
 			var data = accessModel.innerData;
 			var sql = "UPDATE usuario SET nombre = " + connection.escape(data.nombre) + "," +
 						"apellido = " + connection.escape(data.apellido) + "," +
 						"seudonimo = " + connection.escape(data.seudonimo) + "," +
-						"email = " + connection.escape(data.email) + " WHERE nombreUsu = " +
-						connection.escape(data.nombreUsu);
+						"email = " + connection.escape(data.email) + " WHERE nombreusu = " +
+						connection.escape(data.nombreusu);
 			connection.query(sql, function(error, result)
 			{
 				if(error)
@@ -159,7 +159,7 @@ var accessModel = {};
 				if(reqData.success=='1'){
 					var data = accessModel.innerData;
 					var sql = "UPDATE usuario SET clave_usu = " + connection.escape(data.newClave) +
-								" WHERE nombreUsu = " +	connection.escape(data.nombreUsu);
+								" WHERE nombreusu = " +	connection.escape(data.nombreusu);
 					connection.query(sql, function(error, result)
 					{
 						if(error)

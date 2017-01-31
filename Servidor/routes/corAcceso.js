@@ -15,46 +15,46 @@ corAcceso.gestionar = function(pet,res){
 	switch(pet.operacion){
 		case 'acceso':
 			//realizo la busqueda para el acceso
-			accessModel.acceder(function(error,data){
-				var respuesta = {};
-				if(data.success==1)
-				{
-					respuesta.session = {
-						NombreUsu: accessModel.innerData.usuario,
-						HoraCon: data.HoraCon
-					};
-					respuesta.success = 1;
-				}
-				else
-				{
-					respuesta.success = 0;
-				}
-				respuesta.mensaje = data.msg;
-				utils.enviar(respuesta,res);
-			});
+			accessModel.acceder()
+				.then(function(data){
+					console.log(data,'corAcceso linea:20');
+					var respuesta = {};
+						respuesta.session = {
+							NombreUsu: accessModel.innerData.usuario,
+							HoraCon: data.HoraCon
+						};
+						respuesta.success = 1;
+					respuesta.mensaje = data.msg;
+					utils.enviar(respuesta,res);
+				},function(data){
+					console.error(data.msg);
+				});
 			break;
 
 		case 'registro':
 		var respuesta;
-			accessModel.registrar(function(error,data){
-				if(data && data.affectedRows)
-				{
-					console.log("registro realizado con exito");
-					respuesta = {
-						success: 1,
-						mensaje: 'registro realizado con exito'
-					};
-				}
-				else
-				{
-					console.log("error en el registro");
-					respuesta = {
-						success: 0,
-						mensaje: 'Error interno del servidor'
-					};
-				}
-				utils.enviar(respuesta,res);
-			});
+			accessModel.registrar()
+				.then(function(data){
+					if(data && data.affectedRows)
+					{
+						console.log("registro realizado con exito");
+						respuesta = {
+							success: 1,
+							mensaje: 'registro realizado con exito'
+						};
+					}
+					else
+					{
+						console.log("error en el registro");
+						respuesta = {
+							success: 0,
+							mensaje: 'Error interno del servidor'
+						};
+					}
+					utils.enviar(respuesta,res);
+				},function(data){
+					console.error(data.msg);
+				});
 			break;
 
 		case 'datosPer':
