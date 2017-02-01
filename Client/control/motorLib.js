@@ -155,21 +155,21 @@ var Asistente = function(objArranque){
 		return lib;
 	};
 
-	this.usarLib = function(nombreLib,callback){
+	this.usarLib = function(nombreLib){
 		var libreria = jarvis.buscarLib(nombreLib);
 		//TODO: carga de librerias css asincronas
-		if(libreria.estado == 'enUso'){
-			return this.montarLib(nombreLib,callback)
+		if(libreria.estado != 'enUso'){
+			return this.montarLib(nombreLib)
 				.then(function(lib){
 					lib.estado = 'enUso';
 					return lib;
 				});
 		}else{
-			return lib;
+			return Promise.resolve(libreria);
 		}
 	};
 
-	this.montarLib = function(nombreLib,callback){
+	this.montarLib = function(nombreLib){
 		var yo = this;
 		return new Promise(function(resolve,reject){
 			var lib = jarvis.buscarLib(nombreLib);
@@ -262,7 +262,7 @@ var Asistente = function(objArranque){
 		var yo =this;
 		return Promise.all(yo.objArranque.LibreriasArranque.map(function(nombre){return yo.montarLib(nombre);})
 		).then(function(result){
-			console.log(result);
+			return result;
 		});
 	};
 	this.traza = function(aMostrar,tipo){
