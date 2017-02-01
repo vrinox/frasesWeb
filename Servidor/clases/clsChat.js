@@ -109,6 +109,8 @@ chatModel.innerData = [];
 		});
 	};
 
+//----------------------------------------- Falta por Migrar ---------------------------------------------
+//TODO: Migrar a Postrges
 	chatModel.actualizar = function(mensajes,estado){
 		if(connection){
 			var valorEstado;

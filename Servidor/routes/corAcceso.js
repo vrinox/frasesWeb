@@ -17,7 +17,6 @@ corAcceso.gestionar = function(pet,res){
 			//realizo la busqueda para el acceso
 			accessModel.acceder()
 				.then(function(data){
-					console.log(data,'corAcceso linea:20');
 					var respuesta = {};
 						respuesta.session = {
 							NombreUsu: accessModel.innerData.usuario,
@@ -27,7 +26,6 @@ corAcceso.gestionar = function(pet,res){
 					respuesta.mensaje = data.msg;
 					utils.enviar(respuesta,res);
 				},function(data){
-					console.log(data.msg);
 					utils.enviar(data,res);
 				});
 			break;
