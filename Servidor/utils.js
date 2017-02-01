@@ -8,5 +8,8 @@ utils.innerData = [];
     	res.send(JSON.stringify(respuesta));
 	};
 
+	utils.error = function(error){
+		console.error(error);
+	};
 
 module.exports = utils;

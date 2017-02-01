@@ -13,93 +13,100 @@ chatModel.innerData = [];
 		return this.innerData;
 	};
 
-	chatModel.cargarp2p = function(callback){
-		if(connection){
-			var sql = "SELECT seguidor AS p2p,u.nombre AS nu, u.apellido AS au, count(m.codigo) as pendientes "+
-						"FROM sigue AS s "+
-						"INNER JOIN usuario AS u ON(seguidor=u.nombreUsu) "+
-						"left join receptorusu as p on s.seguido = p.usuario "+
-						"left join mensaje as m on p.codigoMen = m.codigo and m.emisor = s.seguidor and m.estado = 'R' "+
-						"WHERE seguido ="+connection.escape(this.innerData.nombre)+
-						" group by seguido ,u.nombre , u.apellido "+
-						"UNION "+
-						"SELECT seguido AS p2p,u.nombre AS nu, u.apellido AS au, count(m.codigo) as pendientes "+
-						"FROM sigue AS s "+
-						"INNER JOIN usuario AS u ON(seguido=u.nombreUsu) "+
-						"left join receptorusu as p on s.seguidor = p.usuario "+
-						"left join mensaje as m on p.codigoMen = m.codigo and m.emisor = s.seguido and m.estado = 'R' "+
-						"WHERE seguidor ="+connection.escape(this.innerData.nombre)+
-						" group by seguido ,u.nombre , u.apellido ";
-			connection.query(sql, function(error, rows) {
-				if(error)
-				{
-					throw error;
-				}
-				else
-				{
-					callback(null, rows);
-				}
-			});
-		}
+	chatModel.cargarp2p = function(){
+		return new Promise(function(resolve,reject){
+			if(connection){
+				var values =[this.innerData.nombre];
+				var sql = "SELECT seguidor AS p2p,u.nombre AS nu, u.apellido AS au, count(m.codigo) as pendientes "+
+							"FROM sigue AS s "+
+							"INNER JOIN usuario AS u ON(seguidor=u.nombreUsu) "+
+							"left join receptorusu as p on s.seguido = p.usuario "+
+							"left join mensaje as m on p.codigoMen = m.codigo and m.emisor = s.seguidor and m.estado = 'R' "+
+							"WHERE seguido =$1"+
+							" group by seguido ,u.nombre , u.apellido "+
+							"UNION "+
+							"SELECT seguido AS p2p,u.nombre AS nu, u.apellido AS au, count(m.codigo) as pendientes "+
+							"FROM sigue AS s "+
+							"INNER JOIN usuario AS u ON(seguido=u.nombreUsu) "+
+							"left join receptorusu as p on s.seguidor = p.usuario "+
+							"left join mensaje as m on p.codigoMen = m.codigo and m.emisor = s.seguido and m.estado = 'R' "+
+							"WHERE seguidor =$1"+
+							" group by seguido ,u.nombre , u.apellido ";
+				connection.query(sql,values, function(error, rows) {
+					if(error)
+					{
+						reject(error);
+					}
+					else
+					{
+						resolve(rows);
+					}
+				});
+			}else{
+				reject("no existe conexion");
+			}
+		});
 	};
 
 	chatModel.cargarChat = function(callback){
-		var data = this.innerData;
-		var sql = 'SELECT * FROM(SELECT m.estado AS estado,m.contenido AS cont,m.fecha,m.emisor,m.codigo as id,idtemp FROM mensaje AS m '+
-					'INNER JOIN receptorusu AS ru ON(m.codigo=ru.codigoMen)'+
-					' WHERE m.emisor='+connection.escape(data.nombre)+' AND ru.usuario='+connection.escape(data.user)+
-					' UNION '+
-					' SELECT m.estado AS estado,m.contenido AS cont,m.fecha,m.emisor,m.codigo as id,idtemp FROM mensaje AS m '+
-					' INNER JOIN receptorusu AS ru ON(m.codigo=ru.codigoMen)'+
-					' WHERE m.emisor='+connection.escape(data.user)+' AND ru.usuario='+connection.escape(data.nombre)+
-					') AS mensajes ORDER BY fecha ';
-			connection.query(sql, function(error, rows) {
+		new Promise(function(resolve,reject){
+			var data = this.innerData;
+			var values = [data.nombre,data.user];
+			var sql = 'SELECT * FROM(SELECT m.estado AS estado,m.contenido AS cont,m.fecha,m.emisor,m.codigo as id,idtemp FROM mensaje AS m '+
+						'INNER JOIN receptorusu AS ru ON(m.codigo=ru.codigoMen)'+
+						' WHERE m.emisor=$1 AND ru.usuario=$2'+
+						' UNION '+
+						' SELECT m.estado AS estado,m.contenido AS cont,m.fecha,m.emisor,m.codigo as id,idtemp FROM mensaje AS m '+
+						' INNER JOIN receptorusu AS ru ON(m.codigo=ru.codigoMen)'+
+						' WHERE m.emisor=$2 AND ru.usuario=$1'+
+						') AS mensajes ORDER BY fecha ';
+			connection.query(sql,values, function(error, rows) {
 				if(error)
 				{
-					throw error;
+					reject(error);
 				}
 				else
 				{
-					callback(null, rows);
+					resolve(rows);
 				}
 			});
+		});
 	};
 
-	chatModel.guardarMensaje = function(callback){
-		var data = this.innerData;
-		if(connection){
-			var dataIns1={
-				contenido:data.contenido,
-				emisor:data.emisor,
-				estado: data.estado,
-				fecha:dateParser.getParseDate(),
-				idtemp:data.id
-			};
-			connection.query('INSERT INTO mensaje SET ?', dataIns1, function(error, result){
+	chatModel.guardarMensaje = function(){
+		return new Promise(function(resolve,reject){
+			var data = this.innerData;
+			if(connection){
+				var dataIns1=[data.contenido,data.emisor, data.estado,dateParser.getParseDate(),data.id];
+				connection.query('INSERT INTO mensaje (contenido,emisor,estado,fecha,idtemp) values($1,$2,$3,$4,$5)', dataIns1, function(error, result){
+					if(error)
+					{
+						Promise.reject(error);
+					}
+					else
+					{
+						resolve(result)
+					}
+				});
+			}else{
+				reject("no existe conexion");
+			}
+		}).then(function(result){
+			dataIns2=[result.insertId,data.receptor]
+			connection.query('INSERT INTO receptorusu (codigomen,usuario) values($1,$2)', dataIns2, function(error, result){
 				if(error)
 				{
-					throw error;
+					Promise.reject(error);
 				}
 				else
 				{
-					dataIns2={
-						codigoMen:result.insertId,
-						usuario:data.receptor
-					};
-					connection.query('INSERT INTO receptorusu SET ?', dataIns2, function(error, result){
-						if(error)
-						{
-							throw error;
-						}
-						else
-						{
-							//devolvemos la última id insertada
-							callback(null,{"affectedRows" : result.affectedRows});
-						}
-					});
+					//devolvemos la última id insertada
+					Promise.resolve({"affectedRows" : result.rowCount});
 				}
 			});
-		}
+		},function(error){
+			console.log(error);
+		});
 	};
 
 	chatModel.actualizar = function(mensajes,estado){

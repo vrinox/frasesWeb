@@ -13,35 +13,40 @@ contactoModel.innerData = [];
 		return this.innerData;
 	};
 
-	contactoModel.listar = function(callback){
-		var data = this.innerData;
-		var sql = "SELECT * FROM usuario where nombreUsu <> '"+data.usuario+"'";
-		connection.query(sql, function(error, rows) {
-			if(error)
-			{
-				throw error;
-			}
-			else
-			{
-				callback(null, rows);
-			}
+	contactoModel.listar = function(){
+		return new Promise(function(resolve,reject){
+			var data = this.innerData;
+			var sql = "SELECT * FROM usuario where nombreUsu <> '"+data.usuario+"'";
+			connection.query(sql, function(error, result) {
+				if(error)
+				{
+					reject(error);
+				}
+				else
+				{
+					resolve(result);
+				}
+			});
 		});
 	};
-	contactoModel.buscar = function(callback){
-		var data = this.innerData;
-		var sql = "SELECT * FROM usuario WHERE nombreUsu="+connection.escape(data.nombreusu);
-		connection.query(sql, function(error, row) {
-			if(error)
-			{
-				throw error;
-			}
-			else
-			{
-				callback(null, row[0]);
-			}
+	contactoModel.buscar = function(){
+		return new Promise(function(resolve,reject){
+			var data = this.innerData;
+			var sql = "SELECT * FROM usuario WHERE nombreUsu="+connection.escape(data.nombreusu);
+			connection.query(sql, function(error, result) {
+				if(error)
+				{
+					reject(error);
+				}
+				else
+				{
+					resolve(result);
+				}
+			});
 		});
 	};
-
+	//----------------------------------------- Falta por Migrar ---------------------------------------------
+//TODO: Migrar a Postrges
 	contactoModel.agregar = function(callback){
 		var data=this.getData();
 		var sql = "SELECT * FROM sigue WHERE seguidor="+connection.escape(data.nombreusu)+

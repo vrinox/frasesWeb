@@ -42,34 +42,35 @@ corChat.gestionar = function(pet,res){
 				nombre : pet.nombre
 			};
 			chatModel.setData(reqData);
-			chatModel.cargarp2p(function(error,data){
-				var respuesta = {};
-				if(data.length>0){
-					respuesta.p2p = [];
-					var persona;
-					for(var x=0;x<data.length;x++){
-						persona ={
-							nombreUsu: data[x].p2p,
-							nombre: data[x].nu,
-							apellido: data[x].au,
-							pendientes: data[x].pendientes
+			chatModel.cargarp2p()
+				.then(function(data){
+					var respuesta = {};
+					if(data.length>0){
+						respuesta.p2p = [];
+						var persona;
+						for(var x=0;x<data.length;x++){
+							persona ={
+								nombreUsu: data[x].p2p,
+								nombre: data[x].nu,
+								apellido: data[x].au,
+								pendientes: data[x].pendientes
+							};
+							respuesta.p2p.push(persona);
+						}
+						respuesta.success = 1;
+					}else{
+						respuesta.success = 0;
+						respuesta.mensaje = {
+							nombre_tipo:'INFORMACION',
+							titulo:"Agregue un contacto",
+							cuerpo:"Debe agregar un contacto para poder empezar a comunicase<br>"+
+									"En el menu lateral en el apartado <b>CONTACTOS</b> esta la opcion "+
+									"<b>BUSCAR CONTACTO</b> hai podra conseguir personas para empezar"+
+									" a comunicase"
 						};
-						respuesta.p2p.push(persona);
 					}
-					respuesta.success = 1;
-				}else{
-					respuesta.success = 0;
-					respuesta.mensaje = {
-						nombre_tipo:'INFORMACION',
-						titulo:"Agregue un contacto",
-						cuerpo:"Debe agregar un contacto para poder empezar a comunicase<br>"+
-								"En el menu lateral en el apartado <b>CONTACTOS</b> esta la opcion "+
-								"<b>BUSCAR CONTACTO</b> hai podra conseguir personas para empezar"+
-								" a comunicase"
-					};
-				}
 				utils.enviar(respuesta,res);
-			});
+			},utils.error);
 			break;
 		case 'cargarChat':
 			var reqData = {

@@ -17,41 +17,46 @@ corContacto.gestionar = function(pet,res){
 	contactoModel.setData(pet);
 	switch(Operacion){
 		case 'listar':
-			contactoModel.listar(function(error,data){
-				var respuesta = {};
-				if(data.length)
-				{
-					respuesta.registros = data;
-					respuesta.success = 1;
-				}
-				else
-				{
-					respuesta.success = 0;
-				}
-				respuesta.mensaje = data.msg;
-				utils.enviar(respuesta,res);
-			});
+			contactoModel.listar()
+				.then(function(data){
+					var respuesta = {};
+					if(data.length)
+					{
+						respuesta.registros = data;
+						respuesta.success = 1;
+					}
+					else
+					{
+						respuesta.success = 0;
+					}
+					respuesta.mensaje = data.mensaje;
+					utils.enviar(respuesta,res);
+				},function(error){
+					console.error(error);
+				});
 			break;
 
 		case 'agregar':
-			contactoModel.agregar(function(error,data){
-				contactoModel.setData({
-					nombreusu:data.seguidor
-				});
+			contactoModel.agregar()
+				.then(function(data){
+					contactoModel.setData({
+						nombreusu:data.seguidor
+					})
 				//busco el usuario que realizo la operacion y si esta conectado
 				//se le agrega o quita el usuario dependiendo de la accion
-				contactoModel.buscar(function(error,user){
-					var seguido = rack.buscarPlug(data.seguido);
-					var datos = {
-						accion:data.accion,
-						user:user
-					};
-					if(seguido){
-						seguido.socket.emit('contacto',datos);
-					}
-				});
-				utils.enviar(data,res);
-			});
+				contactoModel.buscar()
+					.then(function(user){
+						var seguido = rack.buscarPlug(data.seguido);
+						var datos = {
+							accion:data.accion,
+							user:user
+						};
+						if(seguido){
+							seguido.socket.emit('contacto',datos);
+						}
+					},utils.error);
+					utils.enviar(data,res);
+				},utils.error)
 			break;
 
 		default:
