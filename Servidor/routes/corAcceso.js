@@ -27,7 +27,8 @@ corAcceso.gestionar = function(pet,res){
 					respuesta.mensaje = data.msg;
 					utils.enviar(respuesta,res);
 				},function(data){
-					console.error(data.msg);
+					console.log(data.msg);
+					utils.enviar(data,res);
 				});
 			break;
 

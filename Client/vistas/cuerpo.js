@@ -42,14 +42,15 @@ Construc.prototype.construirInicio = function() {
 	},document.body.querySelector('div[contenedor]'));
 
 	//construyo el listado
-	jarvis.usarLib('Chat',function(){
-		if(!jarvis.buscarLib('Chat').op){
-			jarvis.buscarLib('Chat').op = new ChatManager();
-		}
-		jarvis.buscarLib('Chat').op.pedirP2P(function(contactos){
-			jarvis.construc.llenarListadoContactos(contactos);
+	jarvis.usarLib('Chat')
+		.then(function(lib){
+			if(!lib.op){
+				lib.op = new ChatManager();
+			}
+			lib.op.pedirP2P(function(contactos){
+				jarvis.construc.llenarListadoContactos(contactos);
+			});
 		});
-	});
 };
 Construc.prototype.llenarListadoContactos = function(contactos) {
 	if(contactos){

@@ -85,31 +85,32 @@ function ingresar(btn){
 			  mensaje: 'accesando'
 			}
 		};
-		torque.manejarOperacion(pet,cuadro,function(respuesta){
-			console.log("respuesta aceptada");
-			//cadenaHtml donde se guardan todas las partes a agregar
-			if(respuesta.success===0){
-				//extraigo el mensaje
-				var mensaje = respuesta.mensaje;
-				btn.classList.remove('accesando');
-				UI.agregarToasts({
-			    	texto: mensaje,
-			    	tipo: 'web-arriba-derecha-alto'
-			  	});
-				jarvis.buscarLib("Acceso").op.agregarForm('acceso');
-			}else{
-				//armo la session
-				jarvis.session.nombreUsu=respuesta.session.NombreUsu;
-				jarvis.session.horaDeConexion=respuesta.session.HoraCon;
-				jarvis.session.estado="abierta";
-				//envio los datos para la creacion de la session en el servidor
-				jarvis.session.identificacion();
+		torque.manejarOperacion(pet,cuadro)
+			.then(function(respuesta){
+				console.log("respuesta aceptada");
+				//cadenaHtml donde se guardan todas las partes a agregar
+				if(respuesta.success===0){
+					//extraigo el mensaje
+					var mensaje = respuesta.mensaje;
+					btn.classList.remove('accesando');
+					UI.agregarToasts({
+				    	texto: mensaje,
+				    	tipo: 'web-arriba-derecha-alto'
+				  	});
+					jarvis.buscarLib("Acceso").op.agregarForm('acceso');
+				}else{
+					//armo la session
+					jarvis.session.nombreUsu=respuesta.session.NombreUsu;
+					jarvis.session.horaDeConexion=respuesta.session.HoraCon;
+					jarvis.session.estado="abierta";
+					//envio los datos para la creacion de la session en el servidor
+					jarvis.session.identificacion();
 
-				//construir el inicio del chat
-				jarvis.construc.construirInicio();
-				jarvis.construc.llenarMenu();
-			}
-		});
+					//construir el inicio del chat
+					jarvis.construc.construirInicio();
+					jarvis.construc.llenarMenu();
+				}
+			});
 	}else{
 		UI.agregarToasts({
 			texto: "por favor llene los campos para poder ingresar",

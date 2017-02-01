@@ -23,6 +23,8 @@
 	var jarvis = new Asistente({
 		LibreriasArranque:['torque','Rhino','Cuerpo','Session','Acceso'],
 		onLoad: function(){
+			jarvis.session= new Session();
+			jarvis.construc = new Construc();
 			UI = new Arquitecto();
 			UI.configure();
 			torque = new Motor('acceso');

@@ -31,12 +31,11 @@ accessModel.buscar = function(){
 			var sql = 'SELECT * FROM usuario WHERE nombreusu = $1';
 			query = connection.query(sql,[accessModel.innerData.usuario]);
 			query.on('row',function(result){
-				console.log(result);
 				resolve(result);
 			});
 		}else{
 			data={
-				"msg":"'no existe conexion'",
+				"mensaje":"'no existe conexion'",
 				"success":"0"
 			};
 			reject();
@@ -53,27 +52,25 @@ accessModel.acceder = function(){
 			var query = connection.query(sql,[accessModel.innerData.usuario]);
 
 			query.on('row',function(result){
-				console.log(result,'clsAcceso linea:71');
 				var data;
 				if(!result)
 				{
 					data={
-						"msg":"usuario no existe",
+						"mensaje":"usuario no existe",
 						"success":"0"
 					};
 					reject(data);
 				}else{
 					if(result.clave_usu==accessModel.innerData.clave){
 						data={
-							"msg":"acceso realizado con exito",
+							"mensaje":"acceso realizado con exito",
 							"success":"1",
 							"HoraCon": obtenerHoraActual()
-
 						};
 						resolve(data);
 					}else{
 						data={
-							"msg":"usuario/contraseña no concuerda",
+							"mensaje":"usuario/contraseña no concuerda",
 							"success":"0"
 						};
 						reject(data);
@@ -82,19 +79,18 @@ accessModel.acceder = function(){
 			});
 
 			query.on('error',function(error){
-				connection.end();
 				reject(error);
 			});
-			query.on('entidad',function(result){
-				connection.end();
+			query.on('end',function(result){
 				reject({
-					"msg":"no retorno valores"
+					"mensaje":"USUARIO NO EXISTE",
+					"success":0
 				});
 			});
 		}else{
 			data={
-				"msg":"'no existe conexion'",
-				"success":"0"
+				"mensaje":"'no existe conexion'",
+				"success":0
 			};
 			reject(data);
 		}
@@ -142,7 +138,7 @@ accessModel.registrar = function(){
 				else
 				{
 					callback(null,{
-									"msg":"actualizacion realizada con exito",
+									"mensaje":"actualizacion realizada con exito",
 									"success":"1"
 									});
 				}
@@ -165,14 +161,14 @@ accessModel.registrar = function(){
 						else
 						{
 							callback(null,{
-											"msg":"actualizacion realizada con exito",
+											"mensaje":"actualizacion realizada con exito",
 											"success":"1"
 											});
 						}
 					});
 				}else{
 					callback(null,{
-								"msg":"no se pudo realizar la operacion",
+								"mensaje":"no se pudo realizar la operacion",
 								"success":"0"
 								});
 				}
