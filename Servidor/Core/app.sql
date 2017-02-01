@@ -53,7 +53,7 @@ CREATE TABLE `frase` (
   `seudonimo` char(1) collate utf8_spanish_ci NOT NULL,
   PRIMARY KEY  (`codigo`),
   KEY `autor` (`autor`),
-  CONSTRAINT `frase_ibfk_1` FOREIGN KEY (`autor`) REFERENCES `usuario` (`nombreUsu`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `frase_ibfk_1` FOREIGN KEY (`autor`) REFERENCES `usuario` (`nombreusu`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 SET character_set_client = @saved_cs_client;
 
@@ -81,7 +81,7 @@ CREATE TABLE `integrante` (
   PRIMARY KEY  (`codigoDis`,`usuario`),
   KEY `usuario` (`usuario`),
   CONSTRAINT `integrante_ibfk_1` FOREIGN KEY (`codigoDis`) REFERENCES `discusion` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `integrante_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuario` (`nombreUsu`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `integrante_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuario` (`nombreusu`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 SET character_set_client = @saved_cs_client;
 
@@ -110,7 +110,7 @@ CREATE TABLE `mensaje` (
   `idtemp` varchar(5) collate utf8_spanish_ci default NULL,
   PRIMARY KEY  (`codigo`),
   KEY `emisor` (`emisor`),
-  CONSTRAINT `mensaje_ibfk_1` FOREIGN KEY (`emisor`) REFERENCES `usuario` (`nombreUsu`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `mensaje_ibfk_1` FOREIGN KEY (`emisor`) REFERENCES `usuario` (`nombreusu`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 SET character_set_client = @saved_cs_client;
 
@@ -208,13 +208,13 @@ DROP TABLE IF EXISTS `usuario`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `usuario` (
-  `nombreUsu` varchar(20) collate utf8_spanish_ci NOT NULL,
+  `nombreusu` varchar(20) collate utf8_spanish_ci NOT NULL,
   `nombre` varchar(45) collate utf8_spanish_ci NOT NULL,
   `apellido` varchar(45) collate utf8_spanish_ci NOT NULL,
   `email` varchar(60) collate utf8_spanish_ci NOT NULL,
   `clave_usu` varchar(40) collate utf8_spanish_ci NOT NULL,
   `seudonimo` varchar(20) collate utf8_spanish_ci NOT NULL,
-  PRIMARY KEY  (`nombreUsu`)
+  PRIMARY KEY  (`nombreusu`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 SET character_set_client = @saved_cs_client;
 

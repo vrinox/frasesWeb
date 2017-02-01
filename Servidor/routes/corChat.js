@@ -50,7 +50,7 @@ corChat.gestionar = function(pet,res){
 						var persona;
 						for(var x=0;x<data.length;x++){
 							persona ={
-								nombreUsu: data[x].p2p,
+								nombreusu: data[x].p2p,
 								nombre: data[x].nu,
 								apellido: data[x].au,
 								pendientes: data[x].pendientes
@@ -70,7 +70,7 @@ corChat.gestionar = function(pet,res){
 						};
 					}
 				utils.enviar(respuesta,res);
-			},utils.error);
+			},function(error){utils.error(error,'corChat linea:73',res)});
 			break;
 		case 'cargarChat':
 			var reqData = {

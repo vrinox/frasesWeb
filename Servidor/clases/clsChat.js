@@ -14,25 +14,27 @@ chatModel.innerData = [];
 	};
 
 	chatModel.cargarp2p = function(){
+		var yo= this;
 		return new Promise(function(resolve,reject){
+			//TODO: BUG: carga de contactos no funciona
 			if(connection){
-				var values =[this.innerData.nombre];
+				var values =[yo.innerData.nombre];
 				var sql = "SELECT seguidor AS p2p,u.nombre AS nu, u.apellido AS au, count(m.codigo) as pendientes "+
 							"FROM sigue AS s "+
-							"INNER JOIN usuario AS u ON(seguidor=u.nombreUsu) "+
+							"INNER JOIN usuario AS u ON(seguidor=u.nombreusu) "+
 							"left join receptorusu as p on s.seguido = p.usuario "+
 							"left join mensaje as m on p.codigoMen = m.codigo and m.emisor = s.seguidor and m.estado = 'R' "+
 							"WHERE seguido =$1"+
-							" group by seguido ,u.nombre , u.apellido "+
+							" group by seguidor ,u.nombre , u.apellido "+
 							"UNION "+
 							"SELECT seguido AS p2p,u.nombre AS nu, u.apellido AS au, count(m.codigo) as pendientes "+
 							"FROM sigue AS s "+
-							"INNER JOIN usuario AS u ON(seguido=u.nombreUsu) "+
+							"INNER JOIN usuario AS u ON(seguido=u.nombreusu) "+
 							"left join receptorusu as p on s.seguidor = p.usuario "+
 							"left join mensaje as m on p.codigoMen = m.codigo and m.emisor = s.seguido and m.estado = 'R' "+
 							"WHERE seguidor =$1"+
 							" group by seguido ,u.nombre , u.apellido ";
-				connection.query(sql,values, function(error, rows) {
+				var query=connection.query(sql,values, function(error, rows) {
 					if(error)
 					{
 						reject(error);
@@ -48,9 +50,10 @@ chatModel.innerData = [];
 		});
 	};
 
-	chatModel.cargarChat = function(callback){
+	chatModel.cargarChat = function(){
+		var yo= this;
 		new Promise(function(resolve,reject){
-			var data = this.innerData;
+			var data = yo.innerData;
 			var values = [data.nombre,data.user];
 			var sql = 'SELECT * FROM(SELECT m.estado AS estado,m.contenido AS cont,m.fecha,m.emisor,m.codigo as id,idtemp FROM mensaje AS m '+
 						'INNER JOIN receptorusu AS ru ON(m.codigo=ru.codigoMen)'+

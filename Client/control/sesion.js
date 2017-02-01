@@ -4,7 +4,7 @@ var conexionSess;
 //----------------------------------------------OBJETO SESSION--------------------------------------//
 var Session = function(){
 
-	this.nombreUsu = "";
+	this.nombreusu = "";
 
 	this.horaDeConexion = "";
 
@@ -22,7 +22,7 @@ var Session = function(){
 	this.destruirSession = function(){
 		this.socket.emit('session',{
 			text:'cerrar',
-			nombreUsu:this.nombreUsu
+			nombreusu:this.nombreusu
 		});
 	};
 
@@ -30,10 +30,10 @@ var Session = function(){
 		jarvis.traza("peticion de recuperacion enviada",'session');
 		this.socket.emit('session',{
 			text:"recuperar",
-			nombreUsu:this.nombreUsu
+			nombreusu:this.nombreusu
 		});
 		this.sesIntId = setInterval(function(){
-			if(jarvis.session.nombreUsu!==""){
+			if(jarvis.session.nombreusu!==""){
 				jarvis.traza("temporalmente sin conexion",'session');
 			}
 		},30000);
@@ -42,7 +42,7 @@ var Session = function(){
 	this.identificacion = function(){
 		jarvis.traza('identificacion enviada','session');
 		this.socket.emit('identificacion',{
-			nombre: jarvis.session.nombreUsu,
+			nombre: jarvis.session.nombreusu,
 			HDC: jarvis.session.horaDeConexion
 		});
 		if(this.sesIntId!==null){
@@ -60,7 +60,8 @@ var Session = function(){
 		});
 	};
 	this.inicializarConexion = function(){
-		this.socket=io.connect('http://'+document.domain+':4000');
+		//var port = process.env.PORT || 4000;
+		this.socket=io();
 		jarvis.traza('conectado1: '+this.socket.connected,'session');
 		this.socket.on('connect',function(){
 			jarvis.traza('conectado2: '+jarvis.session.socket.connected,'session');
@@ -68,7 +69,7 @@ var Session = function(){
 		var obj = this.socket;
 		this.socket.on('identificacion',function(data){
 			if(data.text=="falsa"){
-				jarvis.session.nombreUsu="";
+				jarvis.session.nombreusu="";
 				jarvis.session.horaDeConexion="";
 				jarvis.session.estado="cerrada";
 				jarvis.construc.construirAcceso();
@@ -78,7 +79,7 @@ var Session = function(){
 			jarvis.traza('peticion recivida: '+data.text,'session');
 			if(data.text=="recuperada")
 			{
-				jarvis.session.nombreUsu=data.nombreUsu;
+				jarvis.session.nombreusu=data.nombreusu;
 				jarvis.session.horaDeConexion=data.horaCon;
 				jarvis.session.estado="abierta";
 				clearInterval(jarvis.session.sesIntId);
@@ -87,14 +88,14 @@ var Session = function(){
 					jarvis.construc.construirInicio();
 					jarvis.construc.llenarMenu();
 					UI.agregarToasts({
-						texto: "Bienvenido "+jarvis.session.nombreUsu,
+						texto: "Bienvenido "+jarvis.session.nombreusu,
 						tipo: 'web-arriba-derecha'
 					});
 				}
 			}
 			else if(data.text=="cerrada")
 			{
-				jarvis.session.nombreUsu="";
+				jarvis.session.nombreusu="";
 				jarvis.session.horaDeConexion="";
 				jarvis.session.estado="cerrada";
 				jarvis.construc.construirAcceso();
@@ -102,7 +103,7 @@ var Session = function(){
 			else if(data.text=="agotada")
 			{
 				jarvis.traza('tiempo agotado inicie de nuevo','session');
-				jarvis.session.nombreUsu="";
+				jarvis.session.nombreusu="";
 				jarvis.session.horaDeConexion="";
 				jarvis.session.estado="cerrada";
 				jarvis.construc.construirAcceso();
@@ -129,11 +130,11 @@ var Session = function(){
 				var newContac = jarvis.buscarLib('Chat').op.crearChatUnit(data.user);
 				UI.buscarVentana('ListadoChats').nodo.appendChild(newContac.userChatCard);
 			  UI.agregarToasts({
-			    texto: data.user.nombreUsu+' te ha agregado',
+			    texto: data.user.nombreusu+' te ha agregado',
 			    tipo: 'web-arriba-derecha-alto'
 			  });
 			}else if(data.accion === 'borrar'){
-				jarvis.buscarLib('Chat').op.eliminarChatUnit(data.user.nombreUsu);
+				jarvis.buscarLib('Chat').op.eliminarChatUnit(data.user.nombreusu);
 			}
 		});
 		this.socket.on('chatMsg',function(data){
@@ -149,7 +150,7 @@ var Session = function(){
 				};
 				//en caso de que este el chat abierto lo escribo en el chat
 				if(jarvis.buscarLib('Chat').op.chatActivo){
-					if(jarvis.buscarLib('Chat').op.chatActivo.user.nombreUsu === data.emisor){
+					if(jarvis.buscarLib('Chat').op.chatActivo.user.nombreusu === data.emisor){
 						newData.estado = 'L';
 						jarvis.buscarLib('Chat').op.agregarMensaje(data);
 					}else{

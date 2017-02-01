@@ -9,7 +9,7 @@ var ChatManager = function(){
 	//---------------------------------FUNCIONES DE DATOS----------------------------//
 	this.pedirP2P = function(callback){
 		var peticion = {
-			Nombre: jarvis.session.nombreUsu,
+			Nombre: jarvis.session.nombreusu,
 			Operacion: "cargarp2p",
 			entidad: "chat",
 			TipoPet:"web"
@@ -20,7 +20,7 @@ var ChatManager = function(){
 				var p2p = respuesta.p2p;
 				for(var x=0;x<p2p.length;x++){
 					yo.contactos.push({
-						nombreUsu : p2p[x].nombreUsu,
+						nombreusu : p2p[x].nombreusu,
 						nombre : p2p[x].nombre,
 						apellido : p2p[x].apellido,
 						pendientes : p2p[x].pendientes
@@ -47,7 +47,7 @@ var ChatManager = function(){
 	this.buscarChatUnit = function(userName){
 		var chatArray = this.chats;
 		for(var x = 0;x < chatArray.length; x++){
-			if(chatArray[x].user.nombreUsu==userName){
+			if(chatArray[x].user.nombreusu==userName){
 				return chatArray[x];
 			}
 		}
@@ -64,13 +64,13 @@ var ChatManager = function(){
 		var chatArray = this.chats;
 		var lista = "lista de chats:\n";
 		for(var x = 0;x < chatArray.length; x++){
-			lista += "\t Nombre:"+chatArray[x].user.nombreUsu+"\n\tEstado:"+chatArray[x].estado+"\n";
+			lista += "\t Nombre:"+chatArray[x].user.nombreusu+"\n\tEstado:"+chatArray[x].estado+"\n";
 		}
 		console.log(lista);
 	};
 
 	this.mostrarUsuario = function(){
-		console.log(jarvis.session.nombreUsu);
+		console.log(jarvis.session.nombreusu);
 	};
 	//---------------------------------FUNCIONES DE MENSAJES----------------------------//
 	this.actualizarMensaje = function(msgData){
@@ -141,14 +141,14 @@ var ChatUnit = function(user){
 			jarvis.buscarLib('Chat').op.chatActivo = this;
 			//vacio el campo de texto
 			UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('textarea').value="";
-			var user = this.user.nombreUsu;
+			var user = this.user.nombreusu;
 			var chatUnit=this;
 			var contenedorMensajes = UI.buscarVentana('contenedorMensajes');
 			//busco los mensajes
 			var peticion = {
 				entidad: "chat",
 				operacion: 'cargarChat',
-				nombre: jarvis.session.nombreUsu,
+				nombre: jarvis.session.nombreusu,
 				chat:user
 			};
 			var cuadro = {
@@ -218,12 +218,12 @@ function createCard(data,tipo,forma){
 	if(data.nombre){
 		iniciales = data.nombre.substr(0,1).toUpperCase()+data.apellido.substr(0,1).toUpperCase();
 	}else{
-		iniciales = data.nombreUsu.substr(0,1).toUpperCase();
+		iniciales = data.nombreusu.substr(0,1).toUpperCase();
 	}
 	var seccionDerecha = "";
 	if(tipo == 'chat'){
-		card.id = 'cardChatOf'+data.nombreUsu;
-		card.setAttribute('cardChat',data.nombreUsu);
+		card.id = 'cardChatOf'+data.nombreusu;
+		card.setAttribute('cardChat',data.nombreusu);
 		seccionDerecha = "<div opciones onmouseout='regresarNot(this)'>"+
 							"<div contenido class='material-icons bluegrey500 md-15'>settings</div>"+
 						 "</div>";
@@ -243,7 +243,7 @@ function createCard(data,tipo,forma){
 	if(data.nombre){
 		html += "<div cardTitle >"+data.nombre+" "+data.apellido+"</div>";
 	}else{
-		html += "<div cardTitle >"+data.nombreUsu+"</div>";
+		html += "<div cardTitle >"+data.nombreusu+"</div>";
 	}
 	html += seccionDerecha+"</div>";
 	card.innerHTML = html;
@@ -261,7 +261,7 @@ function createMsgBubble(data){
 	}
 	var html = data.contenido+
 					"<article hora>"+fecha+"</article>";
-	if(data.emisor!==jarvis.session.nombreUsu){
+	if(data.emisor!==jarvis.session.nombreusu){
 		msg.setAttribute('orientacion','izquierda');
 	}else{
 		msg.setAttribute('orientacion','derecha');
@@ -273,14 +273,14 @@ function createMsgBubble(data){
 }
 function enviarMsg(){
 	var chat = jarvis.buscarLib('Chat').op.chatActivo;
-	var usuario = chat.user.nombreUsu;
+	var usuario = chat.user.nombreusu;
 	var chatField = UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('textarea');
 	if(chatField.value.trim()!==""){
 		var data = {
 			id : chat.crearIdUnico(),
 			contenido : chatField.value,
 			receptor : usuario,
-			emisor : jarvis.session.nombreUsu,
+			emisor : jarvis.session.nombreusu,
 			estado: 'E',
 			tipo : 'envio'
 		};

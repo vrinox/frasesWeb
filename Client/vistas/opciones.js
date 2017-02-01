@@ -67,7 +67,7 @@ function arranque(){
 	jarvis.buscarLib("Opciones").op.construirOpciones();
 	torque.Operacion({
 		operacion:'datosPer',
-		nombre:jarvis.session.nombreUsu,
+		nombre:jarvis.session.nombreusu,
 		entidad:"acceso"
 	},function(respuesta){
 		console.log(respuesta);

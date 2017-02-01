@@ -8,8 +8,14 @@ utils.innerData = [];
     	res.send(JSON.stringify(respuesta));
 	};
 
-	utils.error = function(error){
-		console.error(error);
+	utils.error = function(error,linea,res){
+		console.error(error,linea);
+		error = JSON.stringify(error);
+		this.enviar({
+			"success":0,
+			"mensaje":error,
+			"linea":linea
+		},res);
 	};
 
 module.exports = utils;

@@ -23,7 +23,7 @@ Construc.prototype.construirInicio = function() {
 	    	{
 	    		nombre: 'Bienvenido',
 	    		html: "<div class='material-icons indigo500 ' bienvenidoIcon>info_outline</div>"+
-	    				"<div class='indigo500' bienvenido> Bienvenido "+jarvis.session.nombreUsu+" <br> Por favor presiona un contancto para ver sus mensajes</div>"
+	    				"<div class='indigo500' bienvenido> Bienvenido "+jarvis.session.nombreusu+" <br> Por favor presiona un contancto para ver sus mensajes</div>"
 	    	}
 	    ]
 	},document.body.querySelector('div[contenedor]'));
@@ -95,12 +95,13 @@ Construc.prototype.llenarMenu = function() {
 	UI.elementos.menu.agregarModulo(data);
 };
 Construc.prototype.buscarContactos = function(){
-	jarvis.usarLib('Contactos',function(){
-		if(!jarvis.buscarLib('Contactos').op){
-			jarvis.buscarLib('Contactos').op = new Contactos();
-		}
-		jarvis.buscarLib('Contactos').op.construirBusqueda();
-	});
+	jarvis.usarLib('Contactos')
+		.then(function(lib){
+			if(!lib.op){
+				lib.op = new Contactos();
+			}
+			lib.op.construirBusqueda();
+		});
 };
 Construc.prototype.construirAcceso = function(){
 	var capas = UI.elementos.menu.nodo.querySelectorAll('div[subcapamenu]');

@@ -19,7 +19,7 @@ corAcceso.gestionar = function(pet,res){
 				.then(function(data){
 					var respuesta = {};
 						respuesta.session = {
-							NombreUsu: accessModel.innerData.usuario,
+							nombreusu: accessModel.innerData.usuario,
 							HoraCon: data.HoraCon
 						};
 						respuesta.success = 1;
@@ -52,12 +52,13 @@ corAcceso.gestionar = function(pet,res){
 					}
 					utils.enviar(respuesta,res);
 				},function(data){
-					console.error(data.msg);
+					utils.error(data.mensaje,'corAcceso linea:55',res);
 				});
 			break;
 
 		case 'datosPer':
-			accessModel.buscar(function(error,data){
+			accessModel.buscar()
+			.then(function(data){
 				var respuesta;
 				if(data.success=='1')
 				{
@@ -81,13 +82,13 @@ corAcceso.gestionar = function(pet,res){
 					};
 				}
 				utils.enviar(respuesta,res);
-			});
+			},function(error){utils.error(error,'corAcceso linea:85',res)});
 			break;
 
 		case "actualizarDatos":
 			console.log("peticion de actualizacion obtenida");
 			reqData = {
-				nombreUsu : req.body.NombreUsu,
+				nombreusu : req.body.nombreusu,
 				nombre : req.body.Nombre,
 				apellido : req.body.Apellido,
 				email : req.body.Email,
@@ -105,7 +106,7 @@ corAcceso.gestionar = function(pet,res){
 
 		case "actualizarClave":
 			reqData = {
-				nombreUsu : req.body.Nombre,
+				nombreusu : req.body.Nombre,
 				clave_usu : req.body.Pass,
 				newClave : accessModel.encriptarPass(req.body.NewClave,req.body.Nombre)
 			};
@@ -121,7 +122,7 @@ corAcceso.gestionar = function(pet,res){
 
 		case "seguir":
 			reqData = {
-				nombreUsu : req.body.NombreUsu,
+				nombreusu : req.body.nombreusu,
 				parametro : req.body.Parametro
 			};
 

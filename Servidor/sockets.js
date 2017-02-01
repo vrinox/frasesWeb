@@ -33,19 +33,19 @@ function init(server) {
 	  //--------inicio identificacion ------------------------
 	  socket.on('identificacion',function(data){
 	    var atributos = {
-	      nombreUsu:data.nombre,
+	      nombreusu:data.nombre,
 	      horaDeConeccion:data.HDC,
 	      ultimaConeccion:new Date(),
 	    };
-	    if(rack.buscarPlug(atributos.nombreUsu)){
+	    if(rack.buscarPlug(atributos.nombreusu)){
 	      socket.emit('identificacion',{text:"falsa"});
-	      rack.buscarPlug(atributos.nombreUsu).socket.emit('session',{text:"dobleSession"});
+	      rack.buscarPlug(atributos.nombreusu).socket.emit('session',{text:"dobleSession"});
 	      console.log('doble session');
 	    }else{
 	      var plug = plugAssembler.configure(atributos,socket);
 	      rack.addPlug(plug);
 	      //identificacion en servidor
-	      console.log('\nconexion establecida con: '+plug.nombreUsu+"\nde direccion: "+plug.ip+"\n");
+	      console.log('\nconexion establecida con: '+plug.nombreusu+"\nde direccion: "+plug.ip+"\n");
 	      rack.mostrarListaPlugs();
 	    }
 	  });
@@ -53,9 +53,9 @@ function init(server) {
 	  socket.on('session',function(data){
 	    if(data.text=='cerrar')
 	    {
-	      rack.removePlug(data.nombreUsu);
+	      rack.removePlug(data.nombreusu);
 	      socket.emit('session',{text:"cerrada"});
-	      console.log('session de: '+data.nombreUsu+" cerrada");
+	      console.log('session de: '+data.nombreusu+" cerrada");
 	    }
 	    else if(data.text=="recuperar")
 	    {
@@ -64,7 +64,7 @@ function init(server) {
 	      {
 	        socket.emit('session',{
 	          text:"recuperada",
-	          nombreUsu:plug.nombreUsu,
+	          nombreusu:plug.nombreusu,
 	          horaDeConeccion:plug.horaDeConeccion
 	        });
 	        //activo el plug
@@ -76,7 +76,7 @@ function init(server) {
 	      {
 	        socket.emit('session',{
 	          text:"no recuperada",
-	          nombreUsu:"",
+	          nombreusu:"",
 	          horaDeConeccion:""
 	        });
 	      }
@@ -149,7 +149,7 @@ function init(server) {
 	        (function(plug){
 	          return function(){
 	            if(plug.estado=='esperando'){
-	              rack.removePlug(plug.nombreUsu);
+	              rack.removePlug(plug.nombreusu);
 	            }
 	      		};
 					})(plug), 120000);

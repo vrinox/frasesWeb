@@ -2,7 +2,7 @@ var plugAssembler= {};
 
 plugAssembler.configure = function(attr,socket){
 	var plug = {
-		nombreUsu : attr.nombreUsu,
+		nombreusu : attr.nombreusu,
 		ultimaConexion : attr.ultimaConexion,
 		horaDeConexion : attr.horaDeConexion,
 		socket : socket,

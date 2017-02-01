@@ -10,13 +10,13 @@ Contactos.prototype.construirBusqueda = function(){
 	var lista =  UI.agregarLista({
 		titulo: 'Agregar Contacto',
 		clases: ['enbebida'],
-    	campo_nombre: 'nombreUsu',
+    	campo_nombre: 'nombreusu',
 		carga: {
 			uso:true,
 			peticion:{
 				entidad:'contacto',
 				operacion:'listar',
-				usuario:jarvis.session.nombreUsu
+				usuario:jarvis.session.nombreusu
 			},
 			espera:{
 				cuadro:{
@@ -38,7 +38,7 @@ Contactos.prototype.rellenarLista = function(lista) {
 	});
 };
 Contactos.prototype.verContacto = function(slot) {
-	var nombre = (slot.atributos.nombre)?slot.atributos.nombre+' '+slot.atributos.apellido:slot.atributos.nombreUsu;
+	var nombre = (slot.atributos.nombre)?slot.atributos.nombre+' '+slot.atributos.apellido:slot.atributos.nombreusu;
 	var mensaje={
 		titulo:'Desea seguir a '+nombre,
 		cuerpo: 'Realmente desea seguir al usuario '+nombre+'<br>Si lo hace podra comunicarse con el se mostrar en su lista de contactos',
@@ -48,8 +48,8 @@ Contactos.prototype.verContacto = function(slot) {
 		var pet = {
 			entidad:'contacto',
 			operacion:'agregar',
-			nombreUsu: slot.atributos.nombreUsu,
-			parametro: jarvis.session.nombreUsu
+			nombreusu: slot.atributos.nombreusu,
+			parametro: jarvis.session.nombreusu
 		};
 		var cuadro = {
 			contenedor :UI.elementos.modalWindow.buscarUltimaCapaContenido().partes.cuerpo.nodo,
@@ -58,22 +58,23 @@ Contactos.prototype.verContacto = function(slot) {
 				mensaje:'Agregando a '+nombre
 			}
 		};
-		torque.manejarOperacion(pet,cuadro,function(respuesta){
-			if(respuesta.success){
-				UI.agregarToasts({
-					texto:'contacto agregado de forma exitosa',
-					tipo:'web-arriba-derecha'
-				});
-				if(respuesta.accion!=='borrar'){
-					jarvis.construc.llenarListadoContactos([respuesta.contacto]);
+		torque.manejarOperacion(pet,cuadro)
+			.then(function(respuesta){
+				if(respuesta.success){
+					UI.agregarToasts({
+						texto:'contacto agregado de forma exitosa',
+						tipo:'web-arriba-derecha'
+					});
+					if(respuesta.accion!=='borrar'){
+						jarvis.construc.llenarListadoContactos([respuesta.contacto]);
+					}
+				}else{
+					UI.agregarToasts({
+						texto:'error al agregar el contacto intente de nuevo mas tarde',
+						tipo:'web-arriba-derecha-alto'
+					});
 				}
-			}else{
-				UI.agregarToasts({
-					texto:'error al agregar el contacto intente de nuevo mas tarde',
-					tipo:'web-arriba-derecha-alto'
-				});
-			}
-			UI.elementos.modalWindow.eliminarUltimaCapa();
-		});
+				UI.elementos.modalWindow.eliminarUltimaCapa();
+			});
 	});
 };

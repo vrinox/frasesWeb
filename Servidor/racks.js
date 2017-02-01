@@ -2,11 +2,11 @@ var racks = {};
 
 racks.plugs=[];
 
-racks.buscarPlug = function(nombreUsu){
+racks.buscarPlug = function(nombreusu){
   for(var x=0;x<this.plugs.length;x++){
     if(this.plugs[x]!==null)
     {
-      if(this.plugs[x].nombreUsu==nombreUsu)
+      if(this.plugs[x].nombreusu==nombreusu)
       {
         return this.plugs[x];
       }
@@ -26,9 +26,9 @@ racks.addPlug = function(plug){
   console.log(this.plugs[this.plugs.length]);
   this.plugs[this.plugs.length]=plug;
 };
-racks.removePlug = function(nombreUsu){
-  console.log('buscando el plug:'+nombreUsu);
-  this.plugs[this.plugs.indexOf(this.buscarPlug(nombreUsu))]=null;
+racks.removePlug = function(nombreusu){
+  console.log('buscando el plug:'+nombreusu);
+  this.plugs[this.plugs.indexOf(this.buscarPlug(nombreusu))]=null;
 };
 
 racks.buscarPlugPorIp = function(ip){
@@ -58,7 +58,7 @@ racks.buscarPlugPorSocket = function(Socket){
 racks.mostrarListaPlugs = function(){
   var lista = "Lista de Personas Conectadas:\n";
   for(var x = 0; x < this.plugs.length; x++){
-    lista += this.plugs[x].nombreUsu+"\n";
+    lista += this.plugs[x].nombreusu+"\n";
   }
   console.log(lista);
 } ;

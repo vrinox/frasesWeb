@@ -100,7 +100,7 @@ function ingresar(btn){
 					jarvis.buscarLib("Acceso").op.agregarForm('acceso');
 				}else{
 					//armo la session
-					jarvis.session.nombreUsu=respuesta.session.NombreUsu;
+					jarvis.session.nombreusu=respuesta.session.nombreusu;
 					jarvis.session.horaDeConexion=respuesta.session.HoraCon;
 					jarvis.session.estado="abierta";
 					//envio los datos para la creacion de la session en el servidor
