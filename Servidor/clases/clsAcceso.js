@@ -97,22 +97,17 @@ accessModel.acceder = function(){
 	});
 };
 
-//posible error por no usar id
 accessModel.registrar = function(){
 	return new Promise(function(resolve,reject){
 		if(connection){
-			var data = {
-				nombreusu : accessModel.innerData.usuario,
-				clave_usu :  accessModel.innerData.clave
-			};
-			connection.query('INSERT INTO usuario SET ?', data, function(error, result){
+			var data = [accessModel.innerData.usuario,accessModel.innerData.clave];
+			connection.query("INSERT INTO usuario (nombreusu,clave_usu) values ($1,$2)", data, function(error, result){
 				if(error)
 				{
 					reject(error);
 				}
 				else
 				{
-					//devolvemos la última id insertada
 					resolve(result);
 				}
 			});

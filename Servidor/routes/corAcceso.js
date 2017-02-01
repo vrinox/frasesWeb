@@ -36,7 +36,7 @@ corAcceso.gestionar = function(pet,res){
 		var respuesta;
 			accessModel.registrar()
 				.then(function(data){
-					if(data && data.affectedRows)
+					if(data && data.rowCount)
 					{
 						console.log("registro realizado con exito");
 						respuesta = {

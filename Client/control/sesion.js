@@ -60,7 +60,7 @@ var Session = function(){
 		});
 	};
 	this.inicializarConexion = function(){
-		this.socket=io.connect('http://192.168.88.156:4000');
+		this.socket=io.connect('http://'+document.domain+':4000');
 		jarvis.traza('conectado1: '+this.socket.connected,'session');
 		this.socket.on('connect',function(){
 			jarvis.traza('conectado2: '+jarvis.session.socket.connected,'session');
