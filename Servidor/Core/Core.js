@@ -7,7 +7,7 @@ connectionParams={
   port: proces.env.DATABASE_PORT || '5432',
   ssl: true
 };
-
+console.log(connectionParams);
 var client = new pg.Client(connectionParams);
 client.connect();
 
