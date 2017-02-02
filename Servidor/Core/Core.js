@@ -1,7 +1,13 @@
  var pg = require('pg');
-connectionString = /*process.env.DATABASE_URL ||*/ 'postgres://cptscthbaftblv:f408a51f0b638c21f402ae9b24650a1d0c4f0d39b2258da9ba374e78525d0741@ec2-54-221-201-244.compute-1.amazonaws.com:5432/d9odifbf15mthd';
-console.log(connectionString);
-var client = new pg.Client(connectionString);
+connectionParams={
+  host: process.env.DATABASE_HOST || 'localhost',
+  user: process.env.DATABASE_USER || 'postgres',
+  password: process.env.DATABASE_PASS || '1234',
+  database: process.env.DATABASE || 'frasesweb',
+  ssl: true
+};
+
+var client = new pg.Client(connectionParams);
 client.connect();
 
 module.exports = client;
