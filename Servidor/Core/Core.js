@@ -1,14 +1,7 @@
  var pg = require('pg');
-connectionParams={
-  host: process.env.DATABASE_HOST || 'localhost',
-  user: process.env.DATABASE_USER || 'postgres',
-  password: process.env.DATABASE_PASS || '1234',
-  database: process.env.DATABASE || 'frasesweb',
-  port: process.env.DATABASE_PORT || '5432',
-  ssl: true
-};
-console.log(connectionParams);
-var client = new pg.Client(connectionParams);
+connectionString = process.env.DATABASE_URL+'?ssl=true' || 'postgres://postgres:1234@localhost:5432/frasesweb';
+console.log(connectionString);
+var client = new pg.Client(connectionString);
 client.connect();
 
 module.exports = client;
