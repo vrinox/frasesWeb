@@ -89,7 +89,7 @@ function ingresar(btn){
 			.then(function(respuesta){
 				console.log("respuesta aceptada");
 				//cadenaHtml donde se guardan todas las partes a agregar
-				if(respuesta.success===0){
+				if(respuesta.success==0){
 					//extraigo el mensaje
 					var mensaje = respuesta.mensaje;
 					btn.classList.remove('accesando');
