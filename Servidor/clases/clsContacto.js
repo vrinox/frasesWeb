@@ -70,8 +70,8 @@ contactoModel.verificar = function(){
 				}
 			}
 		});
-	})
-}
+	});
+};
 contactoModel.agregar = function(){
 	var data=this.getData();
 	return new Promise(function(resolve,reject){console.log('clsContacto linea: 75');

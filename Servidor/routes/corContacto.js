@@ -53,7 +53,7 @@ corContacto.gestionar = function(pet,res){
 					contactoModel.setData({
 						nombreusu: contactoModel.innerData.parametro,
 						parametro: contactoModel.innerData.nombreusu
-					})				
+					});
 					return contactoModel.buscar();
 				})
 				.then(function(data){
@@ -70,7 +70,7 @@ corContacto.gestionar = function(pet,res){
 					contactoModel.setData({
 						nombreusu: contactoModel.innerData.parametro,
 						parametro: contactoModel.innerData.nombreusu
-					})	
+					});
 					return contactoModel.buscar();
 				})
 				.then(function(data){
@@ -93,7 +93,7 @@ corContacto.gestionar = function(pet,res){
 				.then(function(data){
 					contactoModel.setData({
 						nombreusu:contactoModel.innerData.seguidor
-					})
+					});
 					return contactoModel.buscar();
 				})
 				.then(function(user){

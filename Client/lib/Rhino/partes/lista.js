@@ -1,3 +1,4 @@
+//BUG: no muestra el cuadro de carga al cargar los registros
 var Lista = function(data){
 	/*------------------------------Objeto BarraPaginacion-------------------*/
 	var BarraPaginacion = function(atributos){
@@ -5,21 +6,22 @@ var Lista = function(data){
 		var Pagina = function(atributos){
 			this.atributos = atributos;
 			this.nodo = null;
-			this.construirNodo = function(){
-				var nodo = document.createElement('article');
-				nodo.setAttribute('pagina','');
-				nodo.textContent = this.atributos.numero;
-				if(this.atributos.clase){
-					nodo.classList.add(this.atributos.clase);
-				}
-				this.nodo = nodo;
-			};
 			this.construirNodo();
+		};
+		Pagina.prototype.construirNodo = function(){
+			var nodo = document.createElement('article');
+			nodo.setAttribute('pagina','');
+			nodo.textContent = this.atributos.numero;
+			if(this.atributos.clase){
+				nodo.classList.add(this.atributos.clase);
+			}
+			this.nodo = nodo;
 		};
 		this.atributos = atributos;
 		this.nodo = null;
 		this.paginas = [];
-		this.construirNodo = function(){
+
+		BarraPaginacion.prototype.construirNodo = function(){
 			var nodo = document.createElement('section');
 			nodo.setAttribute('slot','');
 			nodo.classList.add('barra-paginacion');
@@ -28,7 +30,7 @@ var Lista = function(data){
 			this.nodo = nodo;
 			this.agregarPaginas();
 		};
-		this.agregarPaginas = function(){
+		BarraPaginacion.prototype.agregarPaginas = function(){
 			if(this.paginas.length){
 				this.limpiarPaginas();
 			}
@@ -45,14 +47,14 @@ var Lista = function(data){
 				this.agregarPagina(paginacion.paginas,'ultima');
 			}
 		};
-		this.agregarPagina = function(numero,clase){
+		BarraPaginacion.prototype.agregarPagina = function(numero,clase){
 			if((numero > 0)&&(numero <= this.atributos.paginas)){
 				var pagina = new Pagina({'numero':numero,'clase':clase});
 				this.nodo.querySelector('div[cont-pag]').appendChild(pagina.nodo);
 				this.paginas.push(pagina);
 			}
 		};
-		this.buscarPagina = function(numero){
+		BarraPaginacion.prototype.buscarPagina = function(numero){
 			for (var i = 0; i < this.paginas.length; i++) {
 				if(this.paginas[i].atributos.numero === numero){
 					return this.paginas[i];
@@ -60,18 +62,19 @@ var Lista = function(data){
 			}
 			return false;
 		};
-		this.quitarPagina = function quitar(pag){
+		BarraPaginacion.prototype.quitarPagina = function quitar(pag){
 			var pagina = this.buscarPagina(pag);
 			pagina.nodo.parentNode.removeChild(pagina.nodo);
 			this.paginas.splice(this.paginas.indexOf(pagina),1);
 		};
-		this.limpiarPaginas = function(){
+		BarraPaginacion.prototype.limpiarPaginas = function(){
 			var barra = this;
 			var longitud = this.paginas.length;
 			for(var x = 0; x < longitud; x++){
 				this.quitarPagina(this.paginas[0].atributos.numero);
 			}
 		};
+
 		this.construirNodo();
 	};
   /*------------------------------Objeto Slot-------------------*/
@@ -80,88 +83,202 @@ var Lista = function(data){
 		var Celda = function(atributos){
 			this.atributos = atributos;
 			this.nodo = null;
+			this.capaEdit = null;
 			this.clases = ['dos','tres','cuatro','cinco','seis','siete','ocho','adaptable'];
-
-			this.construirNodo = function(){
-				var nodo = document.createElement('div');
-				if(this.atributos.tipo){
-					nodo.setAttribute('cabeceraCelda',atributos.nombre);
-				}else{
-					nodo.setAttribute('celda',atributos.nombre);
-				}
-				nodo.textContent = atributos.valor;
-				var indice = this.atributos.columnas - 2;
-				if(indice > 6){
-					indice = 7;
-				}
-				nodo.classList.add(this.clases[indice]);
-
-				if(this.atributos.columnas > 8){
-					nodo.classList.add('pequena');
-				}
-				this.nodo = nodo;
-
-			};
 			this.construirNodo();
 		};
+		Celda.prototype.captarValor= function(){
+			var valor = this.nodo.querySelector('span[valor]').textContent.trim();
+			return valor;
+		};
+		Celda.prototype.construirNodo = function(){
+			var nodo = document.createElement('div');
+			if(this.atributos.tipo){
+				nodo.setAttribute('cabeceraCelda',this.atributos.nombre);
+			}else{
+				nodo.setAttribute('celda',this.atributos.nombre);
+			}
+			this.nodo = nodo;
+ 			this.nodo.innerHTML= '<span valor>'+this.atributos.valor+'</span>';
+			var indice = this.atributos.columnas - 2;
+			if(indice > 6){
+				indice = 7;
+			}
+			nodo.classList.add(this.clases[indice]);
+
+			if(this.atributos.columnas > 8){
+				nodo.classList.add('pequena');
+			}
+			if(!this.atributos.tipo){
+				if(this.atributos.editable){
+					this.agregarCapaEdit();
+				}
+			}
+		};
+		Celda.prototype.agregarCapaEdit = function() {
+			var capaEdit = document.createElement('div');
+			capaEdit.setAttribute('edit','');
+			this.nodo.appendChild(capaEdit);
+			this.capaEdit = capaEdit;
+			var yo = this;
+			//campo de texto
+			var span = this.nodo.querySelector('span');
+
+			this.capaEdit.onclick = function(){
+				clickEdit(capaEdit,yo,span);
+			};
+		};
+		function clickEdit(capaEdit,yo,span){
+			if(!capaEdit.querySelector('input')){
+				var input = document.createElement('input');
+				input.type='text';
+				input.value = span.textContent;
+				input.onblur = function(){
+					span.textContent = this.value;
+					capaEdit.classList.toggle('visible');
+					capaEdit.querySelector('input').value = yo.nodo.querySelector('span').textContent;
+					capaEdit.removeChild(capaEdit.querySelector('input'));
+					this.onclick = function(){
+						clickEdit(capaEdit,yo,span);
+					};
+				};
+				capaEdit.appendChild(input);
+				capaEdit.onclick = function(){};
+			}else{
+				capaEdit.querySelector('input').value = yo.nodo.querySelector('span').textContent;
+				capaEdit.removeChild(capaEdit.querySelector('input'));
+			}
+			yo.capaEdit.classList.toggle('visible');
+		}
 		/*------------------------------Objeto Selector-------------------*/
 		var Selector = function(atributos){
 			this.atributos = atributos;
 			this.nodo = null;
 			this.check = null;
-			this.construirNodo = function(){
-				var nodo = document.createElement('div');
-				nodo.setAttribute('selector',this.atributos.codigo);
-				this.nodo = nodo;
-				this.check = new CheckBox({
-						nombre: "selector"+this.atributos.nombre,
-						valor: this.atributos.codigo,
-						requerido: false,
-						habilitado: true,
-						animacion: 'girar',
-						eslabon: 'area',
-						sinTitulo: true,
-						marcado: false,
-						tipo: 'opciones'
-				});
-				this.nodo.appendChild(this.check.nodo);
-			};
-			this.activar = function(){
-				this.check.nodo.click();
-			};
+			this.onSelect = null;
+			this.onDeselect = null;
 			this.construirNodo();
 		};
-    this.atributos = registro;
-    this.estado = 'sinInicializar';
-    this.rol = 'lista';
-    this.nodo = null;
-		this.columnas = [];
-
-    this.construirNodo = function(nombre){
-      var nodo = document.createElement('section');
-      nodo.setAttribute('slot','');
-      nodo.id=this.atributos.codigo;
+		Selector.prototype.construirNodo = function(){
+			var nodo = document.createElement('div');
+			nodo.setAttribute('selector',this.atributos.codigo);
 			this.nodo = nodo;
-			if(registro.columnas!=1){
+			this.check = new CheckBox({
+					nombre: "selector"+this.atributos.nombre,
+					valor: this.atributos.codigo,
+					requerido: false,
+					habilitado: true,
+					animacion: 'girar',
+					eslabon: 'area',
+					sinTitulo: true,
+					marcado: false,
+					tipo: 'opciones'
+			});
+			this.nodo.appendChild(this.check.nodo);
+			var yo = this;
+			this.nodo.onclick = function(){
+				if(yo.check.marcado){
+					if(yo.onSelect){
+						yo.onSelect(yo.slot);
+					}
+				}else{
+					if(yo.onDeselect){
+						yo.onDeselect(yo.slot);
+					}
+				}
+			};
+		};
+		Selector.prototype.activar = function(){
+			this.check.nodo.click();
+		};
+		Selector.prototype.agregarOnSelect = function(funcion,slot){
+			this.onSelect = funcion;
+			this.slot = slot;
+		};
+		Selector.prototype.agregarOnDeselect = function(funcion,slot){
+			this.onDeselect = funcion;
+			this.slot = slot;
+		};
+		/*------------------------------Objeto Selector-------------------*/
+	    this.atributos = registro;
+	    this.estado = 'sinInicializar';
+	    this.nodo = null;
+		  this.columnas = [];
+			Slot.prototype.agregarCelda = function(dataCelda){
+				var newCelda = new Celda(dataCelda);
+				this.nodo.appendChild(newCelda.nodo);
+				this.columnas.push(newCelda);
+				return newCelda;
+			};
+			Slot.prototype.agregarSelector = function(registro){
+				this.selector = new Selector(registro);
+				this.nodo.appendChild(this.selector.nodo);
+			};
+	    this.construirNodo();
+	  };
+
+		Slot.prototype.construirNodo = function(){
+		  var nodo = document.createElement('section');
+		  nodo.setAttribute('slot','');
+		  nodo.id=this.atributos.codigo;
+			this.nodo = nodo;
+			var html = this.construccion();
+			if(html){
+					nodo.innerHTML=html;
+				  this.funcionamiento();
+			}
+		};
+		Slot.prototype.funcionamiento = function(){
+		  var nodo = this.nodo;
+		  var article =nodo.getElementsByTagName('article')[0];
+		  article.onclick=function(e){
+		    agregarRippleEvent(this.parentNode,e);
+		  };
+		};
+
+		Slot.prototype.reconstruirNodo = function(){
+		  var nodo=this.nodo;
+			var slot=this;
+			var html = this.construccion();
+			setTimeout(function(){
+				if(html){
+						nodo.innerHTML=html;
+				    slot.funcionamiento();
+				}
+			},310);
+		};
+		Slot.prototype.construccion = function(){
+			var html = false;
+			this.nodo.innerHTML="";
+			if(this.atributos.columnas!=1){
 				//la celda con el checkbox como selector del registro o fila
 				if(this.atributos.selector){
 					if(this.atributos.selector.toLowerCase()!=='apagado'){
-							this.agregarSelector(registro);
+							this.agregarSelector(this.atributos);
 					}
 				}else{
-					this.agregarSelector(registro);
+					this.agregarSelector(this.atributos);
 				}
 				var x = 0;
-				for (var variable in registro) {
-					if(x < registro.columnas){
-						if (registro.hasOwnProperty(variable)) {
+				for (var variable in this.atributos) {
+					if(x < this.atributos.columnas){
+						if (this.atributos.hasOwnProperty(variable)) {
 							var dataCelda ={
 								nombre: variable,
-								valor: registro[variable],
+								valor: this.atributos[variable],
 								numero: x,
-								columnas: registro.columnas,
-								tipo: registro.tipo
+								columnas: this.atributos.columnas,
+								tipo: this.atributos.tipo
 							};
+							if(this.atributos.editable){
+								if(this.atributos.editable === true){//si editable es igual a true significa que todas las celdas se pueden editar
+									dataCelda.editable = true;
+								}else if(this.atributos.editable.celdas){//si posee el arreglo de las celdas editables
+									if(this.atributos.editable.celdas.indexOf(x+1)!==-1){//si el numero se encuentra dentro de el arreglo
+										dataCelda.editable = true;
+									}
+								}
+							}
 							this.agregarCelda(dataCelda);
 							x++;
 						}
@@ -182,7 +299,7 @@ var Lista = function(data){
 					});
 				}
 			}else{
-				var html ="";
+				html ="";
 				var titulo;
 				var nombreAMostrar;
 				if(data.campo_nombre){
@@ -190,92 +307,59 @@ var Lista = function(data){
 				}else {
 					nombreAMostrar = 'nombre';
 				}
-				if(this.atributos[nombreAMostrar].length>28){
-					titulo=this.atributos[nombreAMostrar].substr(0,28)+'...';
-				}else{
-					titulo=this.atributos[nombreAMostrar];
-				}
+				titulo=this.atributos[nombreAMostrar];
+				//BUG: al tener mas de una lista en una interfaz muestra undefine en el nombre ejemplo vis_Productor.html usando 3 listas
 				html+="<article  title>"+titulo+"</article>";
-				nodo.innerHTML=html;
-				this.estado='enUso';
-				this.funcionamiento();
 			}
-    };
-    this.funcionamiento = function(){
-      var nodo = this.nodo;
-      var article =nodo.getElementsByTagName('article')[0];
-      article.onclick=function(e){
-        agregarRippleEvent(this.parentNode,e);
-      };
-    };
-
-    this.reconstruirNodo = function(){
-      var nodo=this.nodo;
-      var slot=this;
-      var titulo;
-      var nombre;
-      if(data.campo_nombre){
-        nombre = data.campo_nombre;
-      }else {
-        nombre = 'nombre';
-      }
-      if(this.atributos[nombre].length>28){
-        titulo=this.atributos[nombre].substr(0,28)+'...';
-      }else{
-        titulo=this.atributos[nombre];
-      }
-      var html="<article  title>"+titulo+"</article>";
-      setTimeout(function(){
-        nodo.innerHTML=html;
-        slot.funcionamiento();
-      },510);
-    };
-
-    this.destruirNodo = function(){
-      var nodo = this.nodo;
-      var slot = this;
-      nodo.classList.add('desaparecer');
-      setTimeout(function(){
-        nodo.classList.add('desaparecerPorCompleto');
-      },510);
-      setTimeout(function(){
-        nodo.parentNode.removeChild(nodo);
-      },1110);
-    };
-    this.activar = function(){
-      this.nodo.getElementsByTagName('article')[0].click();
-    };
-		this.agregarCelda = function(dataCelda){
-			var newCelda = new Celda(dataCelda);
-			this.nodo.appendChild(newCelda.nodo);
-			this.columnas.push(newCelda);
-			return newCelda;
+			return html;
 		};
-		this.agregarSelector = function(registro){
-			this.selector = new Selector(registro);
-			this.nodo.appendChild(this.selector.nodo);
+		Slot.prototype.destruirNodo = function(){
+		  var nodo = this.nodo;
+		  var slot = this;
+		  nodo.classList.add('desaparecer');
+		  setTimeout(function(){
+		    nodo.classList.add('desaparecerPorCompleto');
+		  },510);
+		  setTimeout(function(){
+		    nodo.parentNode.removeChild(nodo);
+		  },1110);
 		};
-    this.construirNodo();
-  };
+		Slot.prototype.activar = function(){
+			if(this.atributos.columnas===1){
+			  this.nodo.getElementsByTagName('article')[0].click();
+			}else{
+				this.nodo.click();
+			}
+		};
+		Slot.prototype.buscarCelda = function(nombre) {
+			for (var i = 0; i < this.columnas.length; i++) {
+				if(this.columnas[i].atributos.nombre === nombre){
+					return this.columnas[i];
+				}
+			}
+			return false;
+		};
   /*--------------------------Fin Objeto Slot-------------------*/
 
   this.Slots = [];
   this.atributos = data;
-	this.atributos.nombre = data.nombre || data.titulo;
+  this.atributos.nombre = data.nombre || data.titulo;
   this.atributos.onclickSlot = this.atributos.onclickSlot || null;
-	this.clases = data.clases || [];
+  this.clases = data.clases || [];
   this.columnas = data.columnas || 1;
 	//paginacion
 	this.paginaActual = 1;
 	this.paginas = 1;
 	this.valorBusqueda = '';
-	this.registrosPorPagina = this.atributos.registrosPorPagina || 10;
+	this.registrosPorPagina = this.atributos.registrosPorPagina || 12;
 	this.tamano = this.atributos.tamano|| 'libre';
 	//UI
   this.nodo = null;
+	this.poseeCabecera = false;
+	this.noUsatitulo = data.noUsatitulo || false;
 
-  this.construir = function(){
-    var contenedor = data.contenedor || 'noPosee';
+  Lista.prototype.construir = function(){
+    var contenedor = this.atributos.contenedor || 'noPosee';
     var nodo = document.createElement('div');
     nodo.setAttribute('lista','');
     nodo.setAttribute('mat-window','');
@@ -283,28 +367,38 @@ var Lista = function(data){
     //contruir sector busqueda
     var html='';
 		var alto = ((this.tamano==='libre')&&(this.Slots<this.registrosPorPagina))?'auto':parseInt((this.registrosPorPagina*40)+70)+'px';
+		var fijo = '';
+		if(this.atributos.cabecera){
+			if(this.atributos.cabecera.fija){
+				fijo = 'fija';
+			}
+		}
 		html+="<section cont-slots style='height:"+alto+"'>";
-    html+="<section busqueda>";
-    html+=	"<div titulo>"+this.atributos.titulo+"</div>";
-    html+=	"<div listBuscar>";
-    html+=		"<input type='text' placeHolder='Buscar...'campBusq>";
-    html+=		"<button type='button' cerrarBusq></button>";
-    html+=	"</div>";
-    html+=	"<button type='button' btnBusq ></button>";
-		html+="</section>";
+		if(!this.noUsatitulo){
+	    html+="<section busqueda "+fijo+">";
+	    html+=	"<div titulo>"+this.atributos.titulo+"</div>";
+	    html+=	"<div listBuscar>";
+	    html+=		"<input type='text' placeHolder='Buscar...'campBusq>";
+	    html+=		"<button type='button' cerrarBusq></button>";
+	    html+=	"</div>";
+	    html+=	"<button type='button' btnBusq ></button>";
+			html+="</section>";
+		}
     html+="</section>";
     nodo.innerHTML = html;
     this.nodo = nodo;
 
-    var botonBusqueda = nodo.getElementsByTagName('button')[1];
-    var botonCerrarBusq = nodo.getElementsByTagName('button')[0];
+    var botonBusqueda = nodo.querySelector('button[btnBusq]');
+    var botonCerrarBusq = nodo.querySelector('button[cerrarBusq]');
 		var lista = this;
-    botonBusqueda.onclick = function(){
-			lista.abrirCampoBusqueda();
-		};
-    botonCerrarBusq.onclick = function(){
-			lista.cerrarCampoBusqueda();
-		};
+		if(botonBusqueda){
+	    botonBusqueda.onclick = function(){
+				lista.abrirCampoBusqueda();
+			};
+	    botonCerrarBusq.onclick = function(){
+				lista.cerrarCampoBusqueda();
+			};
+		}
 
     //agrego la lista al contenedor
     if(contenedor !== 'noPosee'){
@@ -321,11 +415,11 @@ var Lista = function(data){
 		}
   };
 
-  this.manejarPaginacion = function(){
+  Lista.prototype.manejarPaginacion = function(){
 		if((this.barraPaginacion)||(this.Slots.length === this.registrosPorPagina)){
 			if(!this.barraPaginacion){
 				this.barraPaginacion = new BarraPaginacion({
-					paginas : this.paginas,
+					paginas: this.paginas,
 					paginaActual: this.paginaActual
 				});
 				this.nodo.appendChild(this.barraPaginacion.nodo);
@@ -364,11 +458,15 @@ var Lista = function(data){
 			};
 		}
   };
-	this.recargar = function(){
+	Lista.prototype.recargar = function(){
+		var yo = this;
 		this.limpiarSlots();
-		this.manejarCarga();
+		return this.manejarCarga()
+			.then(function(){
+				yo.removerContenedorCarga();
+			});
 	};
-  this.manejarCarga = function(){
+  Lista.prototype.manejarCarga = function(){
     var carga = this.atributos.carga;
     //si no posee la info del cuadro de carga toma los valore por defecto
     if(carga){
@@ -396,50 +494,68 @@ var Lista = function(data){
 				}
 				carga.peticion.registrosPorPagina = this.registrosPorPagina;
 
-        torque.manejarOperacion(carga.peticion,carga.espera,function cargaAutomaticaLista(respuesta){
-          lista.removerContenedorCarga();
-          if(respuesta.success){
-            lista.cargarElementos(respuesta.registros);
+        return torque.manejarOperacion(carga.peticion,carga.espera)
+					.then(function validacionRespuesta(respuesta){
+						if(respuesta.success===1){
+							return Promise.resolve(respuesta);
+						}else{
+							return Promise.reject();
+						}
+					})
+					.then(function cargaAutomaticaLista(respuesta){
+	          lista.removerContenedorCarga();
 						lista.paginas = respuesta.paginas;
-				    lista.manejarPaginacion();
-          }else{
-            lista.noExistenRegistros();
-          }
-          if(lista.atributos.carga.respuesta){
-            lista.atributos.carga.respuesta(lista);
-          }
-      	});
+						lista.cargarElementos(respuesta.registros)
+						 .then(function(){
+							 lista.manejarPaginacion();
+							 return Promise.resolve();
+						 });
+					},function(){
+		        lista.removerContenedorCarga();
+						lista.noExistenRegistros();
+					})
+					.then(function(){
+	          if(lista.atributos.carga.respuesta){
+	            lista.atributos.carga.respuesta(lista);
+	          }
+						return Promise.resolve();
+	      	});
     	}
     }else if(this.atributos.elementos){
       //si lo elementos de la lista fueron suministrados en la creacion
-      this.cargarElementos(this.atributos.elementos);
+      return this.cargarElementos(this.atributos.elementos);
     }else{
       console.log('la lista se encuentra vacia');
+			return Promise.resolve();
     }
   };
-	this.limpiarSlots = function(){
+	Lista.prototype.limpiarSlots = function(){
 		var longitud =this.Slots.length;
 		for (var i = 0; i < longitud; i++) {
 			this.quitarSlot(this.Slots[0].atributos);
 		}
 	};
-  this.crearContenedorCarga = function(){
+  Lista.prototype.crearContenedorCarga = function(){
     var contenedor = document.createElement('section');
     contenedor.setAttribute('contenedorCarga','');
     this.nodo.querySelector('section[cont-slots]').appendChild(contenedor);
     return contenedor;
   };
-  this.removerContenedorCarga = function(){
-    var contenedor = this.nodo.querySelector('section[contenedorCarga]');
-    this.nodo.querySelector('section[cont-slots]').removeChild(contenedor);
+  Lista.prototype.removerContenedorCarga = function(){
+    var nodos = this.nodo.querySelectorAll('section[contenedorCarga]');
+		nodos.forEach(function(nodo){
+	    nodo.parentNode.removeChild(nodo);
+		});
   };
-  this.noExistenRegistros = function(){
-    var ayuda = document.createElement('section');
-    ayuda.classList.add('vacio');
-    ayuda.textContent = 'No existen Registros';
-    this.nodo.querySelector('section[cont-slots]').appendChild(ayuda);
+  Lista.prototype.noExistenRegistros = function(){
+		if(!this.nodo.querySelector('section[cont-slots]').querySelector('section.vacio')){
+			var ayuda = document.createElement('section');
+			ayuda.classList.add('vacio');
+			ayuda.textContent = 'No existen Registros';
+			this.nodo.querySelector('section[cont-slots]').appendChild(ayuda);
+		}
   };
-  this.abrirCampoBusqueda = function(){
+  Lista.prototype.abrirCampoBusqueda = function(){
 	var botonBusqueda = this.nodo.querySelector('button[btnbusq]');
     botonBusqueda.parentNode.classList.add('buscar');
 		var lista = this;
@@ -450,7 +566,7 @@ var Lista = function(data){
     },10);
   };
 
-	this.cerrarCampoBusqueda = function(){
+	Lista.prototype.cerrarCampoBusqueda = function(){
 		var botonBusqueda = this.nodo.querySelector('button[btnbusq]');
 		this.nodo.querySelector('input[campBusq]').value = "";
 	  botonBusqueda.parentNode.classList.remove('buscar');
@@ -462,37 +578,54 @@ var Lista = function(data){
      },20);
 	};
 
-  this.buscarElementos = function(){
+  Lista.prototype.buscarElementos = function(){
 		this.atributos.carga.peticion.valor = this.nodo.querySelector('input[campBusq]').value.toUpperCase();
 		this.recargar();
   };
 
-  this.listarSlots = function(){
+  Lista.prototype.listarSlots = function(){
     console.log('Slots:');
     for(var x=0;x<this.Slots.length;x++){
       console.log('nombre: '+this.Slots[x].atributos.nombre+'\testado: '+this.Slots[x].estado);
     }
   };
-  this.agregarSlot = function(data){
+  Lista.prototype.agregarSlot = function(data){
+		if(data){//informacion que necesito que llegue al slot
+			data.columnas = this.columnas;
+			data.editable = this.atributos.editable;
+		}
+    var slot = new Slot(data);
 		if( this.nodo.querySelector('section.vacio')){
 			var vacio = this.nodo.querySelector('section.vacio');
 			vacio.parentNode.removeChild(vacio);
+			if((!this.noUsatitulo)&&(!this.poseeCabecera)){
+				slot.nodo.classList.add('primero');
+			}
 		}
-		data.columnas = this.columnas;
-    var slot = new Slot(data);
     this.Slots.push(slot);
     this.nodo.querySelector('section[cont-slots]').appendChild(slot.nodo);
     var lista = this;
+    //callback section
     if(this.atributos.onclickSlot!==null){
       slot.nodo.onclick = function(){
-        lista.controlLista(this);
+        lista.controlLista(slot);
         lista.atributos.onclickSlot(slot);
       };
+    }
+    if(this.atributos.onSelect){
+    	if(slot.selector){
+    		slot.selector.agregarOnSelect(this.atributos.onSelect,slot);
+    	}
+    }
+    if(this.atributos.onDeselect){
+    	if(slot.selector){
+    		slot.selector.agregarOnDeselect(this.atributos.onDeselect,slot);
+    	}
     }
 		this.verificarBoton();
     return slot.nodo;
   };
-	this.quitarSlot = function(objeto){
+	Lista.prototype.quitarSlot = function(objeto){
 		var slot = this.buscarSlot(objeto);
 		slot.destruirNodo();
 		this.Slots.splice(this.Slots.indexOf(slot),1);
@@ -501,14 +634,16 @@ var Lista = function(data){
 		}
 		this.verificarBoton();
 	};
-	this.verificarBoton = function(){
-		if(this.Slots.length<this.registrosPorPagina){
-			this.nodo.querySelector('button[btnBusq]').classList.add('invisible');
-		}else{
-			this.nodo.querySelector('button[btnBusq]').classList.remove('invisible');
+	Lista.prototype.verificarBoton = function(){
+		if(!this.noUsatitulo){
+			if(this.Slots.length<this.registrosPorPagina){
+				this.nodo.querySelector('button[btnBusq]').classList.add('invisible');
+			}else{
+				this.nodo.querySelector('button[btnBusq]').classList.remove('invisible');
+			}
 		}
 	};
-  this.cargarElementos = function(registros){
+  Lista.prototype.cargarElementos = function(registros){
 		if(this.columnas !== 1){
 			if(!this.atributos.sinCabecera){
 				this.agregarCabecera(registros);
@@ -518,8 +653,15 @@ var Lista = function(data){
 			registros[x].selector = this.atributos.selector;
       this.agregarSlot(registros[x]);
     }
+		if((!this.noUsatitulo)&&(!this.poseeCabecera)){
+			if(this.Slots[0]){
+					this.Slots[0].nodo.classList.add('primero');
+			}
+		}
+		return Promise.resolve();
   };
-	this.agregarCabecera = function(registros){
+	Lista.prototype.agregarCabecera = function(registros){
+		this.poseeCabecera = true;
 		var cabeceras = {};
 		var x = 0;
 		if(!this.cabecera){
@@ -538,6 +680,10 @@ var Lista = function(data){
 			this.agregarSlot(cabeceras);
 			var newSlot = this.Slots[0];
 			this.cabecera = newSlot;
+			this.cabecera.nodo.setAttribute('cabecera','');
+			if(!this.noUsatitulo){
+				this.cabecera.nodo.classList.add('primero');
+			}
 			var lista = this;
 			if(newSlot.selector){
 				newSlot.selector.check.asignarClick(function(){
@@ -551,32 +697,36 @@ var Lista = function(data){
 			}
 			this.Slots.splice(this.Slots.indexOf(newSlot),1);
 		}
+		if(this.atributos.cabecera){
+			if(this.atributos.cabecera.fija){
+				this.cabecera.nodo.setAttribute('fija','');
+			}
+		}
 	};
-  this.controlLista = function(nodo){
-    var obj=false;
+  Lista.prototype.controlLista = function(slot){
     for(var x=0;x<this.Slots.length;x++){
-      if(this.Slots[x].nodo==nodo){
-        this.Slots[x].estado='seleccionado';
-        this.Slots[x].nodo.classList.add('seleccionado');
-        obj=this.Slots[x];
-      }else{
         this.Slots[x].estado='enUso';
         this.Slots[x].nodo.classList.remove('seleccionado');
-      }
     }
+		if(slot){
+	    slot.estado='seleccionado';
+	    slot.nodo.classList.add('seleccionado');
+		}
   };
 
-  this.buscarSlot = function(objeto){
-    for(x=0;x<this.Slots.length;x++){
-      if(this.Slots[x].atributos.codigo==objeto.codigo){
-        return this.Slots[x];
-      }
-    }
+  Lista.prototype.buscarSlot = function(objeto){
+		if(objeto){
+			for(x=0;x<this.Slots.length;x++){
+				if(this.Slots[x].atributos.codigo==objeto.codigo){
+					return this.Slots[x];
+				}
+			}
+		}
     console.log('el slot no existe');
     return false;
   };
 
-  this.buscarSlotPorNombre = function(objeto){
+  Lista.prototype.buscarSlotPorNombre = function(objeto){
     for(x=0;x<this.Slots.length;x++){
       if(this.Slots[x].atributos.nombre==objeto.nombre){
         return this.Slots[x];
@@ -586,17 +736,13 @@ var Lista = function(data){
     return false;
   };
 
-  this.cambiarTextoSlots = function(cambio){
+  Lista.prototype.cambiarTextoSlots = function(cambio){
     if(cambio=='mediaQuery'){
       for(var x=0;x<this.Slots.length;x++){
         var nodo=this.Slots[x].nodo;
         var slot=this.Slots[x];
         var titulo;
-        if(slot.atributos.nombre.length>28){
-          titulo=slot.atributos.nombre.substr(0,28)+'...';
-        }else{
-          titulo=slot.atributos.nombre;
-        }
+        titulo=slot.atributos.nombre;
         var html="<article  title>"+titulo+"</article>]";
         nodo.innerHTML=html;
         slot.funcionamiento();
@@ -610,7 +756,7 @@ var Lista = function(data){
     }
   };
 
-  this.actualizarLista = function(cambios){
+  Lista.prototype.actualizarLista = function(cambios){
     if(cambios instanceof Array){
 
     }else{
@@ -618,28 +764,35 @@ var Lista = function(data){
     }
   };
 
-  this.actualizarSlot = function(objeto){
+  Lista.prototype.actualizarSlot = function(objeto){
     var slot=this.buscarSlot(objeto);
     var yo = this;
     if(slot){
-      slot.atributos=objeto;
+      slot.atributos=UI.juntarObjetos(objeto,{columnas:this.atributos.columnas,selector:this.atributos.selector});
       slot.reconstruirNodo();
       setTimeout(function() {
-        yo.controlLista(slot.nodo);
+        yo.controlLista(slot);
       }, 510);
     }
   };
 
-  this.obtenerSeleccionado = function(){
-    var seleccionado=false;
+  Lista.prototype.obtenerSeleccionado = function(){
+    var seleccionado = [];
     for(var x=0;x<this.Slots.length;x++){
       if(this.Slots[x].estado=='seleccionado'){
-        seleccionado=this.Slots[x];
+        seleccionado.push(this.Slots[x]);
       }
     }
-    return seleccionado;
+    if(seleccionado.length == 1){
+    	return seleccionado[0];
+    }else if(seleccionado.length > 1){
+    	return seleccionado;
+    }else{
+    	return false;
+    }
+
   };
-  this.destruirNodo = function(){
+  Lista.prototype.destruirNodo = function(){
 		this.nodo.style.height='0px';
 		var l = this;
 		setTimeout(function(){
