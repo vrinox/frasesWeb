@@ -608,7 +608,7 @@ div[mat-window].formulario {
 div[mat-window].centrado {
     width: 400px;
     float: left;
-    margin-top: calc(25% - 151px);
+    margin-top: calc(25%);
     margin-left: calc(50% - 200px);
 }
 div[mat-window].titulo {
