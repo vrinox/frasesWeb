@@ -15,28 +15,30 @@ var ChatManager = function(){
 			TipoPet:"web"
 		};
 		var yo = this;
-		torque.Operacion(peticion,function(respuesta){
-			if(respuesta.success){
-				var p2p = respuesta.p2p;
-				for(var x=0;x<p2p.length;x++){
-					yo.contactos.push({
-						nombreusu : p2p[x].nombreusu,
-						nombre : p2p[x].nombre,
-						apellido : p2p[x].apellido,
-						pendientes : p2p[x].pendientes
+		torque.Operacion(peticion)
+			.then(JSON.parse)
+			.then(function(respuesta){
+				if(respuesta.success){
+					var p2p = respuesta.p2p;
+					for(var x=0;x<p2p.length;x++){
+						yo.contactos.push({
+							nombreusu : p2p[x].nombreusu,
+							nombre : p2p[x].nombre,
+							apellido : p2p[x].apellido,
+							pendientes : p2p[x].pendientes
+						});
+					}
+					if(callback){
+						callback(yo.contactos);
+					}
+				}else{
+					UI.agregarToasts({
+					    texto:'error al cargar contactos intente mas tarde',
+					    tipo: 'web-arriba-derecha-alto'
 					});
+					jarvis.buscarLib("Chat").op.pedirP2P(callback);
 				}
-				if(callback){
-					callback(yo.contactos);
-				}
-			}else{
-				UI.agregarToasts({
-				    texto:'error al cargar contactos intente mas tarde',
-				    tipo: 'web-arriba-derecha-alto'
-				});
-				jarvis.buscarLib("Chat").op.pedirP2P(callback);
-			}
-		});
+			});
 	};
 	//---------------------------------FUNCIONES DE CONSTRUCCION----------------------------//
 	this.crearChatUnit = function(user){
@@ -158,19 +160,20 @@ var ChatUnit = function(user){
 					mensaje: "Cargando Mensajes de "+user
 				}
 			};
-			torque.manejarOperacion(peticion,cuadro,function(respuesta){
-				var userName = respuesta.user;
-				var chat = jarvis.buscarLib('Chat').op.buscarChatUnit(userName);
-				//elimino el div de los mesajes pendientes
-				var divPendientes = chat.userChatCard.querySelector('div[notificaciones]');
-				if(divPendientes){
-					var texto = divPendientes.querySelector('div[contenido]');
-					divPendientes.classList.add('invisible');
-					texto.textContent = 0;
-				}
-				//cambio el estado chat a activo
-				chat.estado='activo';
-				if(respuesta.success){
+			torque.manejarOperacion(peticion,cuadro)
+				.then(torque.evaluarRespuesta)
+				.then(function(respuesta){
+					var userName = respuesta.user;
+					var chat = jarvis.buscarLib('Chat').op.buscarChatUnit(userName);
+					//elimino el div de los mesajes pendientes
+					var divPendientes = chat.userChatCard.querySelector('div[notificaciones]');
+					if(divPendientes){
+						var texto = divPendientes.querySelector('div[contenido]');
+						divPendientes.classList.add('invisible');
+						texto.textContent = 0;
+					}
+					//cambio el estado chat a activo
+					chat.estado='activo';
 					var mensajes = respuesta.mensajes;
 					var msg;
 					var clear;
@@ -185,17 +188,19 @@ var ChatUnit = function(user){
 						};
 						jarvis.buscarLib('Chat').op.agregarMensaje(mensaje);
 					}
-    				contenedorMensajes.nodo.scrollTop = '9999';
-				}else{
+    			contenedorMensajes.nodo.scrollTop = '9999';
+					UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('button').onclick = function(){
+						enviarMsg();
+					};
+				},function(){
 					UI.agregarToasts({
 						texto:'Error en la carga de mensajes',
 						tipo:'web-arriba-derecha-alto'
 					});
-				}
-				UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('button').onclick = function(){
-					enviarMsg();
-				};
-			});
+					UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('button').onclick = function(){
+						enviarMsg();
+					};
+				});
 		};
 		this.desactivarChat = function(){
 			this.estado='inactivo';

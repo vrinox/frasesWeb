@@ -36,9 +36,10 @@ channel.on('actualizarMensajes', function(data,emisor){
 corChat.gestionar = function(pet,res){
 	//creamos un objeto con los datos a insertar del usuario
 	var Operacion = pet.operacion;
+	var reqData;
 	switch(Operacion){
 		case 'cargarp2p':
-			var reqData = {
+		  reqData = {
 				nombre : pet.nombre
 			};
 			chatModel.setData(reqData);
@@ -48,63 +49,68 @@ corChat.gestionar = function(pet,res){
 					if(data.length>0){
 						respuesta.p2p = [];
 						var persona;
-						for(var x=0;x<data.length;x++){
+						data.forEach(function(user){
 							persona ={
-								nombreusu: data[x].p2p,
-								nombre: data[x].nu,
-								apellido: data[x].au,
-								pendientes: data[x].pendientes
+								nombreusu: user.p2p,
+								nombre: user.nu,
+								apellido: user.au,
+								pendientes: user.pendientes
 							};
 							respuesta.p2p.push(persona);
-						}
+						});
 						respuesta.success = 1;
 					}else{
 						respuesta.success = 0;
 						respuesta.mensaje = {
 							nombre_tipo:'INFORMACION',
 							titulo:"Agregue un contacto",
-							cuerpo:"Debe agregar un contacto para poder empezar a comunicase<br>"+
+							cuerpo:"Debe agregar un contacto para poder empezar a comunicarse<br>"+
 									"En el menu lateral en el apartado <b>CONTACTOS</b> esta la opcion "+
 									"<b>BUSCAR CONTACTO</b> hai podra conseguir personas para empezar"+
 									" a comunicase"
 						};
 					}
 				utils.enviar(respuesta,res);
-			},function(error){utils.error(error,'corChat linea:73',res)});
+			},function(error){utils.error(error,'corChat linea:73',res);});
 			break;
 		case 'cargarChat':
-			var reqData = {
+			reqData = {
 				nombre : pet.nombre,
 				user : pet.chat
 			};
 			chatModel.setData(reqData);
-			chatModel.cargarChat(function(error,data){
-				var respuesta = {};
-				if(data.length>0){
+			chatModel.cargarChat()
+				.then(function(data){
+					var respuesta = {};
 					respuesta.success = 1;
 					respuesta.user = reqData.user;
 					respuesta.mensajes = [];
 					var msg;
-					for(var x=0;x<data.length;x++){
+					data.forEach(function(mensaje){
 						msg = {
-							id: data[x].id,
-							estado: data[x].estado,
-							cont: data[x].cont,
-							fecha: data[x].fecha,
-							emisor: data[x].emisor,
-							idtemp: data[x].idtemp
+							id: mensaje.id,
+							estado: mensaje.estado,
+							cont: mensaje.cont,
+							fecha: mensaje.fecha,
+							emisor: mensaje.emisor,
+							idtemp: mensaje.idtemp
 						};
 						respuesta.mensajes.push(msg);
-					}
+					});
 					//actualizo a leidos todos los mensajes del chat
-					channel.emit('actualizarMensajes',respuesta.mensajes,pet.chat);
-				}else{
-					respuesta.success = 0;
-					respuesta.msg = "chat vacio";
-					respuesta.user = reqData.user;
-				}
-				utils.enviar(respuesta,res);
-			});
+					//channel.emit('actualizarMensajes',respuesta.mensajes,pet.chat);
+					utils.enviar(respuesta,res);
+				},function(data){
+					var respuesta={};
+					if(parseInt(data.success)){
+								respuesta.success = 0;
+								respuesta.msg = data.mensaje;
+								respuesta.user = reqData.user;
+								utils.enviar(respuesta,res);
+					}else{
+							utils.error(error,'corChat linea:108',res);
+					}
+				});
 			break;
 
 		default:

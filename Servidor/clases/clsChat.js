@@ -41,7 +41,7 @@ chatModel.innerData = [];
 					}
 					else
 					{
-						resolve(rows);
+						resolve(rows.rows);
 					}
 				});
 			}else{
@@ -52,7 +52,7 @@ chatModel.innerData = [];
 
 	chatModel.cargarChat = function(){
 		var yo= this;
-		new Promise(function(resolve,reject){
+		return new Promise(function(resolve,reject){
 			var data = yo.innerData;
 			var values = [data.nombre,data.user];
 			var sql = 'SELECT * FROM(SELECT m.estado AS estado,m.contenido AS cont,m.fecha,m.emisor,m.codigo as id,idtemp FROM mensaje AS m '+
@@ -66,43 +66,47 @@ chatModel.innerData = [];
 			connection.query(sql,values, function(error, rows) {
 				if(error)
 				{
-					reject(error);
+					reject({
+						"error":error,
+						"success":0
+					});
 				}
 				else
 				{
-					resolve(rows);
+					if(rows.rowCount){
+						resolve(rows.rows);
+					}else{
+						reject({
+							"mensaje":'chat vacio',
+							"success":1
+						});
+					}
 				}
 			});
 		});
 	};
 
 	chatModel.guardarMensaje = function(){
+		var data = this.innerData;
 		return new Promise(function(resolve,reject){
-			var data = this.innerData;
 			if(connection){
 				var dataIns1=[data.contenido,data.emisor, data.estado,dateParser.getParseDate(),data.id];
-				connection.query('INSERT INTO mensaje (contenido,emisor,estado,fecha,idtemp) values($1,$2,$3,$4,$5)', dataIns1, function(error, result){
-					if(error)
-					{
+				connection.query('INSERT INTO mensaje (contenido,emisor,estado,fecha,idtemp) values($1,$2,$3,$4,$5) returning *', dataIns1, function(error, result){
+					if(error){
 						Promise.reject(error);
-					}
-					else
-					{
-						resolve(result)
+					}else{
+						resolve(result);
 					}
 				});
 			}else{
 				reject("no existe conexion");
 			}
 		}).then(function(result){
-			dataIns2=[result.insertId,data.receptor]
+			dataIns2=[result.rows[0].codigo,data.receptor];
 			connection.query('INSERT INTO receptorusu (codigomen,usuario) values($1,$2)', dataIns2, function(error, result){
-				if(error)
-				{
+				if(error){
 					Promise.reject(error);
-				}
-				else
-				{
+				}else{
 					//devolvemos la última id insertada
 					Promise.resolve({"affectedRows" : result.rowCount});
 				}
@@ -112,35 +116,37 @@ chatModel.innerData = [];
 		});
 	};
 
-//----------------------------------------- Falta por Migrar ---------------------------------------------
-//TODO: Migrar a Postrges
 	chatModel.actualizar = function(mensajes,estado){
-		if(connection){
-			var valorEstado;
-			var valores = "(";
-			for(var x=0; x<mensajes.length;x++){
-				valores+="'"+mensajes[x]+"'";
-				if(x !== mensajes.length - 1){
-					valores+=',';
+		return new Promise(function(resolve,reject){
+			if(connection){
+				var valorEstado;
+				var valores = "(";
+				for(var x=0; x<mensajes.length;x++){
+					valores+="'"+mensajes[x]+"'";
+					if(x !== mensajes.length - 1){
+						valores+=',';
+					}
 				}
+				valores +=")";
+				if(estado === 'leidos'){
+					valorEstado = 'L' ;
+				}else if(estado === 'recibidos'){
+					valorEstado = 'R';
+				}
+				var sql = "UPDATE mensaje SET estado = $1 WHERE codigo in $2 or idtemp in $2" ;
+				var values =[valorEstado,valores];
+				connection.query(sql,values, function(error, result){
+					if(error)
+					{
+						reject(error);
+					}
+					else
+					{
+						console.log("mensajes actualizados");
+						resolve();
+					}
+				});
 			}
-			valores +=")";
-			if(estado === 'leidos'){
-				valorEstado = 'L' ;
-			}else if(estado === 'recibidos'){
-				valorEstado = 'R';
-			}
-			var sql = "UPDATE mensaje SET estado = '"+valorEstado+"' WHERE codigo in "+valores+" or idtemp in "+valores ;
-			connection.query(sql, function(error, result){
-				if(error)
-				{
-					throw error;
-				}
-				else
-				{
-					console.log("mensajes actualizados");
-				}
-			});
-		}
+		});
 	};
 module.exports = chatModel;

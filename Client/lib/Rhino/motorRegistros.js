@@ -14,7 +14,7 @@ var Motor = function(entidadActiva){
 	//busqueda en bd
 	this.buscarRegistros = function(entidad){
 		//creo la promesa
-		return new Promise(function(resolve,reject){			
+		return new Promise(function(resolve,reject){
 			var req=crearXMLHttpRequest();
 			req.onreadystatechange = function(){
 				if (req.readyState == 4){
@@ -23,7 +23,7 @@ var Motor = function(entidadActiva){
 				        resolve(req.responseText);
 					}else{
 				        //la rechazo
-				    	reject('rechazada');	
+				    	reject('rechazada');
 					}
 			    }
 			};
@@ -75,7 +75,7 @@ var Motor = function(entidadActiva){
 						completada(req.responseText);
 					}else{
 				        //la rechazo
-				    	rechazada(Error(req.statusText));	
+				    	rechazada(Error(req.statusText));
 					}
 			    }
 			};
@@ -101,7 +101,7 @@ var Motor = function(entidadActiva){
 		var promesa = this.Operacion(peticion).then(JSON.parse).then(this.evaluarRespuesta,function(respuesta){
 				console.log('Error en carga de JSON');
 			});
-		if(callback){	
+		if(callback){
 			return promesa.then(callback);
 		}else{
 			return promesa;
@@ -136,7 +136,7 @@ var Motor = function(entidadActiva){
 				rechazada(respuesta);
 			}
 		});
-	}
+	};
 };
 //--------------------------------AJAX---------------------------------------
 function crearXMLHttpRequest()
