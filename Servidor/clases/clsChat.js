@@ -120,11 +120,19 @@ chatModel.innerData = [];
 		return new Promise(function(resolve,reject){
 			if(connection){
 				var valorEstado;
+				var valoresNumericos = '(';
 				var valores = "(";
 				for(var x=0; x<mensajes.length;x++){
-					valores+="'"+mensajes[x]+"'";
-					if(x !== mensajes.length - 1){
-						valores+=',';
+					if(isNAN(mensajes[x])){
+						valores+="'"+mensajes[x]+"'";
+						if(x !== mensajes.length - 1){
+							valores+=',';
+						}
+					}else{
+						valoresNumericos+="'"+mensajes[x]+"'";
+						if(x !== mensajes.length - 1){
+							valoresNumericos+=',';
+						}
 					}
 				}
 				valores +=")";
@@ -133,7 +141,8 @@ chatModel.innerData = [];
 				}else if(estado === 'recibidos'){
 					valorEstado = 'R';
 				}
-				var sql = "UPDATE mensaje SET estado = $1 WHERE codigo in "+valores+" or idtemp in "+valores;
+				var sql = "UPDATE mensaje SET estado = $1 WHERE codigo in "+valoresNumericos+" or idtemp in "+valores;
+				console.log(sql);
 				var values =[valorEstado];
 				connection.query(sql,values, function(error, result){
 					if(error)
