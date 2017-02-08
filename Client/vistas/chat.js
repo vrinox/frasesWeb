@@ -159,6 +159,7 @@ var ChatUnit = function(user){
 				UI.buscarVentana('contenedorMensajes').nodo.classList.remove('visible');
 				boton.classList.remove('visible');
 				boton.onclick=function(){};
+				jarvis.buscarLib('Chat').op.chatActivo =null;
 			};
 			//busco los mensajes
 			var peticion = {
