@@ -123,7 +123,7 @@ chatModel.innerData = [];
 				var valoresNumericos = '(';
 				var valores = "(";
 				for(var x=0; x<mensajes.length;x++){
-					if(isNAN(mensajes[x])){
+					if(isNaN(mensajes[x])){
 						valores+="'"+mensajes[x]+"'";
 						if(x !== mensajes.length - 1){
 							valores+=',';
