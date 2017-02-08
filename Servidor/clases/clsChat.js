@@ -136,7 +136,7 @@ chatModel.innerData = [];
 					}
 				}
 				valores +=")";
-				valoresNumericos = ')';
+				valoresNumericos += ')';
 				if(estado === 'leidos'){
 					valorEstado = 'L' ;
 				}else if(estado === 'recibidos'){
