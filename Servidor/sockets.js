@@ -1,6 +1,8 @@
 //BUG: *
-//  	Mensajes que no son recibidos de inmediato no cambia de estado de "enviado" a "Recibido" o "leido" aunq el
-//  	Receptor entre abra la app y peor aun el chat con los mensajes
+//  	1) Mensajes que no son recibidos de inmediato no cambia de estado de "enviado" a "Recibido" o "leido" aunq el
+//  	   Receptor entre abra la app y peor aun el chat con los mensajes
+//  	2) Mensajes cambian de estado en la interfaz mas no en la base de datos mas alla de la "S"
+//  	3) Mensajes no pasan en la interfaz de Recibidos a leidos
 //  *
 var socketio = require('socket.io');
 var rack = require('./racks');
