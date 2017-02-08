@@ -43,3 +43,10 @@ div[contenedor] div[cabecera]{
 div[contenedor] div[cabecera] button[menubtn]{
     border-right: 1px solid white;
 }
+
+@media only screen and (max-device-width: 480px) {
+    div[mat-window].centrado{
+        width: 100% !important;
+        margin-left: 0px !important;
+    }
+}
