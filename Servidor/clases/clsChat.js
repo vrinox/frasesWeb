@@ -133,8 +133,8 @@ chatModel.innerData = [];
 				}else if(estado === 'recibidos'){
 					valorEstado = 'R';
 				}
-				var sql = "UPDATE mensaje SET estado = $1 WHERE codigo in $2 or idtemp in $2" ;
-				var values =[valorEstado,valores];
+				var sql = "UPDATE mensaje SET estado = $1 WHERE codigo in "+valores+" or idtemp in "+valores;
+				var values =[valorEstado];
 				connection.query(sql,values, function(error, result){
 					if(error)
 					{
