@@ -142,7 +142,7 @@ chatModel.innerData = [];
 				}else if(estado === 'recibidos'){
 					valorEstado = 'R';
 				}
-				if(valoresNumericos === '()'){
+				if(valoresNumericos !== '()'){
 					valoresNumericos ='codigo in '+valoresNumericos+' or';
 				}
 				var sql = "UPDATE mensaje SET estado = $1 WHERE "+valoresNumericos+" idtemp in "+valores;
