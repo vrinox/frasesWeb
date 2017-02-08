@@ -77,7 +77,7 @@ var ChatManager = function(){
 	};
 	//---------------------------------FUNCIONES DE MENSAJES----------------------------//
 	this.actualizarMensaje = function(msgData){
-		var contenedorMensajes = UI.buscarVentana('contenedorMensajes');
+		var contenedorMensajes = UI.buscarVentana('contenedorMensajes').buscarSector('mensajes');
 		var burbuja = contenedorMensajes.nodo.querySelector('div#msg'+msgData.id);
 		if(!burbuja){
 			burbuja = contenedorMensajes.nodo.querySelector('div#msg'+msgData.idtemp);
@@ -98,7 +98,7 @@ var ChatManager = function(){
 		var msg = createMsgBubble(data);
 		var clear=document.createElement('div');
 		clear.setAttribute('clear','');
-		var chatBody =  UI.buscarVentana('contenedorMensajes').nodo;
+		var chatBody =  UI.buscarVentana('contenedorMensajes').buscarSector('mensajes').nodo;
 		chatBody.appendChild(msg);
 		chatBody.appendChild(clear);
     	chatBody.scrollTop = '9999';
@@ -142,24 +142,20 @@ var ChatUnit = function(user){
 
 		this.activarChat = function(){
 			jarvis.buscarLib('Chat').op.chatActivo = this;
-			//vacio el campo de texto
-			UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('textarea').value="";
 			var user = this.user.nombreusu;
 			var chatUnit=this;
-
-
 			//funcionamiento paneles
-			var contenedorMensajes = UI.buscarVentana('contenedorMensajes');
+			var contenedorMensajes = UI.buscarVentana('contenedorMensajes').buscarSector('mensajes');
+			//vacio el campo de texto
+			UI.buscarVentana('contenedorMensajes').buscarSector('escritura').nodo.querySelector('textarea').value="";
 
-			contenedorMensajes.nodo.classList.add('visible');
+			UI.buscarVentana('contenedorMensajes').nodo.classList.add('visible');
 			UI.buscarVentana('ListadoChats').nodo.classList.add('oculto');
-			UI.buscarVentana('panelEsc').nodo.classList.add('visible');
 
 			var boton = UI.elementos.cabecera.nodo.querySelector('button.listado');
 			boton.classList.add('visible');
 			boton.onclick=function(){
 				UI.buscarVentana('ListadoChats').nodo.classList.remove('oculto');
-				UI.buscarVentana('panelEsc').nodo.classList.remove('visible');
 				UI.buscarVentana('contenedorMensajes').nodo.classList.remove('visible');
 				boton.classList.remove('visible');
 				boton.onclick=function(){};
@@ -207,7 +203,7 @@ var ChatUnit = function(user){
 						jarvis.buscarLib('Chat').op.agregarMensaje(mensaje);
 					}
     			contenedorMensajes.nodo.scrollTop = '9999';
-					UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('button').onclick = function(){
+					UI.buscarVentana('contenedorMensajes').buscarSector('escritura').nodo.querySelector('button').onclick = function(){
 						enviarMsg();
 					};
 				},function(){
@@ -215,7 +211,7 @@ var ChatUnit = function(user){
 						texto:'Error en la carga de mensajes',
 						tipo:'web-arriba-derecha-alto'
 					});
-					UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('button').onclick = function(){
+					UI.buscarVentana('contenedorMensajes').buscarSector('escritura').nodo.querySelector('button').onclick = function(){
 						enviarMsg();
 					};
 				});
@@ -297,7 +293,7 @@ function createMsgBubble(data){
 function enviarMsg(){
 	var chat = jarvis.buscarLib('Chat').op.chatActivo;
 	var usuario = chat.user.nombreusu;
-	var chatField = UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('textarea');
+	var chatField = UI.buscarVentana('contenedorMensajes').buscarSector('escritura').nodo.querySelector('textarea');
 	if(chatField.value.trim()!==""){
 		var data = {
 			id : chat.crearIdUnico(),

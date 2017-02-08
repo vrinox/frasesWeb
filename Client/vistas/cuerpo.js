@@ -22,23 +22,14 @@ Construc.prototype.construirInicio = function() {
 	    nombre: 'contenedorMensajes',
 	    sectores:[
 	    	{
-	    		nombre: 'Bienvenido',
-	    		html: "<div class='material-icons indigo500 ' bienvenidoIcon>info_outline</div>"+
-	    				"<div class='indigo500' bienvenido> Bienvenido "+jarvis.session.nombreusu+" <br> Por favor presiona un contancto para ver sus mensajes</div>"
-	    	}
-	    ]
-	},document.body.querySelector('div[contenedor]'));
-
-	//agrego el panel de escritura
-	this.estructuraActiva.panelEsc = UI.agregarVentana({
-		clases: ['panelEsc'],
-	    nombre: 'panelEsc',
-	    sectores:[
-	        {
-	        	clases:['botonera'],
-	            nombre:'escritura',
-	            html:'<TextArea placeholder="Escribir"></TextArea><button type="button" class="icon material-icons mat-indigo500 white md-24">send</button>'
-	        }
+	    		nombre: 'mensajes',
+	    		html: "",
+					clases:['mensajes']
+	    	},{
+					clases:['botonera'],
+						nombre:'escritura',
+						html:'<TextArea placeholder="Escribir"></TextArea><button type="button" class="icon material-icons mat-indigo500 white md-24">send</button>'
+				}
 	    ]
 	},document.body.querySelector('div[contenedor]'));
 

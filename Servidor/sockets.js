@@ -1,3 +1,7 @@
+//BUG: *
+//  Mensajes que no son recibidos de inmediato no cambia de estado de "enviado" a "Recibido" o "leido" aunq el
+//  Receptor entre abra la app y peor aun el chat con los mensajes
+//  *
 var socketio = require('socket.io');
 var rack = require('./racks');
 var dateParser = require('./dateParser');

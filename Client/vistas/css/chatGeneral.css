@@ -8,16 +8,18 @@ div[mat-window].latDer{
 	float:left;
 }
 div[mat-window].contMens{
-    transition: all 0.3s ease-in-out;
-	margin: 50px 1px 0px 1px;
+  transition: all 0.3s ease-in-out;
+  width: calc(100% - 282px);
+  background-color: transparent;
+  height: 100%;
+  margin: 50px 1px 0px 1px;
+}
+div[mat-window].contMens section[sector].mensajes{
     float: left;
-    width: calc(100% - 282px);
+    width: calc(100%);
     height: calc(100% - 102px);
     background-color: transparent;
     overflow-y: auto;
-}
-div[mat-window].contMens section[sector]{
-    height: calc(100% - 2px);
 }
 section[sector] div[bienvenido]{
     background-color: white;
@@ -34,27 +36,20 @@ section[sector] div[bienvenidoIcon]{
 section[sector].transparente{
     background-color: transparent;
 }
-div[mat-window].panelEsc{
-    transition: all 0.3s ease-in-out;
-	margin: 1px;
-    float: left;
-    width: calc(100% - 282px);
-    height: 51px;
-}
-div[mat-window].panelEsc section[sector].botonera{
+div[mat-window].contMens section[sector].botonera{
     height: 50px;
 }
-div[mat-window].panelEsc textarea{
+div[mat-window].contMens textarea{
     position:absolute;
     top:0px;
     height: 50px;
-    width:calc(100% - 40px);
+    width:calc(100%);
     border:none;
     font-size: 15px;
     padding-top: 5px;
     padding-left: 5px;
 }
-div[mat-window].panelEsc button{
+div[mat-window].contMens button{
     position: absolute;
     right: 2px;
     top: 7px;
@@ -72,22 +67,19 @@ div[cabecera] button.listado{
 	div[mat-window].latDer{
 		width: 100%;
 	}
-	div[mat-window].contMens,div[mat-window].panelEsc{
+	div[mat-window].contMens{
 		width: 100%;
         margin-left: calc(100%);
         position:absolute;
 	}
-    div[mat-window].panelEsc{
-        margin-top:calc(143%);
-    }
-    /*-----Chat Activo-------*/
-    div[mat-window].latDer.oculto{
-        margin-left: calc(-100%);
-    }
-    div[mat-window].panelEsc.visible,div[mat-window].contMens.visible{
-        margin-left: 0px;
-    }
-    div[cabecera] button.listado.visible{
-        display:block;;
-    }
+  /*-----Chat Activo-------*/
+  div[mat-window].latDer.oculto{
+      margin-left: calc(-100%);
   }
+  div[mat-window].contMens.visible{
+      margin-left: 0px;
+  }
+  div[cabecera] button.listado.visible{
+      display:block;;
+  }
+}
