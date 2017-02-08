@@ -144,6 +144,8 @@ chatModel.innerData = [];
 				}
 				if(valoresNumericos !== '()'){
 					valoresNumericos ='codigo in '+valoresNumericos+' or';
+				}else{
+					valoresNumericos="";
 				}
 				var sql = "UPDATE mensaje SET estado = $1 WHERE "+valoresNumericos+" idtemp in "+valores;
 				console.log(sql);
