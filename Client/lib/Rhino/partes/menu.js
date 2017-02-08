@@ -141,7 +141,7 @@ var Menu = function(){
 		this.partes.pie = pie;
 		this.nodo.appendChild(pie);
 
-		html+='<article off onclick="jarvis.session.cerrarSession()"><i></i></article>';
+		html+='<article off onclick="jarvis.session.cerrarSession();UI.elementos.menu.abrirMenu();"><i></i></article>';
 		pie.innerHTML=html;
 	};
 	this.getEstado = function(){

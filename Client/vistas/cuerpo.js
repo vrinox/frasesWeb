@@ -9,6 +9,7 @@ Construc.prototype.construirInicio = function() {
 	//elimino la ventana acceso
 	UI.quitarVentana('Acceso');
 
+	UI.elementos.cabecera.agregarHTML('<button class="material-icons md-48 white listado">supervisor_account</button>');
 	//agrego la lista de chats disponibles
 	this.estructuraActiva.latDer = UI.agregarVentana({
 		clases: ['latDer'],
@@ -41,6 +42,7 @@ Construc.prototype.construirInicio = function() {
 	    ]
 	},document.body.querySelector('div[contenedor]'));
 
+
 	//construyo el listado
 	jarvis.usarLib('Chat')
 		.then(function(lib){
@@ -52,7 +54,7 @@ Construc.prototype.construirInicio = function() {
 			});
 		});
 };
-Construc.prototype.llenarListadoContactos = function(contactos) {
+Construc.prototype.llenarListadoContactos = function(contactos){
 	if(contactos){
 		contactos.forEach(function(each){
 			var newContac = jarvis.buscarLib('Chat').op.crearChatUnit(each);
@@ -85,6 +87,7 @@ Construc.prototype.llenarMenu = function() {
 						padre: "2",
 						hijos:[],
 						click: function(){
+							UI.elementos.menu.abrirMenu();
 							jarvis.construc.buscarContactos();
 						}
 					}
@@ -109,14 +112,8 @@ Construc.prototype.construirAcceso = function(){
 		capa.parentNode.removeChild(capa);
 	});
 	this.estructuraActiva = "acceso";
-	if(UI.buscarVentana('contenedorMensajes')){
-		UI.quitarVentana('contenedorMensajes');
-	}
-	if(UI.buscarVentana('panelEsc')){
-		UI.quitarVentana('panelEsc');
-	}
-	if(UI.buscarVentana('ListadoChats')){
-		UI.quitarVentana('ListadoChats');
-	}
+	UI.elementos.ventanas.forEach(function(ventana){
+		UI.quitarVentana(ventana.atributos.nombre);
+	});
 	jarvis.buscarLib("Acceso").op.crearFormulario();
 };

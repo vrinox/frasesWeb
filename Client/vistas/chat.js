@@ -20,6 +20,7 @@ var ChatManager = function(){
 			.then(function(respuesta){
 				if(respuesta.success){
 					var p2p = respuesta.p2p;
+					yo.contactos=[];
 					for(var x=0;x<p2p.length;x++){
 						yo.contactos.push({
 							nombreusu : p2p[x].nombreusu,
@@ -145,7 +146,24 @@ var ChatUnit = function(user){
 			UI.buscarVentana('panelEsc').buscarSector('escritura').nodo.querySelector('textarea').value="";
 			var user = this.user.nombreusu;
 			var chatUnit=this;
+
+
+			//funcionamiento paneles
 			var contenedorMensajes = UI.buscarVentana('contenedorMensajes');
+
+			contenedorMensajes.nodo.classList.add('visible');
+			UI.buscarVentana('ListadoChats').nodo.classList.add('oculto');
+			UI.buscarVentana('panelEsc').nodo.classList.add('visible');
+
+			var boton = UI.elementos.cabecera.nodo.querySelector('button.listado');
+			boton.classList.add('visible');
+			boton.onclick=function(){
+				UI.buscarVentana('ListadoChats').nodo.classList.remove('oculto');
+				UI.buscarVentana('panelEsc').nodo.classList.remove('visible');
+				UI.buscarVentana('contenedorMensajes').nodo.classList.remove('visible');
+				boton.classList.remove('visible');
+				boton.onclick=function(){};
+			};
 			//busco los mensajes
 			var peticion = {
 				entidad: "chat",

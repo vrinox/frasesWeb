@@ -1,5 +1,6 @@
 
 div[mat-window].latDer{
+    transition: all 0.3s ease-in-out;
 	margin-left: 0px;
 	margin-top: 50px;
 	width: 280px;
@@ -7,6 +8,7 @@ div[mat-window].latDer{
 	float:left;
 }
 div[mat-window].contMens{
+    transition: all 0.3s ease-in-out;
 	margin: 50px 1px 0px 1px;
     float: left;
     width: calc(100% - 282px);
@@ -33,6 +35,7 @@ section[sector].transparente{
     background-color: transparent;
 }
 div[mat-window].panelEsc{
+    transition: all 0.3s ease-in-out;
 	margin: 1px;
     float: left;
     width: calc(100% - 282px);
@@ -57,4 +60,33 @@ div[mat-window].panelEsc button{
     top: 7px;
     margin: 0px !important;
 }
-    
+div[cabecera] button.listado{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background: transparent;
+    border: none;
+    display:none;
+}
+@media only screen and (max-device-width: 480px) {
+	div[mat-window].latDer{
+		width: 100%;
+	}
+	div[mat-window].contMens,div[mat-window].panelEsc{
+		width: 100%;
+        margin-left: calc(100%);
+        position:absolute;
+	}
+    div[mat-window].panelEsc{
+        margin-top:calc(143%);
+    }
+    /*-----Chat Activo-------*/
+    div[mat-window].latDer.oculto{
+        margin-left: calc(-100%);
+    }
+    div[mat-window].panelEsc.visible,div[mat-window].contMens.visible{
+        margin-left: 0px;
+    }
+    div[cabecera] button.listado.visible{
+        display:block;;
+    }

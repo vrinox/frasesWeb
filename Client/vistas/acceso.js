@@ -31,32 +31,34 @@ var Acceso = function(){
 	};
 
 	this.crearFormulario = function(){
-		var ventana = UI.agregarVentana({
-		  tipo: 'centrado',
-		  nombre: 'Acceso',
-		  titulo:{
-		    html: 'Acceso',
-		    tipo: 'basico'
-		  },
-		  sectores:[
-				{
-					nombre: 'formulario', //puede ser lo que sea
-					formulario: this.plano.acceso,
-					tipo: 'nuevo'
+		if(!UI.buscarVentana('Acceso')){
+			var ventana = UI.agregarVentana({
+				tipo: 'centrado',
+				nombre: 'Acceso',
+				titulo:{
+					html: 'Acceso',
+					tipo: 'basico'
 				},
-				{
-					nombre:'botonera',
-					html:'<section botonera><button type="button" class="icon material-icons md-24 white mat-blue500">send</button>'+
-								'<button type="button" class="icon material-icons md-24 white mat-indigo500">person_add</button></section>'
-				}
-		  ]
-		},document.body.querySelector('div[contenedor]'));
-		ventana.buscarSector('botonera').nodo.querySelector('button.icon.mat-blue500').onclick = function(){
-			ingresar(this);
-		};
-		ventana.buscarSector('botonera').nodo.querySelector('button.icon.mat-indigo500').onclick = function(){
-			activarRegistro();
-		};
+				sectores:[
+					{
+						nombre: 'formulario', //puede ser lo que sea
+						formulario: this.plano.acceso,
+						tipo: 'nuevo'
+					},
+					{
+						nombre:'botonera',
+						html:'<section botonera><button type="button" class="icon material-icons md-24 white mat-blue500">send</button>'+
+									'<button type="button" class="icon material-icons md-24 white mat-indigo500">person_add</button></section>'
+					}
+				]
+			},document.body.querySelector('div[contenedor]'));
+			ventana.buscarSector('botonera').nodo.querySelector('button.icon.mat-blue500').onclick = function(){
+				ingresar(this);
+			};
+			ventana.buscarSector('botonera').nodo.querySelector('button.icon.mat-indigo500').onclick = function(){
+				activarRegistro();
+			};
+		}
 	};
 
 	this.agregarForm = function(nombreForm){
